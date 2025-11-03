@@ -1,11 +1,12 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
-
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+/* design tokens (fallback CSS vars) */
+:root{
+  --bc-bitter:#362320;
+  --bc-wine:#57091d;
+  --bc-cherry:#890524;
+  --bc-truffle:#6a4e4a;
+  --bc-icing:#d0d1c9;
 }

@@ -1,12 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* design tokens (fallback CSS vars) */
-:root{
-  --bc-bitter:#362320;
-  --bc-wine:#57091d;
-  --bc-cherry:#890524;
-  --bc-truffle:#6a4e4a;
-  --bc-icing:#d0d1c9;
-}

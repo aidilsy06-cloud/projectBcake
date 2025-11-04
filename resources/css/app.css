@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* -------------------------------------------------------
+   🌸 B’cake Global Style Helpers
+   (bisa dipakai di semua blade secara langsung)
+--------------------------------------------------------*/
+
+/* Background grain (lembut seperti kertas bakery aesthetic) */
+.grain {
+    @apply bg-grain bg-[length:12px_12px] bg-repeat;
+}
+
+/* Button default */
+.btn {
+    @apply inline-flex items-center justify-center font-medium rounded-xl2 px-5 py-3 shadow-soft transition;
+}
+
+/* Button utama B’cake */
+.btn-primary {
+    @apply bg-bcake-cherry text-white hover:bg-bcake-wine;
+}
+
+/* Button ghost (border soft, cocok untuk aksi sekunder) */
+.btn-ghost {
+    @apply border border-bcake-truffle/25 text-bcake-bitter hover:border-bcake-cherry;
+}
+
+/* Card produk */
+.card {
+    @apply rounded-xl2 shadow-soft bg-white border border-bcake-truffle/10 overflow-hidden;
+}
+
+/* Title section */
+.section-title {
+    @apply font-display text-3xl mb-6;
+}

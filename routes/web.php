@@ -20,52 +20,36 @@ Route::get('/', function () {
 })->name('home');
 
 // === PRODUK (PUBLIC) ===
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::get('/product/{product:slug}', [ProductController::class, 'show'])->name('products.show');
+Route::controller(ProductController::class)->group(function () {
+    Route::get('/products', 'index')->name('products.index');
+    Route::get('/product/{product:slug}', 'show')->name('products.show');
+});
 
 // === KERANJANG (PUBLIC / SESSION) ===
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/add/{product:slug}', [CartController::class, 'add'])->name('cart.add');
-Route::post('/cart/remove/{product:slug}', [CartController::class, 'remove'])->name('cart.remove');
-Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+Route::prefix('cart')->name('cart.')->group(function () {
+    Route::get('/',          [CartController::class, 'index'])->name('index');
+    Route::post('/add/{product:slug}',    [CartController::class, 'add'])->name('add');
+    Route::post('/update',   [CartController::class, 'update'])->name('update');
+    Route::delete('/remove/{product:slug}', [CartController::class, 'remove'])->name('remove'); // <- DELETE
+});
 
-
-// ===========================================================================
-// === AUTH ROUTES (LOGIN & REGISTER) =======================================
-// ===========================================================================
-
-// SHOW LOGIN PAGE
-Route::get('/login', [AuthenticatedSessionController::class, 'create'])
-        ->middleware('guest')
-        ->name('login');
-
-// PROCESS LOGIN
-Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-        ->middleware('guest');
-
-// LOGOUT
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->middleware('auth')
-        ->name('logout');
-
-// REGISTRATION (OPSIONAL, JIKA ADA REGISTER)
-Route::get('/register', [RegisteredUserController::class, 'create'])
-        ->middleware('guest')
-        ->name('register');
-
-Route::post('/register', [RegisteredUserController::class, 'store'])
-        ->middleware('guest');
-
-// Halaman statis
+// === HALAMAN STATIS ===
 Route::view('/tentang-kami', 'static.about')->name('about');
 Route::view('/bantuan', 'static.help')->name('help');
 
+// === AUTH (LOGIN / REGISTER / LOGOUT) ===
+Route::middleware('guest')->group(function () {
+    Route::get('/login',    [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login',   [AuthenticatedSessionController::class, 'store']);
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register',[RegisteredUserController::class, 'store']);
+});
 
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
 
-// ===========================================================================
-// === DASHBOARD (SETELAH LOGIN) ============================================
-// ===========================================================================
-
+// === DASHBOARD (PROTECTED) ===
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('auth')->name('dashboard');

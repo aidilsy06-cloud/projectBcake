@@ -6,149 +6,109 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', $title ?? 'B’cake')</title>
 
-    {{-- Vite assets --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Vite --}}
+    @vite(['resources/css/app.css','resources/js/app.js'])
 
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <style> body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif} </style>
+    <style>body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}</style>
 
     @stack('head')
 </head>
 <body class="bg-rose-50 text-gray-800 selection:bg-bcake-icing selection:text-bcake-bitter">
 
-    {{-- ======= NAVBAR ======= --}}
+    {{-- ================= NAVBAR ================= --}}
     <header class="bg-white/90 backdrop-blur border-b border-bcake-truffle/10 sticky top-0 z-40">
         <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            {{-- Brand --}}
-            <a href="{{ Route::has('home') ? route('home') : url('/') }}"
-               class="text-2xl font-extrabold" style="font-family:'Playfair Display',serif;">
-                <span class="text-bcake-wine">B’</span><span class="text-bcake-bitter">cake</span>
-            </a>
 
-            {{-- Desktop links --}}
+            {{-- BRAND --}}
+            <div class="flex items-center gap-3">
+                {{-- Sidebar Open Button (Desktop Left) --}}
+                <button id="openSidebar"
+                        class="hidden md:inline-flex items-center justify-center w-10 h-10 rounded-full border border-bcake-truffle/20 hover:bg-rose-50"
+                        aria-label="Buka menu info">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+
+                <a href="{{ route('home') }}" class="text-2xl font-extrabold" style="font-family:'Playfair Display',serif;">
+                    <span class="text-bcake-wine">B’</span><span class="text-bcake-bitter">cake</span>
+                </a>
+            </div>
+
+            {{-- NAV DESKTOP --}}
             <div class="hidden md:flex items-center gap-6">
-                @if (Route::has('products.index'))
-                    <a href="{{ route('products.index') }}"
-                       class="{{ request()->routeIs('products.*') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">
-                        Produk
-                    </a>
-                @endif
+                <a href="{{ route('products.index') }}" class="{{ request()->routeIs('products.*') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">Produk</a>
+                <a href="{{ route('help') }}" class="{{ request()->routeIs('help') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">Bantuan</a>
 
-                @if (Route::has('cart.index'))
-                    <a href="{{ route('cart.index') }}"
-                       class="{{ request()->routeIs('cart.*') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">
-                        Keranjang
-                    </a>
-                @endif
+                <a href="{{ route('cart.index') }}" class="relative {{ request()->routeIs('cart.*') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">
+                    Keranjang
+                    @php $cc = (int) session('cart_count', 0); @endphp
+                    @if($cc > 0)
+                        <span class="absolute -top-2 -right-3 bg-bcake-cherry text-white text-[10px] px-1.5 py-0.5 rounded-full">{{ $cc }}</span>
+                    @endif
+                </a>
 
+                {{-- AUTH --}}
                 @auth
-                    <a href="{{ route('dashboard') }}"
-                       class="{{ request()->routeIs('dashboard') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">
-                        Dashboard
-                    </a>
-                    <div class="flex items-center gap-3">
-                        <span class="text-sm text-gray-600 hidden sm:inline">Hi, {{ auth()->user()->name }}</span>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button class="text-sm font-medium text-bcake-wine hover:underline">Logout</button>
-                        </form>
-                    </div>
+                    <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">Dashboard</a>
+                    <form method="POST" action="{{ route('logout') }}"><@csrf>
+                        <button class="text-sm font-medium text-bcake-wine hover:underline">Logout</button>
+                    </form>
                 @else
-                    @if (Route::has('login'))
-                        <a href="{{ route('login') }}" class="text-sm font-semibold hover:text-bcake-wine">Login</a>
-                    @endif
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}"
-                           class="text-sm font-semibold text-white bg-bcake-wine px-4 py-2 rounded-xl shadow hover:opacity-90">
-                           Daftar
-                        </a>
-                    @endif
+                    <a href="{{ route('login') }}" class="text-sm font-semibold hover:text-bcake-wine">Login</a>
+                    <a href="{{ route('register') }}" class="text-sm font-semibold text-white bg-bcake-wine px-4 py-2 rounded-xl shadow hover:opacity-90">Daftar</a>
                 @endauth
             </div>
 
-            {{-- Mobile hamburger --}}
-            <button id="menuBtn" class="md:hidden inline-flex items-center justify-center p-2 rounded-lg border border-bcake-truffle/20"
-                    aria-controls="mobileMenu" aria-expanded="false" aria-label="Buka menu">
-                {{-- icon --}}
+            {{-- HAMBURGER MOBILE --}}
+            <button id="menuBtn" class="md:hidden inline-flex items-center justify-center p-2 rounded-lg border border-bcake-truffle/20">
                 <svg id="menuIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M4 6h16M4 12h16M4 18h16"/>
+                    <path id="iconBars" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    <path id="iconX" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
             </button>
         </nav>
+
         <div class="h-1 bg-bcake-gradient"></div>
 
-        {{-- Mobile menu panel --}}
+        {{-- MOBILE MENU --}}
         <div id="mobileMenu" class="md:hidden hidden border-t border-bcake-truffle/10 bg-white">
             <div class="max-w-6xl mx-auto px-4 py-3 space-y-2">
-                @if (Route::has('products.index'))
-                    <a href="{{ route('products.index') }}"
-                       class="block py-2 {{ request()->routeIs('products.*') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">
-                        Produk
-                    </a>
-                @endif
-                @if (Route::has('cart.index'))
-                    <a href="{{ route('cart.index') }}"
-                       class="block py-2 {{ request()->routeIs('cart.*') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">
-                        Keranjang
-                    </a>
-                @endif
+                <a href="{{ route('products.index') }}" class="block py-2">Produk</a>
+                <a href="{{ route('help') }}" class="block py-2">Bantuan</a>
+                <a href="{{ route('cart.index') }}" class="block py-2">Keranjang</a>
+
+                {{-- Sidebar button mobile --}}
+                <button id="openSidebarMobile" class="mt-1 inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-bcake-truffle/20 hover:bg-rose-50">
+                    Info
+                </button>
 
                 @auth
-                    <a href="{{ route('dashboard') }}"
-                       class="block py-2 {{ request()->routeIs('dashboard') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">
-                       Dashboard
-                    </a>
-                    <form method="POST" action="{{ route('logout') }}" class="pt-2">
-                        @csrf
+                    <a href="{{ route('dashboard') }}" class="block py-2">Dashboard</a>
+                    <form method="POST" action="{{ route('logout') }}"><@csrf>
                         <button class="text-bcake-wine font-medium">Logout</button>
                     </form>
                 @else
-                    @if (Route::has('login'))
-                        <a href="{{ route('login') }}" class="block py-2 font-medium hover:text-bcake-wine">Login</a>
-                    @endif
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="block py-2 font-medium hover:text-bcake-wine">Daftar</a>
-                    @endif
+                    <a href="{{ route('login') }}" class="block py-2">Login</a>
+                    <a href="{{ route('register') }}" class="block py-2">Daftar</a>
                 @endauth
             </div>
         </div>
     </header>
 
-    {{-- ======= OPTIONAL PAGE HEADER (Breeze $header) ======= --}}
-    @isset($header)
-        <div class="bg-white border-b border-bcake-truffle/10">
-            <div class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                {{ $header }}
-            </div>
-        </div>
-    @endisset
 
-    {{-- ======= FLASH MESSAGES ======= --}}
-    @foreach (['status' => 'bg-bcake-icing/70 text-bcake-bitter', 'success' => 'bg-emerald-50 text-emerald-700', 'error' => 'bg-rose-50 text-rose-700'] as $key => $classes)
-        @if(session($key))
-            <div class="max-w-6xl mx-auto px-4 mt-4">
-                <div class="rounded-xl border border-black/5 px-4 py-3 shadow-sm {{ $classes }}">
-                    {{ session($key) }}
-                </div>
-            </div>
-        @endif
-    @endforeach
-
-    {{-- ======= MAIN ======= --}}
+    {{-- ================= MAIN ================= --}}
     <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        @isset($slot)
-            {{ $slot }}
-        @else
-            @yield('content')
-        @endisset
+        @isset($slot) {{ $slot }} @else @yield('content') @endisset
     </main>
 
-    {{-- ======= FOOTER ======= --}}
+
+    {{-- ================= FOOTER ================= --}}
     <footer class="border-t border-bcake-truffle/10 bg-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-sm text-gray-500 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p>© {{ date('Y') }} B’cake. All Rights Reserved.</p>
@@ -156,18 +116,59 @@
         </div>
     </footer>
 
-    {{-- Simple mobile menu toggle (no dependency) --}}
+
+    {{-- ================= SIDEBAR LEFT ================= --}}
+    <div id="sbOverlay" class="fixed inset-0 bg-black/30 z-40 hidden opacity-0 transition-opacity duration-200"></div>
+
+    <aside id="sidebar"
+      class="fixed left-0 top-0 h-full w-[300px] bg-white z-50 border-r border-bcake-truffle/10 shadow-xl
+             -translate-x-full transition-transform duration-300">
+
+        {{-- HEADER SIDEBAR --}}
+        <div class="flex items-center justify-between px-5 h-14 border-b border-bcake-truffle/10">
+            <button id="closeSidebar" class="p-2 rounded-lg hover:bg-rose-50" aria-label="Tutup">✕</button>
+            <div class="font-semibold text-bcake-bitter">Menu</div>
+        </div>
+
+        {{-- MENU LIST --}}
+        <div class="p-5 space-y-3">
+            <a href="{{ route('help') }}" class="block px-4 py-3 rounded-xl border border-bcake-truffle/15 hover:bg-rose-50">Bantuan</a>
+            <a href="{{ route('products.index') }}" class="block px-4 py-3 rounded-xl border border-bcake-truffle/15 hover:bg-rose-50">Katalog Produk</a>
+        </div>
+    </aside>
+
+
+    {{-- ================= SCRIPTS ================= --}}
     <script>
-      (() => {
-        const btn = document.getElementById('menuBtn');
+      document.addEventListener('DOMContentLoaded', () => {
+        const ov   = document.getElementById('sbOverlay');
+        const sb   = document.getElementById('sidebar');
         const panel = document.getElementById('mobileMenu');
-        if (!btn || !panel) return;
-        btn.addEventListener('click', () => {
-          const isOpen = !panel.classList.contains('hidden');
-          panel.classList.toggle('hidden');
-          btn.setAttribute('aria-expanded', String(!isOpen));
-        });
-      })();
+        const iconBars = document.getElementById('iconBars');
+        const iconX = document.getElementById('iconX');
+        const openBtn  = document.getElementById('openSidebar');
+        const openBtnM = document.getElementById('openSidebarMobile');
+        const closeBtn = document.getElementById('closeSidebar');
+
+        const open = () => { sb.classList.remove('-translate-x-full'); ov.classList.remove('hidden','opacity-0'); };
+        const close = () => { sb.classList.add('-translate-x-full'); ov.classList.add('hidden','opacity-0'); };
+
+        openBtn?.addEventListener('click', open);
+        openBtnM?.addEventListener('click', () => { open(); panel?.classList.add('hidden'); });
+        closeBtn?.addEventListener('click', close);
+        ov?.addEventListener('click', close);
+        window.addEventListener('keydown', (e) => e.key === 'Escape' && close());
+
+        const btn = document.getElementById('menuBtn');
+        if (btn && panel) {
+          btn.addEventListener('click', () => {
+            const isOpen = !panel.classList.contains('hidden');
+            panel.classList.toggle('hidden');
+            iconBars.classList.toggle('hidden');
+            iconX.classList.toggle('hidden');
+          });
+        }
+      });
     </script>
 
     @stack('scripts')

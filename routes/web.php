@@ -56,6 +56,11 @@ Route::get('/register', [RegisteredUserController::class, 'create'])
 Route::post('/register', [RegisteredUserController::class, 'store'])
         ->middleware('guest');
 
+// Halaman statis
+Route::view('/tentang-kami', 'static.about')->name('about');
+Route::view('/bantuan', 'static.help')->name('help');
+
+
 
 // ===========================================================================
 // === DASHBOARD (SETELAH LOGIN) ============================================

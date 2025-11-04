@@ -12,7 +12,7 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    {{-- Beranda selalu ada --}}
+                    {{-- Beranda --}}
                     <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
                         {{ __('Beranda') }}
                     </x-nav-link>
@@ -22,11 +22,33 @@
                         {{ __('Produk') }}
                     </x-nav-link>
 
-                    {{-- Keranjang: tampil hanya jika route ada --}}
-                    @if (Route::has('cart.index'))
-                        <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
-                            {{ __('Keranjang') }}
+                    {{-- Tentang Kami (jika route ada) --}}
+                    @if (Route::has('about'))
+                        <x-nav-link :href="route('about')" :active="request()->routeIs('about')">
+                            {{ __('Tentang Kami') }}
                         </x-nav-link>
+                    @endif
+
+                    {{-- Bantuan (jika route ada) --}}
+                    @if (Route::has('help'))
+                        <x-nav-link :href="route('help')" :active="request()->routeIs('help')">
+                            {{ __('Bantuan') }}
+                        </x-nav-link>
+                    @endif
+
+                    {{-- Keranjang (dengan badge) --}}
+                    @if (Route::has('cart.index'))
+                        @php $cc = (int) session('cart_count', 0); @endphp
+                        <div class="relative">
+                            <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
+                                {{ __('Keranjang') }}
+                            </x-nav-link>
+                            @if($cc > 0)
+                                <span class="absolute -top-1 -right-3 bg-bcake-cherry text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                                    {{ $cc }}
+                                </span>
+                            @endif
+                        </div>
                     @endif
                 </div>
             </div>
@@ -42,27 +64,25 @@
                                 <div class="ms-1">
                                     <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd"
-                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                            clip-rule="evenodd" />
+                                              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                              clip-rule="evenodd" />
                                     </svg>
                                 </div>
                             </button>
                         </x-slot>
 
                         <x-slot name="content">
-                            {{-- Profil hanya jika route ada (Breeze/Fortify) --}}
                             @if (Route::has('profile.edit'))
                                 <x-dropdown-link :href="route('profile.edit')">
                                     {{ __('Profil') }}
                                 </x-dropdown-link>
                             @endif
 
-                            {{-- Logout hanya jika route ada --}}
                             @if (Route::has('logout'))
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <x-dropdown-link href="{{ route('logout') }}"
-                                        onclick="event.preventDefault(); this.closest('form').submit();">
+                                                     onclick="event.preventDefault(); this.closest('form').submit();">
                                         {{ __('Logout') }}
                                     </x-dropdown-link>
                                 </form>
@@ -70,7 +90,6 @@
                         </x-slot>
                     </x-dropdown>
                 @else
-                    {{-- Login/Daftar hanya jika route ada --}}
                     @if (Route::has('login'))
                         <a href="{{ route('login') }}" class="text-sm font-semibold hover:text-rose-500">Login</a>
                     @endif
@@ -83,14 +102,14 @@
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open"
-                    class="p-2 rounded-md text-gray-500 hover:bg-gray-100 focus:outline-none">
+                        class="p-2 rounded-md text-gray-500 hover:bg-gray-100 focus:outline-none">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex"
-                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
+                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden"
-                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
+                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
@@ -108,9 +127,27 @@
                 {{ __('Produk') }}
             </x-responsive-nav-link>
 
+            @if (Route::has('about'))
+                <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')">
+                    {{ __('Tentang Kami') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if (Route::has('help'))
+                <x-responsive-nav-link :href="route('help')" :active="request()->routeIs('help')">
+                    {{ __('Bantuan') }}
+                </x-responsive-nav-link>
+            @endif
+
             @if (Route::has('cart.index'))
                 <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
                     {{ __('Keranjang') }}
+                    @php $cc = (int) session('cart_count', 0); @endphp
+                    @if($cc > 0)
+                        <span class="ms-2 inline-flex items-center justify-center text-[10px] px-1.5 py-0.5 rounded-full bg-bcake-cherry text-white">
+                            {{ $cc }}
+                        </span>
+                    @endif
                 </x-responsive-nav-link>
             @endif
         </div>

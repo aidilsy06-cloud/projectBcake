@@ -6,6 +6,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
+Route::get('/_health', fn() => 'ok');
 /*
 |--------------------------------------------------------------------------
 | Web Routes

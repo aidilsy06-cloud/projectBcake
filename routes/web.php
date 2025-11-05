@@ -34,13 +34,13 @@ Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/add/{product:slug}', [CartController::class, 'add'])->name('add');
     Route::post('/update', [CartController::class, 'update'])->name('update');
-    // pakai method spoofing di form: <form method="POST">@csrf @method('DELETE')</form>
-    Route::delete('/remove/{product:slug}', [CartController::class, 'remove'])->name('remove');
+    Route::delete('/remove/{product:slug}', [CartController::class, 'remove'])->name('remove'); // pakai @method('DELETE') di form
 });
 
 // HALAMAN STATIS
 Route::view('/tentang-kami', 'static.about')->name('about');
 Route::view('/bantuan', 'static.help')->name('help');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -58,16 +58,25 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
+
 /*
 |--------------------------------------------------------------------------
 | Role-based Dashboard
 |--------------------------------------------------------------------------
 */
 
+// Helper kecil: pilih view yang tersedia (dashboard.* atau dashboards.*)
+function pickDashboardView(string $who): string {
+    if (view()->exists("dashboard.$who"))  return "dashboard.$who";
+    if (view()->exists("dashboards.$who")) return "dashboards.$who";
+    // fallback terakhir biar tidak error saat belum bikin file
+    return 'static.dashboard';
+}
+
 // /dashboard -> arahkan sesuai role
 Route::get('/dashboard', function () {
     $user = auth()->user();
-    if (!$user) return redirect()->route('login');
+    if (! $user) return redirect()->route('login');
 
     return match ($user->role) {
         'admin'  => redirect()->route('admin.dashboard'),
@@ -77,30 +86,37 @@ Route::get('/dashboard', function () {
 })->middleware('auth')->name('dashboard');
 
 // ADMIN
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        $stats = [
-            'total_products' => Product::count(),
-            'users'          => User::count(),
-        ];
-        return view('dashboard.admin', compact('stats'));
-    })->name('dashboard');
-});
+Route::middleware(['auth', 'role:admin'])
+    ->prefix('admin')->name('admin.')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            $stats = [
+                'total_products' => Product::count(),
+                'users'          => User::count(),
+            ];
+            return view(pickDashboardView('admin'), compact('stats'));
+        })->name('dashboard');
+    });
 
 // PENJUAL
-Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->group(function () {
-    Route::get('/dashboard', function () {
-        $stats = [
-            'my_products' => Product::count(), // ganti ke where('user_id', auth()->id()) kalau ada kolom owner
-        ];
-        return view('dashboard.seller', compact('stats'));
-    })->name('dashboard');
-});
+Route::middleware(['auth', 'role:seller'])
+    ->prefix('seller')->name('seller.')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            $stats = [
+                // ganti ke where('user_id', auth()->id()) jika ada kolom owner
+                'my_products' => Product::count(),
+            ];
+            return view(pickDashboardView('seller'), compact('stats'));
+        })->name('dashboard');
+    });
 
 // PEMBELI
-Route::middleware(['auth', 'role:buyer'])->prefix('buyer')->name('buyer.')->group(function () {
-    Route::get('/dashboard', function () {
-        $stats = ['wish' => 0];
-        return view('dashboard.buyer', compact('stats'));
-    })->name('dashboard');
-});
+Route::middleware(['auth', 'role:buyer'])
+    ->prefix('buyer')->name('buyer.')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            $stats = ['wish' => 0];
+            return view(pickDashboardView('buyer'), compact('stats'));
+        })->name('dashboard');
+    });

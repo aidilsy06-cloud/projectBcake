@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,18 +14,48 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // ✅ Seed produk contoh
+        // Seeder lain (produk, dsb)
         $this->call([
             ProductSeeder::class,
         ]);
 
-        // ✅ (Opsional) Buat 1 user contoh untuk login admin
-        if (!User::where('email', 'admin@bcake.local')->exists()) {
-            User::factory()->create([
-                'name'     => 'B’cake Admin',
-                'email'    => 'admin@bcake.local',
-                'password' => bcrypt('password'), // login: admin@bcake.local / password
-            ]);
-        }
+        // ===========================
+        // Users sample (role-based)
+        // ===========================
+        // Admin
+        User::updateOrCreate(
+            ['email' => 'admin@bcake.local'],
+            [
+                'name'              => 'B’cake Admin',
+                'password'          => Hash::make('password'), // login: admin@bcake.local / password
+                'role'              => 'admin',
+                'email_verified_at' => now(),
+                'remember_token'    => Str::random(10),
+            ]
+        );
+
+        // Penjual (seller)
+        User::updateOrCreate(
+            ['email' => 'seller@bcake.local'],
+            [
+                'name'              => 'B’cake Seller',
+                'password'          => Hash::make('password'), // seller@bcake.local / password
+                'role'              => 'seller',
+                'email_verified_at' => now(),
+                'remember_token'    => Str::random(10),
+            ]
+        );
+
+        // Pembeli (buyer)
+        User::updateOrCreate(
+            ['email' => 'buyer@bcake.local'],
+            [
+                'name'              => 'B’cake Buyer',
+                'password'          => Hash::make('password'), // buyer@bcake.local / password
+                'role'              => 'buyer',
+                'email_verified_at' => now(),
+                'remember_token'    => Str::random(10),
+            ]
+        );
     }
 }

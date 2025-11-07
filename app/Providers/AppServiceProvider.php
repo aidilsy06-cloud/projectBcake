@@ -9,46 +9,54 @@ use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(Router $router): void
     {
         /*
         |--------------------------------------------------------------------------
-        | 1) Alias Middleware (tetap dari kode lama)
+        | 1) Alias Middleware (tetap)
         |--------------------------------------------------------------------------
-        | Supaya bisa memakai ->middleware('role:admin') di routes
         */
         $router->aliasMiddleware('role', RoleMiddleware::class);
 
 
         /*
         |--------------------------------------------------------------------------
-        | 2) View Composer (untuk membuat $cartCount tersedia di semua view)
+        | 2) View Composer (membuat $cartCount tersedia di semua view)
         |--------------------------------------------------------------------------
         */
         View::composer('*', function ($view) {
-            // Ambil data keranjang dari session
-            $cart = session('cart', []);
 
-            // Hitung jumlah item atau qty
-            $cartCount = 0;
-            if (is_array($cart) && !empty($cart)) {
-                foreach ($cart as $item) {
-                    if (is_array($item) && isset($item['qty'])) {
-                        $cartCount += (int) $item['qty'];
-                    } else {
-                        $cartCount += 1;
+            // PRIORITAS 1 — jika controller set session('cart_count') manual
+            $cartCount = (int) session('cart_count', 0);
+
+            // PRIORITAS 2 — jika belum ada, hitung otomatis dari session('cart')
+            if ($cartCount === 0) {
+                $cart = session('cart', []);
+
+                if (is_array($cart)) {
+                    // Bentuk A: ['slug'=>['qty'=>2], ...]
+                    foreach ($cart as $item) {
+                        if (is_array($item) && array_key_exists('qty', $item)) {
+                            $cartCount += (int) $item['qty'];
+                        } elseif (is_array($item)) {
+                            // Bentuk B: ['slug'=>[]] tanpa qty → hitung itemnya
+                            $cartCount += 1;
+                        }
                     }
+
+                    // Bentuk C: ['items'=>[...]]
+                    if (isset($cart['items']) && is_array($cart['items'])) {
+                        $cartCount = max($cartCount, count($cart['items']));
+                    }
+                }
+                elseif ($cart instanceof \Countable) {
+                    // Jika session cart berupa Collection
+                    $cartCount = max($cartCount, count($cart));
                 }
             }
 
@@ -56,15 +64,13 @@ class AppServiceProvider extends ServiceProvider
             $view->with('cartCount', $cartCount);
         });
 
+
         /*
         |--------------------------------------------------------------------------
-        | (Opsional tambahan, tetap aman kalau mau dipakai nanti)
+        | (Opsional tambahan)
         |--------------------------------------------------------------------------
         */
-
         // Schema::defaultStringLength(191); // untuk MySQL lama
-        // if (app()->environment('production')) {
-        //     URL::forceScheme('https');    // paksa pakai https di hosting
-        // }
+        // if (app()->environment('production')) URL::forceScheme('https');
     }
 }

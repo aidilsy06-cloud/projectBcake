@@ -38,6 +38,44 @@
                 <a href="{{ route('home') }}" class="text-2xl font-extrabold" style="font-family:'Playfair Display',serif;">
                     <span class="text-bcake-wine">B’</span><span class="text-bcake-bitter">cake</span>
                 </a>
+
+                {{-- (opsional) tampilkan cart kecil dekat logo di layar kecil --}}
+                <div class="md:hidden ml-2">
+                    {{-- Keranjang (inline, tanpa komponen) --}}
+                    <a href="{{ route('cart.index') }}"
+                       class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-md ring-1 ring-black/5 hover:bg-white/95 transition"
+                       aria-label="Buka keranjang ({{ (int)($cartCount ?? 0) }})">
+                      <svg class="h-5 w-5" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <defs>
+                          <linearGradient id="cartBody" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%"  stop-color="#FF9FB3"/>
+                            <stop offset="100%" stop-color="#D2335B"/>
+                          </linearGradient>
+                          <linearGradient id="wheel" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%"  stop-color="#FFE4EA"/>
+                            <stop offset="100%" stop-color="#C5B7BE"/>
+                          </linearGradient>
+                        </defs>
+                        <rect x="7" y="14" rx="4" ry="4" width="38" height="8" fill="url(#cartBody)"/>
+                        <path d="M10 20h34l-2.5 15a4 4 0 0 1-3.9 3.3H18.4a4 4 0 0 1-3.9-3.2L10 20Z" fill="url(#cartBody)" opacity=".95"/>
+                        <path d="M16 23h22M15 28h24M14 33h26" stroke="white" stroke-opacity=".6" stroke-width="1.6" stroke-linecap="round"/>
+                        <path d="M13 14c0-3 2.5-5 5.5-5H28" stroke="#A30F33" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M12 16c0 0 3-3 6-3" stroke="#FFDDE6" stroke-width="2" stroke-linecap="round" />
+                        <circle cx="19" cy="41" r="4.6" fill="url(#wheel)"/>
+                        <circle cx="36" cy="41" r="4.6" fill="url(#wheel)"/>
+                        <circle cx="19" cy="41" r="2.1" fill="#5B4E53"/>
+                        <circle cx="36" cy="41" r="2.1" fill="#5B4E53"/>
+                        <circle cx="45" cy="13" r="1.3" fill="#FFDDE6"/>
+                        <circle cx="48" cy="16" r="1.6" fill="#FFBACB"/>
+                      </svg>
+                      <span class="text-base font-medium tabular-nums">{{ (int)($cartCount ?? 0) }}</span>
+                      @if((int)($cartCount ?? 0) > 0)
+                        <span class="ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-bcake-wine px-1 text-[10px] font-semibold text-white leading-none">
+                          {{ (int)($cartCount ?? 0) }}
+                        </span>
+                      @endif
+                    </a>
+                </div>
             </div>
 
             {{-- NAV DESKTOP --}}
@@ -45,8 +83,40 @@
                 <a href="{{ route('products.index') }}" class="{{ request()->routeIs('products.*') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">Produk</a>
                 <a href="{{ route('help') }}" class="{{ request()->routeIs('help') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">Bantuan</a>
 
-                {{-- ====== CART PILL (baru) ====== --}}
-                <x-cart-pill :count="$cartCount" />
+                {{-- ====== CART (inline, tanpa komponen) ====== --}}
+                <a href="{{ route('cart.index') }}"
+                   class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-md ring-1 ring-black/5 hover:bg-white/95 transition"
+                   aria-label="Buka keranjang ({{ (int)($cartCount ?? 0) }})">
+                  <svg class="h-5 w-5" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="cartBody" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%"  stop-color="#FF9FB3"/>
+                        <stop offset="100%" stop-color="#D2335B"/>
+                      </linearGradient>
+                      <linearGradient id="wheel" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%"  stop-color="#FFE4EA"/>
+                        <stop offset="100%" stop-color="#C5B7BE"/>
+                      </linearGradient>
+                    </defs>
+                    <rect x="7" y="14" rx="4" ry="4" width="38" height="8" fill="url(#cartBody)"/>
+                    <path d="M10 20h34l-2.5 15a4 4 0 0 1-3.9 3.3H18.4a4 4 0 0 1-3.9-3.2L10 20Z" fill="url(#cartBody)" opacity=".95"/>
+                    <path d="M16 23h22M15 28h24M14 33h26" stroke="white" stroke-opacity=".6" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M13 14c0-3 2.5-5 5.5-5H28" stroke="#A30F33" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M12 16c0 0 3-3 6-3" stroke="#FFDDE6" stroke-width="2" stroke-linecap="round" />
+                    <circle cx="19" cy="41" r="4.6" fill="url(#wheel)"/>
+                    <circle cx="36" cy="41" r="4.6" fill="url(#wheel)"/>
+                    <circle cx="19" cy="41" r="2.1" fill="#5B4E53"/>
+                    <circle cx="36" cy="41" r="2.1" fill="#5B4E53"/>
+                    <circle cx="45" cy="13" r="1.3" fill="#FFDDE6"/>
+                    <circle cx="48" cy="16" r="1.6" fill="#FFBACB"/>
+                  </svg>
+                  <span class="text-base font-medium tabular-nums">{{ (int)($cartCount ?? 0) }}</span>
+                  @if((int)($cartCount ?? 0) > 0)
+                    <span class="ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-bcake-wine px-1 text-[10px] font-semibold text-white leading-none">
+                      {{ (int)($cartCount ?? 0) }}
+                    </span>
+                  @endif
+                </a>
 
                 {{-- AUTH --}}
                 @auth
@@ -77,7 +147,43 @@
             <div class="max-w-6xl mx-auto px-4 py-3 space-y-2">
                 <a href="{{ route('products.index') }}" class="block py-2">Produk</a>
                 <a href="{{ route('help') }}" class="block py-2">Bantuan</a>
-                <a href="{{ route('cart.index') }}" class="block py-2">Keranjang</a>
+
+                {{-- Keranjang (inline, tanpa komponen) --}}
+                <div class="py-2">
+                  <a href="{{ route('cart.index') }}"
+                     class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-md ring-1 ring-black/5 hover:bg-white/95 transition w-max"
+                     aria-label="Buka keranjang ({{ (int)($cartCount ?? 0) }})">
+                    <svg class="h-5 w-5" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <defs>
+                        <linearGradient id="cartBody" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%"  stop-color="#FF9FB3"/>
+                          <stop offset="100%" stop-color="#D2335B"/>
+                        </linearGradient>
+                        <linearGradient id="wheel" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%"  stop-color="#FFE4EA"/>
+                          <stop offset="100%" stop-color="#C5B7BE"/>
+                        </linearGradient>
+                      </defs>
+                      <rect x="7" y="14" rx="4" ry="4" width="38" height="8" fill="url(#cartBody)"/>
+                      <path d="M10 20h34l-2.5 15a4 4 0 0 1-3.9 3.3H18.4a4 4 0 0 1-3.9-3.2L10 20Z" fill="url(#cartBody)" opacity=".95"/>
+                      <path d="M16 23h22M15 28h24M14 33h26" stroke="white" stroke-opacity=".6" stroke-width="1.6" stroke-linecap="round"/>
+                      <path d="M13 14c0-3 2.5-5 5.5-5H28" stroke="#A30F33" stroke-width="2.5" stroke-linecap="round"/>
+                      <path d="M12 16c0 0 3-3 6-3" stroke="#FFDDE6" stroke-width="2" stroke-linecap="round" />
+                      <circle cx="19" cy="41" r="4.6" fill="url(#wheel)"/>
+                      <circle cx="36" cy="41" r="4.6" fill="url(#wheel)"/>
+                      <circle cx="19" cy="41" r="2.1" fill="#5B4E53"/>
+                      <circle cx="36" cy="41" r="2.1" fill="#5B4E53"/>
+                      <circle cx="45" cy="13" r="1.3" fill="#FFDDE6"/>
+                      <circle cx="48" cy="16" r="1.6" fill="#FFBACB"/>
+                    </svg>
+                    <span class="text-base font-medium tabular-nums">{{ (int)($cartCount ?? 0) }}</span>
+                    @if((int)($cartCount ?? 0) > 0)
+                      <span class="ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-bcake-wine px-1 text-[10px] font-semibold text-white leading-none">
+                        {{ (int)($cartCount ?? 0) }}
+                      </span>
+                    @endif
+                  </a>
+                </div>
 
                 {{-- Sidebar button mobile --}}
                 <button id="openSidebarMobile" class="mt-1 inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-bcake-truffle/20 hover:bg-rose-50">
@@ -98,12 +204,10 @@
         </div>
     </header>
 
-
     {{-- ================= MAIN ================= --}}
     <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         @isset($slot) {{ $slot }} @else @yield('content') @endisset
     </main>
-
 
     {{-- ================= FOOTER ================= --}}
     <footer class="border-t border-bcake-truffle/10 bg-white">
@@ -112,7 +216,6 @@
             <p class="text-gray-400">Crafted with <span class="text-bcake-cherry">♥</span> & cocoa.</p>
         </div>
     </footer>
-
 
     {{-- ================= SIDEBAR LEFT ================= --}}
     <div id="sbOverlay" class="fixed inset-0 bg-black/30 z-40 hidden opacity-0 transition-opacity duration-200"></div>
@@ -133,7 +236,6 @@
             <a href="{{ route('products.index') }}" class="block px-4 py-3 rounded-xl border border-bcake-truffle/15 hover:bg-rose-50">Katalog Produk</a>
         </div>
     </aside>
-
 
     {{-- ================= SCRIPTS ================= --}}
     <script>

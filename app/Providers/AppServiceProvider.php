@@ -5,9 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
 use App\Http\Middleware\RoleMiddleware;
-// (opsional) fitur umum yang sering dipakai:
-// use Illuminate\Support\Facades\Schema;   // Schema::defaultStringLength(191);
-// use Illuminate\Support\Facades\URL;      // URL::forceScheme('https');
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,16 +22,49 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(Router $router): void
     {
-        // Daftarkan alias middleware 'role' supaya bisa dipakai di routes:
-        // ->middleware('role:admin'), 'role:seller', 'role:buyer', dll.
+        /*
+        |--------------------------------------------------------------------------
+        | 1) Alias Middleware (tetap dari kode lama)
+        |--------------------------------------------------------------------------
+        | Supaya bisa memakai ->middleware('role:admin') di routes
+        */
         $router->aliasMiddleware('role', RoleMiddleware::class);
 
-        // (opsional) kalau perlu kompatibilitas MySQL lama untuk indeks panjang
-        // Schema::defaultStringLength(191);
 
-        // (opsional) paksa https di production
+        /*
+        |--------------------------------------------------------------------------
+        | 2) View Composer (untuk membuat $cartCount tersedia di semua view)
+        |--------------------------------------------------------------------------
+        */
+        View::composer('*', function ($view) {
+            // Ambil data keranjang dari session
+            $cart = session('cart', []);
+
+            // Hitung jumlah item atau qty
+            $cartCount = 0;
+            if (is_array($cart) && !empty($cart)) {
+                foreach ($cart as $item) {
+                    if (is_array($item) && isset($item['qty'])) {
+                        $cartCount += (int) $item['qty'];
+                    } else {
+                        $cartCount += 1;
+                    }
+                }
+            }
+
+            // Kirim ke semua view
+            $view->with('cartCount', $cartCount);
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | (Opsional tambahan, tetap aman kalau mau dipakai nanti)
+        |--------------------------------------------------------------------------
+        */
+
+        // Schema::defaultStringLength(191); // untuk MySQL lama
         // if (app()->environment('production')) {
-        //     URL::forceScheme('https');
+        //     URL::forceScheme('https');    // paksa pakai https di hosting
         // }
     }
 }

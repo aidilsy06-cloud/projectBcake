@@ -45,18 +45,14 @@
                 <a href="{{ route('products.index') }}" class="{{ request()->routeIs('products.*') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">Produk</a>
                 <a href="{{ route('help') }}" class="{{ request()->routeIs('help') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">Bantuan</a>
 
-                <a href="{{ route('cart.index') }}" class="relative {{ request()->routeIs('cart.*') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">
-                    Keranjang
-                    @php $cc = (int) session('cart_count', 0); @endphp
-                    @if($cc > 0)
-                        <span class="absolute -top-2 -right-3 bg-bcake-cherry text-white text-[10px] px-1.5 py-0.5 rounded-full">{{ $cc }}</span>
-                    @endif
-                </a>
+                {{-- ====== CART PILL (baru) ====== --}}
+                <x-cart-pill :count="$cartCount" />
 
                 {{-- AUTH --}}
                 @auth
                     <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'text-bcake-wine font-semibold' : 'hover:text-bcake-wine' }}">Dashboard</a>
-                    <form method="POST" action="{{ route('logout') }}"><@csrf>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
                         <button class="text-sm font-medium text-bcake-wine hover:underline">Logout</button>
                     </form>
                 @else
@@ -90,7 +86,8 @@
 
                 @auth
                     <a href="{{ route('dashboard') }}" class="block py-2">Dashboard</a>
-                    <form method="POST" action="{{ route('logout') }}"><@csrf>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
                         <button class="text-bcake-wine font-medium">Logout</button>
                     </form>
                 @else

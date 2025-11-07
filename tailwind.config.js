@@ -8,15 +8,16 @@ export default {
     './storage/framework/views/*.php',
     './resources/views/**/*.blade.php',
     './resources/js/**/*.js',
-    './resources/views/**/*.vue',
+    './resources/**/*.vue',
   ],
 
   theme: {
     extend: {
+      // Typography
       fontFamily: {
-        // gunakan Poppins untuk body (atau biarkan Figtree kalau mau default Breeze)
+        // Body text → Poppins (self-hosted)
         sans: ['Poppins', ...defaultTheme.fontFamily.sans],
-        // ✅ ini yang bikin utility `font-display`
+        // Heading (opsional) → Playfair Display; kalau file belum ada, fallback ke serif
         display: ['"Playfair Display"', 'serif'],
       },
 
@@ -31,7 +32,7 @@ export default {
         },
       },
       borderRadius: {
-        xl2: '1.25rem',
+        xl2: '1.25rem', // => rounded-xl2
       },
       boxShadow: {
         soft: '0 8px 24px rgba(54,35,32,0.12)',
@@ -58,3 +59,4 @@ export default {
 
   plugins: [forms],
 }
+

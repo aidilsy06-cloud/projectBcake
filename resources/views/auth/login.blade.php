@@ -181,7 +181,7 @@
             <div class="relative">
               <input :type="show ? 'text' : 'password'" id="password" name="password" required
                      autocomplete="current-password"
-                     class="w-full border rounded-xl px-4 py-2 ring-pink pr-12" placeholder="••••••••">
+                     class="w-full border rounded-xl px-4 py-2 ring-pink pr-12" placeholder="">
               <button type="button" @click="show=!show"
                       class="absolute right-2 top-1/2 -translate-y-1/2 text-pink-600 px-2 py-1 text-sm">
                 <span x-text="show ? 'Sembunyikan' : 'Lihat'"></span>

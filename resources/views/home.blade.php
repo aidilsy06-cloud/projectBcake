@@ -1,111 +1,133 @@
 @extends('layouts.app')
 
-@section('title', 'B’cake — Elegant Bakery')
+@section('title','B’cake — Elegant Bakery')
 
 @push('head')
 <style>
-  /* ——— Animasi sprinkle kecil (dipakai di hero) ——— */
-  @keyframes sprinkleFloat {
-    0%,100% { transform: translateY(0) }
-    50%     { transform: translateY(-6px) }
-  }
-  .animate-sprinkle { animation: sprinkleFloat 3.6s ease-in-out infinite; }
-
-  /* ——— Animasi welcome cake (opsional) ——— */
-  @keyframes bcake-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-  @keyframes bcake-fadein { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes bcake-flicker { 0%,100%{opacity:.9;transform:translateY(0) scale(1)} 50%{opacity:1;transform:translateY(-1px) scale(1.02)} }
-  @keyframes bcake-sparkle { 0%{opacity:0;transform:translateY(4px) scale(.85)} 50%{opacity:1;transform:translateY(-2px) scale(1)} 100%{opacity:0;transform:translateY(-6px) scale(.9)} }
-  .bcake-anim-floating{animation:bcake-float 4.5s ease-in-out infinite}
-  .bcake-anim-fade{animation:bcake-fadein .8s ease forwards}
-  .bcake-anim-flame{animation:bcake-flicker 1.4s ease-in-out infinite;transform-origin:center}
-  .bcake-anim-sparkle{animation:bcake-sparkle 1.8s ease-in-out infinite}
+  .bcake-divider{height:4px;background:linear-gradient(90deg,#362320,#57091d 40%,#890524);border-radius:999px}
 </style>
 @endpush
 
 @section('content')
 
-{{-- ========== HERO SECTION ========== --}}
-<section class="relative">
-  <div class="max-w-6xl mx-auto px-4 pt-16 pb-24 grid md:grid-cols-2 gap-10 items-center">
-
-    <div>
-      <div class="inline-flex items-center gap-2 text-xs tracking-wider uppercase text-bcake-wine/80">
-        <span class="h-1.5 w-1.5 rounded-full bg-bcake-cherry"></span> Handcrafted · Since 2025
-      </div>
-
-      <h1 class="font-display text-4xl md:text-5xl leading-tight mt-3">
-        Elegan di <span class="text-bcake-wine">Setiap Gigitan</span> 🍒
-      </h1>
-
-      <p class="mt-4 text-bcake-truffle max-w-md">
-        Cupcake cherry, brownies premium, dan kue artisanal — dibuat segar setiap hari
-        dengan bahan pilihan terbaik.
-      </p>
-
-      <div class="mt-8 flex flex-wrap gap-3">
-        <x-button href="{{ route('products.index') }}">Lihat Katalog</x-button>
-        <x-button variant="outline" href="#about">Tentang Kami</x-button>
-      </div>
-    </div>
-
+{{-- ================= HERO (center text + side photos) ================= --}}
+<section class="relative overflow-hidden">
+  <div class="max-w-6xl mx-auto px-4 py-16 md:py-20">
     <div class="relative">
-      <div class="aspect-[4/3] rounded-2xl shadow overflow-hidden ring-1 ring-bcake-truffle/10">
-        <img
-          src="https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?q=80&w=1200"
-          alt="Cupcake cherry"
-          class="w-full h-full object-cover">
-      </div>
+      {{-- foto kiri --}}
+      <img
+        src="{{ Vite::asset('resources/images/hero-left.jpg') }}"
+        alt=""
+        class="hidden md:block absolute -left-16 top-1/2 -translate-y-1/2 w-72 h-72 object-cover rounded-3xl shadow-soft ring-1 ring-bcake-truffle/10">
 
-      {{-- sprinkle animasi kecil --}}
-      <div class="pointer-events-none absolute inset-0">
-        <span class="absolute left-6 top-0 text-bcake-cherry/70 animate-sprinkle">•</span>
-        <span class="absolute right-14 top-4 text-bcake-wine/70 animate-sprinkle [animation-delay:.5s]">•</span>
-        <span class="absolute right-8 top-1 text-bcake-truffle/70 animate-sprinkle [animation-delay:1s]">•</span>
+      {{-- foto kanan --}}
+      <img
+        src="{{ Vite::asset('resources/images/hero-right.jpg') }}"
+        alt=""
+        class="hidden md:block absolute -right-16 top-1/2 -translate-y-1/2 w-80 h-80 object-cover rounded-3xl shadow-soft ring-1 ring-bcake-truffle/10">
+
+      {{-- konten tengah --}}
+      <div class="relative max-w-xl mx-auto text-center">
+        <p class="inline-flex items-center gap-2 text-xs tracking-wider uppercase text-bcake-wine/80">
+          <span class="h-1.5 w-1.5 rounded-full bg-bcake-cherry"></span>
+          Handcrafted • Since 2025
+        </p>
+
+        <h1 class="font-display text-4xl md:text-5xl leading-tight mt-4">
+          Delight in <br><span class="text-bcake-wine">every bite!</span>
+        </h1>
+
+        <p class="mt-4 text-bcake-truffle/90">
+          Kue artisanal lembut, macarons cantik, dan koleksi cupcake — dibuat segar setiap hari.
+        </p>
+
+        <div class="mt-7 flex items-center justify-center gap-3">
+          <x-button href="{{ route('products.index') }}" class="bg-bcake-cherry hover:bg-bcake-wine text-white">
+            Order Now
+          </x-button>
+          <x-button variant="outline" href="#signature" class="border-bcake-truffle/25">Lihat Signature</x-button>
+        </div>
       </div>
     </div>
-
   </div>
-
-  <div class="h-1.5 bg-bcake-gradient"></div>
+  <div class="bcake-divider max-w-6xl mx-auto"></div>
 </section>
 
-{{-- ========== PRODUK FAVORIT ========== --}}
-<section class="max-w-6xl mx-auto px-4 py-16">
-  <div class="flex items-end justify-between mb-6">
-    <h2 class="font-display text-3xl">Favorit Minggu Ini</h2>
-    <a href="{{ route('products.index') }}" class="text-sm hover:underline text-bcake-wine">Lihat semua</a>
-  </div>
+{{-- ================= SIGNATURE ================= --}}
+<section id="signature" class="max-w-6xl mx-auto px-4 py-14">
+  <h2 class="font-display text-3xl text-center">Signature</h2>
+  <p class="text-center text-bcake-truffle/80 mt-2">Favorit pelanggan kami — manis, elegan, dan berkesan.</p>
 
-  @isset($products)
+  <div class="relative mt-8">
+    {{-- tombol panah kiri (non-aktif/placeholder) --}}
+    <button class="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 h-9 w-9 items-center justify-center rounded-full ring-1 ring-bcake-truffle/20 bg-white shadow hover:bg-rose-50">
+      ‹
+    </button>
+
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      @forelse ($products as $p)
-        <a href="{{ route('products.show', $p->slug) }}"
-           class="card group border rounded-xl overflow-hidden bg-white hover:shadow transition">
-          <img
-            src="{{ $p->image_url ?? 'https://picsum.photos/640/360' }}"
-            alt="{{ $p->name }}"
-            class="h-44 w-full object-cover group-hover:scale-[1.02] transition">
-          <div class="p-4">
-            <div class="font-medium">{{ $p->name }}</div>
-            <div class="mt-3 font-semibold text-bcake-wine">
-              @if(!is_null($p->price))
-                Rp {{ number_format($p->price, 0, ',', '.') }}
-              @else
-                Hubungi kami
-              @endif
-            </div>
-          </div>
-        </a>
-      @empty
-        <p class="text-gray-500">Belum ada produk.</p>
-      @endforelse
-    </div>
-  @endisset
+      {{-- kartu 1 --}}
+      <a href="{{ route('products.index') }}" class="group rounded-3xl bg-white border border-bcake-truffle/10 shadow-soft overflow-hidden">
+        <img src="{{ Vite::asset('resources/images/sig1.jpg') }}" alt="Custom Cakes"
+             class="h-56 w-full object-cover group-hover:scale-[1.02] transition">
+        <div class="p-5">
+          <div class="font-display text-xl">Custom Cakes</div>
+          <p class="text-sm text-bcake-truffle/80 mt-1">Pesan desain kue sesuai tema acara.</p>
+        </div>
+      </a>
 
-  <div class="text-center mt-10">
-    <x-button href="{{ route('products.index') }}">Lihat Semua Produk</x-button>
+      {{-- kartu 2 --}}
+      <a href="{{ route('products.index') }}" class="group rounded-3xl bg-white border border-bcake-truffle/10 shadow-soft overflow-hidden">
+        <img src="{{ Vite::asset('resources/images/sig2.jpg') }}" alt="Macarons"
+             class="h-56 w-full object-cover group-hover:scale-[1.02] transition">
+        <div class="p-5">
+          <div class="font-display text-xl">Macarons</div>
+          <p class="text-sm text-bcake-truffle/80 mt-1">Warna pastel, rasa premium.</p>
+        </div>
+      </a>
+
+      {{-- kartu 3 --}}
+      <a href="{{ route('products.index') }}" class="group rounded-3xl bg-white border border-bcake-truffle/10 shadow-soft overflow-hidden">
+        <img src="{{ Vite::asset('resources/images/sig3.jpg') }}" alt="Cupcake Collections"
+             class="h-56 w-full object-cover group-hover:scale-[1.02] transition">
+        <div class="p-5">
+          <div class="font-display text-xl">Cupcake Collections</div>
+          <p class="text-sm text-bcake-truffle/80 mt-1">Kotak 6/12 pcs — cocok untuk hadiah.</p>
+        </div>
+      </a>
+    </div>
+
+    {{-- tombol panah kanan (non-aktif/placeholder) --}}
+    <button class="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 h-9 w-9 items-center justify-center rounded-full ring-1 ring-bcake-truffle/20 bg-white shadow hover:bg-rose-50">
+      ›
+    </button>
+  </div>
+</section>
+
+{{-- ================= HOLIDAY COLLECTION (banner) ================= --}}
+<section class="max-w-6xl mx-auto px-4 pb-16">
+  <div class="rounded-3xl overflow-hidden border border-bcake-truffle/10 shadow-soft grid md:grid-cols-2 bg-rose-50">
+    {{-- gambar --}}
+    <img src="{{ Vite::asset('resources/images/promo.jpg') }}" alt="Holiday cake"
+         class="w-full h-[260px] md:h-full object-cover">
+
+    {{-- teks --}}
+    <div class="p-8 md:p-10 bg-white/80 backdrop-blur">
+      <h3 class="font-display text-3xl">Holiday Collection</h3>
+      <p class="text-bcake-truffle/80 mt-2 max-w-md">Kue edisi spesial dengan dekor elegan. Stok terbatas!</p>
+
+      <div class="mt-6 inline-flex items-center gap-3 rounded-2xl border border-bcake-truffle/15 bg-white px-5 py-3">
+        <span class="text-bcake-bitter font-semibold text-xl">20% OFF</span>
+        <span class="text-bcake-truffle/70 text-sm">untuk pembelian paket</span>
+      </div>
+
+      <div class="mt-6">
+        <x-button href="{{ route('products.index') }}" class="bg-bcake-wine hover:opacity-90 text-white">
+          Order Today
+        </x-button>
+      </div>
+    </div>
   </div>
 </section>
 
 @endsection
+

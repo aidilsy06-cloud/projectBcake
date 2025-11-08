@@ -8,7 +8,26 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Models\Product;
 use App\Models\User;
 
+// ----------------------------------------
+// Healthcheck
+// ----------------------------------------
 Route::get('/_health', fn () => 'ok');
+
+// ----------------------------------------
+// Helper aman
+// ----------------------------------------
+if (! function_exists('safeCount')) {
+    function safeCount(callable $cb): int {
+        try { return (int) $cb(); } catch (\Throwable $e) { return 0; }
+    }
+}
+if (! function_exists('pickDashboardView')) {
+    function pickDashboardView(string $who): string {
+        if (view()->exists("dashboard.$who"))  return "dashboard.$who";
+        if (view()->exists("dashboards.$who")) return "dashboards.$who";
+        return 'static.dashboard'; // fallback agar tidak 500
+    }
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -16,11 +35,18 @@ Route::get('/_health', fn () => 'ok');
 |--------------------------------------------------------------------------
 */
 
-// HOME / LANDING
+// HOME / LANDING (aman tanpa DB)
 Route::get('/', function () {
-    return view('home', [
-        'products' => Product::take(3)->get(),
-    ]);
+    $products = collect();
+    try {
+        if (class_exists(Product::class)) {
+            $products = Product::query()->take(3)->get();
+        }
+    } catch (\Throwable $e) {
+        // biarkan kosong agar tidak 500 saat DB belum siap
+    }
+
+    return view('home', ['products' => $products]);
 })->name('home');
 
 // PRODUK (PUBLIC)
@@ -41,15 +67,19 @@ Route::prefix('cart')->name('cart.')->group(function () {
 Route::view('/tentang-kami', 'static.about')->name('about');
 Route::view('/bantuan', 'static.help')->name('help');
 
-
 /*
 |--------------------------------------------------------------------------
 | Auth
 |--------------------------------------------------------------------------
+|
+| GET /login dipaksa ke view custom (auth.login).
+| POST /login tetap ke controller Breeze untuk autentikasi.
+|
 */
 Route::middleware('guest')->group(function () {
-    Route::get('/login',    [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('/login',   [AuthenticatedSessionController::class, 'store']);
+    Route::view('/login', 'auth.login')->name('login');               // << pakai view kamu
+    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register',[RegisteredUserController::class, 'store']);
 });
@@ -58,65 +88,63 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
-
 /*
 |--------------------------------------------------------------------------
-| Role-based Dashboard
+| Role-based Dashboard (tanpa middleware role:, dicek manual)
 |--------------------------------------------------------------------------
 */
 
-// Helper kecil: pilih view yang tersedia (dashboard.* atau dashboards.*)
-function pickDashboardView(string $who): string {
-    if (view()->exists("dashboard.$who"))  return "dashboard.$who";
-    if (view()->exists("dashboards.$who")) return "dashboards.$who";
-    // fallback terakhir biar tidak error saat belum bikin file
-    return 'static.dashboard';
-}
-
-// /dashboard -> arahkan sesuai role
+// /dashboard => redirect sesuai role (fallback 'buyer')
 Route::get('/dashboard', function () {
     $user = auth()->user();
     if (! $user) return redirect()->route('login');
 
-    return match ($user->role) {
-        'admin'  => redirect()->route('admin.dashboard'),
-        'seller' => redirect()->route('seller.dashboard'),
-        default  => redirect()->route('buyer.dashboard'),
+    $role = $user->role ?? 'buyer';
+
+    $target = match ($role) {
+        'admin'  => 'admin.dashboard',
+        'seller' => 'seller.dashboard',
+        default  => 'buyer.dashboard',
     };
+
+    return Route::has($target) ? redirect()->route($target) : view('dashboard'); // fallback ke view default
 })->middleware('auth')->name('dashboard');
 
 // ADMIN
-Route::middleware(['auth', 'role:admin'])
-    ->prefix('admin')->name('admin.')
-    ->group(function () {
-        Route::get('/dashboard', function () {
-            $stats = [
-                'total_products' => Product::count(),
-                'users'          => User::count(),
-            ];
-            return view(pickDashboardView('admin'), compact('stats'));
-        })->name('dashboard');
-    });
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+        if (($user->role ?? null) !== 'admin') abort(403);
+
+        $stats = [
+            'total_products' => safeCount(fn () => Product::count()),
+            'users'          => safeCount(fn () => User::count()),
+        ];
+        return view(pickDashboardView('admin'), compact('stats'));
+    })->name('dashboard');
+});
 
 // PENJUAL
-Route::middleware(['auth', 'role:seller'])
-    ->prefix('seller')->name('seller.')
-    ->group(function () {
-        Route::get('/dashboard', function () {
-            $stats = [
-                // ganti ke where('user_id', auth()->id()) jika ada kolom owner
-                'my_products' => Product::count(),
-            ];
-            return view(pickDashboardView('seller'), compact('stats'));
-        })->name('dashboard');
-    });
+Route::prefix('seller')->name('seller.')->middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+        if (($user->role ?? null) !== 'seller') abort(403);
+
+        $stats = [
+            // ganti ke where('user_id', auth()->id()) jika sudah ada relasi owner
+            'my_products' => safeCount(fn () => Product::count()),
+        ];
+        return view(pickDashboardView('seller'), compact('stats'));
+    })->name('dashboard');
+});
 
 // PEMBELI
-Route::middleware(['auth', 'role:buyer'])
-    ->prefix('buyer')->name('buyer.')
-    ->group(function () {
-        Route::get('/dashboard', function () {
-            $stats = ['wish' => 0];
-            return view(pickDashboardView('buyer'), compact('stats'));
-        })->name('dashboard');
-    });
+Route::prefix('buyer')->name('buyer.')->middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+        if (($user->role ?? 'buyer') !== 'buyer') abort(403);
+
+        $stats = ['wish' => 0];
+        return view(pickDashboardView('buyer'), compact('stats'));
+    })->name('dashboard');
+});

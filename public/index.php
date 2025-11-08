@@ -1,6 +1,4 @@
 <?php
-echo "INDEX FROM: " . __DIR__;
-exit;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;

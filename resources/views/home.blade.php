@@ -53,6 +53,37 @@
   <div class="bcake-divider max-w-6xl mx-auto"></div>
 </section>
 
+{{-- ================= TEST GAMBAR (hapus setelah berhasil) ================= --}}
+<div class="max-w-6xl mx-auto px-4 py-6 border border-red-400 bg-white rounded-xl">
+  <p class="font-semibold text-red-600 mb-3">🔍 Test gambar Vite</p>
+  <div class="grid grid-cols-3 gap-3 text-xs">
+    <div class="text-center">
+      <img src="{{ Vite::asset('resources/images/hero-left.jpg') }}" class="w-full h-32 object-cover rounded-lg border">
+      hero-left.jpg
+    </div>
+    <div class="text-center">
+      <img src="{{ Vite::asset('resources/images/hero-right.jpg') }}" class="w-full h-32 object-cover rounded-lg border">
+      hero-right.jpg
+    </div>
+    <div class="text-center">
+      <img src="{{ Vite::asset('resources/images/sig1.jpg') }}" class="w-full h-32 object-cover rounded-lg border">
+      sig1.jpg
+    </div>
+    <div class="text-center">
+      <img src="{{ Vite::asset('resources/images/sig2.jpg') }}" class="w-full h-32 object-cover rounded-lg border">
+      sig2.jpg
+    </div>
+    <div class="text-center">
+      <img src="{{ Vite::asset('resources/images/sig3.jpg') }}" class="w-full h-32 object-cover rounded-lg border">
+      sig3.jpg
+    </div>
+    <div class="text-center">
+      <img src="{{ Vite::asset('resources/images/promo.jpg') }}" class="w-full h-32 object-cover rounded-lg border">
+      promo.jpg
+    </div>
+  </div>
+</div>
+
 {{-- ================= SIGNATURE ================= --}}
 <section id="signature" class="max-w-6xl mx-auto px-4 py-14">
   <h2 class="font-display text-3xl text-center">Signature</h2>
@@ -130,4 +161,5 @@
 </section>
 
 @endsection
+
 

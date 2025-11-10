@@ -8,6 +8,10 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Models\Product;
 use App\Models\User;
 
+// === Tambahan: Admin Controllers untuk CRUD ===
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+
 // ----------------------------------------
 // Healthcheck
 // ----------------------------------------
@@ -110,21 +114,46 @@ Route::get('/dashboard', function () {
     return Route::has($target) ? redirect()->route($target) : view('dashboard'); // fallback ke view default
 })->middleware('auth')->name('dashboard');
 
-// ADMIN
+/*
+|--------------------------------------------------------------------------
+| ADMIN AREA (Dashboard + CRUD Users & Products)
+|--------------------------------------------------------------------------
+*/
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+    // Dashboard: kirim stats + contoh tabel ringkas (paginate)
     Route::get('/dashboard', function () {
         $user = auth()->user();
         if (($user->role ?? null) !== 'admin') abort(403);
 
+        // aman dari error DB
         $stats = [
             'total_products' => safeCount(fn () => Product::count()),
             'users'          => safeCount(fn () => User::count()),
         ];
-        return view(pickDashboardView('admin'), compact('stats'));
+
+        $users    = collect();
+        $products = collect();
+        try { $users = User::latest()->paginate(8); } catch (\Throwable $e) {}
+        try { $products = Product::latest()->paginate(8); } catch (\Throwable $e) {}
+
+        // kalau kamu sudah punya resources/views/dashboard/admin.blade.php
+        // bisa pakai pickDashboardView('admin'), tapi kita tetap kirim data tabel
+        $view = view()->exists('dashboard.admin') ? 'dashboard.admin' : pickDashboardView('admin');
+        return view($view, compact('stats','users','products'));
     })->name('dashboard');
+
+    // CRUD Users
+    Route::resource('users', AdminUserController::class)->except(['show']);
+
+    // CRUD Products
+    Route::resource('products', AdminProductController::class)->except(['show']);
 });
 
-// PENJUAL
+/*
+|--------------------------------------------------------------------------
+| SELLER
+|--------------------------------------------------------------------------
+*/
 Route::prefix('seller')->name('seller.')->middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         $user = auth()->user();
@@ -138,7 +167,11 @@ Route::prefix('seller')->name('seller.')->middleware('auth')->group(function () 
     })->name('dashboard');
 });
 
-// PEMBELI
+/*
+|--------------------------------------------------------------------------
+| BUYER
+|--------------------------------------------------------------------------
+*/
 Route::prefix('buyer')->name('buyer.')->middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         $user = auth()->user();

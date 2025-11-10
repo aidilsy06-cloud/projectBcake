@@ -26,84 +26,82 @@
 <body class="bg-rose-50 text-gray-800 antialiased">
 
   {{-- ====== HEADER (final) ====== --}}
-  <header class="sticky top-0 z-50 w-full" role="banner">
-    {{-- announcement bar --}}
-    <div class="hidden md:flex items-center justify-between px-6 lg:px-10 py-2 text-sm bg-rose-100/80 backdrop-blur border-b border-rose-200/60">
-      <div class="text-rose-700/80">🎀 Gratis ongkir area kota tertentu — weekend sale!</div>
-      <a href="{{ route('products.index') }}" class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 bg-rose-600 text-white hover:bg-rose-700 transition">
-        Order Now
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-        </svg>
-      </a>
-      <div class="flex items-center gap-5 text-rose-700/80">
-        <a href="#" class="hover:text-rose-900">Cek Lokasi</a>
-        <a href="#" class="hover:text-rose-900">Bantuan</a>
-      </div>
-    </div>
+<header class="sticky top-0 z-50 w-full" role="banner">
+  <div class="bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-rose-200/50">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10">
+      {{-- 3 kolom: brand | nav+search (fleksibel) | actions --}}
+      <div class="grid items-center py-4 md:grid-cols-[auto_1fr_auto] gap-4">
 
-    {{-- main navbar --}}
-    <div class="bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-rose-200/50">
-      <div class="max-w-7xl mx-auto px-6 lg:px-10">
-        <div class="grid grid-cols-12 items-center py-4">
-          {{-- brand --}}
-          <div class="col-span-6 md:col-span-3">
-            <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
-              <img src="{{ asset('cake.jpg') }}" alt="B’cake" class="hidden xl:block h-10 w-10 rounded-lg object-cover ring-1 ring-rose-200/60">
-              <span class="font-serif text-2xl tracking-wide text-rose-800">Patisserie</span>
-            </a>
-          </div>
+        {{-- BRAND --}}
+        <div class="min-w-0">
+          <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
+            <img src="{{ asset('cake.jpg') }}" alt="B’cake"
+                 class="hidden xl:block h-10 w-10 rounded-lg object-cover ring-1 ring-rose-200/60">
+            <span class="font-serif text-2xl tracking-wide text-rose-800">B'cake</span>
+          </a>
+        </div>
 
-          {{-- nav links (desktop) --}}
-          <nav class="col-span-12 md:col-span-6 hidden md:flex justify-center" aria-label="Primary">
-            <ul class="flex items-center gap-7 text-rose-800/90">
+        {{-- NAV + SEARCH (tengah, fleksibel) --}}
+        <div class="min-w-0">
+          <div class="hidden md:flex items-center gap-6">
+            <ul class="flex items-center gap-7 flex-none text-rose-800/90">
               <li><a href="{{ route('home') }}" class="hover:text-rose-900">Home</a></li>
-              <li><a href="{{ route('products.index') }}" class="hover:text-rose-900">Menu</a></li>
-              <li><a href="{{ route('products.index') }}?category=cakes" class="hover:text-rose-900">Cakes</a></li>
-              <li><a href="#" class="hover:text-rose-900">Promo</a></li>
-              <li><a href="#" class="hover:text-rose-900">Contact</a></li>
+              <li><a href="{{ route('products.index') }}" class="hover:text-rose-900">Produk</a></li>
+              <li><a href="{{ route('cart.index') }}" class="hover:text-rose-900">Keranjang</a></li>
+              <li><a href="#" class="hover:text-rose-900">Bantuan</a></li>
             </ul>
-          </nav>
 
-          {{-- actions (search, cart, auth) --}}
-          <div class="col-span-6 md:col-span-3 flex justify-end items-center gap-3">
-            {{-- search (desktop) --}}
-            <form action="{{ route('products.index') }}" method="get" class="hidden lg:block" role="search">
-              <div class="relative">
-                <input name="q" type="text" placeholder="Search cakes…"
-                       class="peer w-56 rounded-full border border-rose-200/70 bg-white/70 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300">
-                <svg xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-rose-400 peer-focus:text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/>
-                </svg>
-              </div>
-            </form>
-
-            {{-- cart --}}
-            <a href="{{ route('cart.index') }}" class="relative inline-flex items-center rounded-full border border-rose-200/70 bg-white/70 px-3 py-2 hover:border-rose-300" aria-label="Keranjang">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-700" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l3-8H6.4M7 13L5.4 5M7 13l-2 9m12-9l-2 9M9 22a1 1 0 100-2 1 1 0 000 2z"/>
+            {{-- SEARCH: melebar hanya di kolom tengah --}}
+            <form action="{{ route('products.index') }}" method="get"
+                  class="relative flex-1 min-w-0 max-w-xl" role="search">
+              <input name="q" type="text" placeholder="Search cakes…"
+                     class="w-full rounded-full border border-rose-200/70 bg-white/70 px-4 py-2 text-sm
+                            focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-rose-400"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/>
               </svg>
-            </a>
-
-            {{-- auth --}}
-            @auth
-              <a href="{{ route('dashboard') }}" class="rounded-full bg-rose-600 text-white px-4 py-2 text-sm hover:bg-rose-700">Dashboard</a>
-              <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">
-                  Logout
-                </button>
-              </form>
-            @else
-              <a href="{{ route('login') }}" class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">Login</a>
-              <a href="{{ route('register') }}" class="rounded-full bg-rose-700 text-white px-4 py-2 text-sm hover:bg-rose-800">Register</a>
-            @endauth
+            </form>
           </div>
         </div>
+
+        {{-- ACTIONS (kanan, fixed width) --}}
+        <div class="flex justify-end items-center gap-3 flex-none">
+          <a href="{{ route('cart.index') }}"
+             class="relative inline-flex items-center rounded-full border border-rose-200/70 bg-white/70 px-3 py-2 hover:border-rose-300"
+             aria-label="Keranjang">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-700"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 3h2l.4 2M7 13h10l3-8H6.4M7 13L5.4 5M7 13l-2 9m12-9l-2 9M9 22a1 1 0 100-2 1 1 0 000 2z"/>
+            </svg>
+          </a>
+
+          @auth
+            <a href="{{ route('dashboard') }}"
+               class="rounded-full bg-rose-600 text-white px-4 py-2 text-sm hover:bg-rose-700">Dashboard</a>
+            <form method="POST" action="{{ route('logout') }}">
+              @csrf
+              <button type="submit"
+                      class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">
+                Logout
+              </button>
+            </form>
+          @else
+            <a href="{{ route('login') }}"
+               class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">Login</a>
+            <a href="{{ route('register') }}"
+               class="rounded-full bg-rose-700 text-white px-4 py-2 text-sm hover:bg-rose-800">Register</a>
+          @endauth
+        </div>
+
       </div>
-      <div class="h-[3px] bg-gradient-to-r from-rose-900 via-rose-700 to-rose-500/90"></div>
     </div>
-  </header>
+    <div class="h-[3px] bg-gradient-to-r from-rose-900 via-rose-700 to-rose-500/90"></div>
+  </div>
+</header>
 
   {{-- ====== PAGE CONTENT ====== --}}
   @yield('content')

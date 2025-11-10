@@ -14,14 +14,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seeder lain (produk, dsb)
+        // ===========================================
+        // Jalankan seeder lain (Store & Product)
+        // ===========================================
         $this->call([
-            ProductSeeder::class,
+            StoreSeeder::class,   // pastikan file StoreSeeder sudah ada
+            ProductSeeder::class, // pastikan file ProductSeeder sudah ada
         ]);
 
-        // ===========================
+        // ===========================================
         // Users sample (role-based)
-        // ===========================
+        // ===========================================
+
         // Admin
         User::updateOrCreate(
             ['email' => 'admin@bcake.local'],

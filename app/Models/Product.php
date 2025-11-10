@@ -13,5 +13,14 @@ class Product extends Model
         'stock',
         'image_url',
         'description',
+        'store_id', // tambahkan jika produk terhubung ke toko
     ];
+
+    /**
+     * Relasi ke model Store (setiap produk dimiliki oleh satu toko)
+     */
+    public function store()
+    {
+        return $this->belongsTo(\App\Models\Store::class);
+    }
 }

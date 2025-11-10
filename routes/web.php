@@ -8,9 +8,12 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Models\Product;
 use App\Models\User;
 
-// === Tambahan: Admin Controllers untuk CRUD ===
+// === Admin Controllers ===
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+
+// === Buyer Controllers ===
+use App\Http\Controllers\Buyer\StoreController;
 
 // ----------------------------------------
 // Healthcheck
@@ -18,7 +21,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 Route::get('/_health', fn () => 'ok');
 
 // ----------------------------------------
-// Helper aman
+// Helpers (aman saat DB belum siap)
 // ----------------------------------------
 if (! function_exists('safeCount')) {
     function safeCount(callable $cb): int {
@@ -75,13 +78,11 @@ Route::view('/bantuan', 'static.help')->name('help');
 |--------------------------------------------------------------------------
 | Auth
 |--------------------------------------------------------------------------
-|
-| GET /login dipaksa ke view custom (auth.login).
-| POST /login tetap ke controller Breeze untuk autentikasi.
-|
+| GET /login diarahkan ke view custom (auth.login).
+| POST /login tetap ke Breeze untuk autentikasi.
 */
 Route::middleware('guest')->group(function () {
-    Route::view('/login', 'auth.login')->name('login');               // << pakai view kamu
+    Route::view('/login', 'auth.login')->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
@@ -104,14 +105,13 @@ Route::get('/dashboard', function () {
     if (! $user) return redirect()->route('login');
 
     $role = $user->role ?? 'buyer';
-
     $target = match ($role) {
         'admin'  => 'admin.dashboard',
         'seller' => 'seller.dashboard',
         default  => 'buyer.dashboard',
     };
 
-    return Route::has($target) ? redirect()->route($target) : view('dashboard'); // fallback ke view default
+    return Route::has($target) ? redirect()->route($target) : view('dashboard'); // fallback
 })->middleware('auth')->name('dashboard');
 
 /*
@@ -120,12 +120,10 @@ Route::get('/dashboard', function () {
 |--------------------------------------------------------------------------
 */
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
-    // Dashboard: kirim stats + contoh tabel ringkas (paginate)
     Route::get('/dashboard', function () {
         $user = auth()->user();
         if (($user->role ?? null) !== 'admin') abort(403);
 
-        // aman dari error DB
         $stats = [
             'total_products' => safeCount(fn () => Product::count()),
             'users'          => safeCount(fn () => User::count()),
@@ -136,16 +134,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         try { $users = User::latest()->paginate(8); } catch (\Throwable $e) {}
         try { $products = Product::latest()->paginate(8); } catch (\Throwable $e) {}
 
-        // kalau kamu sudah punya resources/views/dashboard/admin.blade.php
-        // bisa pakai pickDashboardView('admin'), tapi kita tetap kirim data tabel
         $view = view()->exists('dashboard.admin') ? 'dashboard.admin' : pickDashboardView('admin');
         return view($view, compact('stats','users','products'));
     })->name('dashboard');
 
-    // CRUD Users
-    Route::resource('users', AdminUserController::class)->except(['show']);
-
-    // CRUD Products
+    Route::resource('users',    AdminUserController::class)->except(['show']);
     Route::resource('products', AdminProductController::class)->except(['show']);
 });
 
@@ -163,6 +156,7 @@ Route::prefix('seller')->name('seller.')->middleware('auth')->group(function () 
             // ganti ke where('user_id', auth()->id()) jika sudah ada relasi owner
             'my_products' => safeCount(fn () => Product::count()),
         ];
+
         return view(pickDashboardView('seller'), compact('stats'));
     })->name('dashboard');
 });
@@ -180,4 +174,8 @@ Route::prefix('buyer')->name('buyer.')->middleware('auth')->group(function () {
         $stats = ['wish' => 0];
         return view(pickDashboardView('buyer'), compact('stats'));
     })->name('dashboard');
+
+    // === STORES: daftar toko & detail toko ===
+    Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
+    Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
 });

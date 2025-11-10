@@ -5,50 +5,119 @@
 @section('content')
 
 {{-- ============ HERO ============ --}}
-<section class="relative overflow-hidden bg-rose-50">
-  <div class="max-w-7xl mx-auto px-6 py-16 md:py-20">
-    <div class="relative min-h-[260px] md:min-h-[320px]">
-      {{-- side photos (pakai public/cake.jpg) --}}
-      <img src="{{ asset('cake.jpg') }}" alt="" class="hidden md:block absolute -left-12 top-1/2 -translate-y-1/2 w-72 h-72 object-cover rounded-3xl shadow-soft ring-1 ring-rose-200/60 z-0">
-      <img src="{{ asset('cake.jpg') }}" alt="" class="hidden md:block absolute -right-12 top-1/2 -translate-y-1/2 w-80 h-80 object-cover rounded-3xl shadow-soft ring-1 ring-rose-200/60 z-0">
+<section class="bg-rose-50">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="rounded-3xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.06)]">
+      <svg viewBox="0 0 1440 640" class="w-full h-[640px] block">
+        <defs>
+          <mask id="bookNotch">
+            <rect width="1440" height="640" fill="#fff"/>
 
-      {{-- center content --}}
-      <div class="relative z-10 max-w-xl mx-auto text-center">
-        <p class="inline-flex items-center gap-2 text-xs tracking-wider uppercase text-rose-700/80">
-          <span class="h-1.5 w-1.5 rounded-full bg-rose-700"></span> Handcrafted • Since 2025
-        </p>
+            <!-- 🔻 Notch runcing di tengah -->
+            <path fill="#000"
+                  d="M520 0
+                     C 640 0, 680 40, 720 100
+                     C 760 40, 800 0, 920 0
+                     Z" />
+          </mask>
+        </defs>
 
-        <h1 class="font-display text-4xl md:text-5xl leading-tight mt-4">
-          Delight in <br><span class="text-rose-800">every bite!</span>
-        </h1>
+        <image
+          href="{{ asset('image/cake.jpg') }}"
+          width="1440" height="640"
+          preserveAspectRatio="xMidYMid slice"
+          mask="url(#bookNotch)" />
+      </svg>
+    </div>
+  </div>
+</section>
 
-        <p class="mt-4 text-gray-700/90">
-          Kue artisanal lembut, macarons cantik, dan koleksi cupcake — dibuat segar setiap hari.
-        </p>
+{{-- ========= WHY + FEATURED GRID (pakai cake.jpg sementara) ========= --}}
+<section class="py-10 md:py-14">
+  <div class="max-w-[90rem] mx-auto px-4">
 
-        <div class="mt-7 flex items-center justify-center gap-3">
-          <a href="{{ route('products.index') }}" class="rounded-full bg-rose-600 text-white px-6 py-3 hover:bg-rose-700">Order Now</a>
-          <a href="#signature" class="rounded-full border border-rose-200/70 px-6 py-3 hover:border-rose-300">Lihat Signature</a>
+    {{-- ROW 1: image – text – image --}}
+    <div class="grid md:grid-cols-12 gap-6 items-stretch">
+      {{-- Left image --}}
+      <div class="md:col-span-3">
+        <div class="card h-full">
+          <img src="{{ asset('image/cake.jpg') }}" alt="Cake" class="w-full aspect-[4/3] object-cover">
+        </div>
+      </div>
+
+      {{-- Center text card --}}
+      <div class="md:col-span-6">
+        <div class="card h-full flex flex-col items-center justify-center text-center p-8">
+          <p class="uppercase tracking-widest text-bcake-truffle/60 text-xs">Since 2025</p>
+          <h2 class="font-display text-3xl md:text-4xl mt-2">Why Choose Us?</h2>
+          <p class="mt-3 text-bcake-truffle/80 max-w-xl">
+            Kue kami dibuat dari bahan premium, dengan resep artisan dan cita rasa khas B’cake —
+            lembut, elegan, dan selalu segar setiap hari.
+          </p>
+          <a href="{{ route('products.index') }}" class="btn btn-ghost mt-6">Lihat Menu Kami</a>
+        </div>
+      </div>
+
+      {{-- Right image --}}
+      <div class="md:col-span-3">
+        <div class="card h-full">
+          <img src="{{ asset('image/cake.jpg') }}" alt="Cake" class="w-full aspect-[4/3] object-cover">
         </div>
       </div>
     </div>
-  </div>
-  <div class="bcake-divider max-w-7xl mx-auto"></div>
-</section>
 
-{{-- ============ TEST GAMBAR (hapus kalau sudah ok) ============ --}}
-<div class="max-w-7xl mx-auto px-6 py-6 border border-red-300 bg-white rounded-xl">
-  <p class="font-semibold text-red-600 mb-3">🔍 Test gambar — semua pakai asset('cake.jpg')</p>
-  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
-    @for ($i=1;$i<=6;$i++)
-    <div class="text-center">
-      <img src="{{ asset('cake.jpg') }}" class="w-full h-32 object-cover rounded-lg border">
-      cake.jpg (#{{ $i }})
+    {{-- ROW 2: 3 product tiles + right promo --}}
+    <div class="grid md:grid-cols-12 gap-6 mt-6">
+      {{-- Product 1 --}}
+      <div class="md:col-span-3">
+        <div class="card group">
+          <img src="{{ asset('image/cake.jpg') }}" alt="Cake" class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
+          <div class="p-4">
+            <h3 class="text-sm tracking-wide text-bcake-truffle/70">Artisan Breads</h3>
+          </div>
+        </div>
+      </div>
+
+      {{-- Product 2 --}}
+      <div class="md:col-span-3">
+        <div class="card group">
+          <img src="{{ asset('image/cake.jpg') }}" alt="Cake" class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
+          <div class="p-4">
+            <h3 class="text-sm tracking-wide text-bcake-truffle/70">Sweet Pastries</h3>
+          </div>
+        </div>
+      </div>
+
+      {{-- Product 3 --}}
+      <div class="md:col-span-3">
+        <div class="card group">
+          <img src="{{ asset('image/cake.jpg') }}" alt="Cake" class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
+          <div class="p-4">
+            <h3 class="text-sm tracking-wide text-bcake-truffle/70">Custom Cakes</h3>
+          </div>
+        </div>
+      </div>
+
+      {{-- Right promo text block --}}
+      <div class="md:col-span-3">
+        <div class="card h-full p-6 flex flex-col justify-between">
+          <div>
+            <p class="uppercase tracking-widest text-bcake-truffle/60 text-xs">Daily Fresh</p>
+            <h3 class="font-display text-2xl mt-1 leading-tight">Sweety, Sweet Bakes…</h3>
+            <p class="mt-3 text-bcake-truffle/80">
+              Koleksi musiman dengan bahan pilihan, buah segar, dan krim premium khas B’cake.
+              Siap membuat harimu manis!
+            </p>
+          </div>
+          <a href="{{ route('products.index') }}" class="btn btn-primary mt-6 self-start">
+            Order Now
+          </a>
+        </div>
+      </div>
     </div>
-    @endfor
-  </div>
-</div>
 
+  </div>
+</section>
 {{-- ============ SIGNATURE ============ --}}
 <section id="signature" class="max-w-7xl mx-auto px-6 py-14">
   <h2 class="font-display text-3xl text-center">Signature</h2>
@@ -60,7 +129,7 @@
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
       @foreach ([['Custom Cakes'],['Macarons'],['Cupcake Collections']] as $card)
         <a href="{{ route('products.index') }}" class="group rounded-3xl bg-white border border-rose-200 shadow-soft overflow-hidden">
-          <img src="{{ asset('cake.jpg') }}" alt="{{ $card[0] }}" class="h-56 w-full object-cover group-hover:scale-[1.02] transition">
+          <img src="{{ asset('image/cake.jpg') }}" alt="{{ $card[0] }}" class="h-56 w-full object-cover group-hover:scale-[1.02] transition">
           <div class="p-5">
             <div class="font-display text-xl">{{ $card[0] }}</div>
             <p class="text-sm text-gray-600 mt-1">Lezat & elegan untuk momen spesial.</p>
@@ -76,7 +145,7 @@
 {{-- ============ BANNER PROMO ============ --}}
 <section class="max-w-7xl mx-auto px-6 pb-16">
   <div class="rounded-3xl overflow-hidden border border-rose-200 shadow-soft grid md:grid-cols-2 bg-rose-50">
-    <img src="{{ asset('cake.jpg') }}" alt="Holiday cake" class="w-full h-[260px] md:h-full object-cover">
+    <img src="{{ asset('image/cake.jpg') }}" alt="Holiday cake" class="w-full h-[260px] md:h-full object-cover">
     <div class="p-8 md:p-10 bg-white/80 backdrop-blur">
       <h3 class="font-display text-3xl">Holiday Collection</h3>
       <p class="text-gray-700 mt-2 max-w-md">Kue edisi spesial dengan dekor elegan. Stok terbatas!</p>
@@ -90,5 +159,51 @@
     </div>
   </div>
 </section>
+
+<footer class="relative mt-16 w-full bg-[#f7e3e7] text-bcake-truffle pt-10 pb-6 overflow-hidden">
+  {{-- Lace border atas --}}
+  <div class="absolute top-0 left-0 w-full h-6 bg-repeat-x"
+       style="background-image: url('{{ asset('image/lace-border.png') }}'); background-size: auto 100%;">
+  </div>
+
+  {{-- isi footer di tengah --}}
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row justify-between items-center md:items-start gap-6 md:gap-12">
+
+      {{-- kolom kiri --}}
+      <div class="text-center md:text-left">
+        <h2 class="font-display text-3xl text-bcake-wine">B’cake</h2>
+        <p class="mt-2 italic text-bcake-truffle/80">“Because elegance can be sweet.”</p>
+      </div>
+
+      {{-- kolom tengah --}}
+      <div class="text-center">
+        <h3 class="font-medium uppercase tracking-widest text-sm text-bcake-truffle/70 mb-2">
+          Contact &amp; Socials
+        </h3>
+        <div class="flex justify-center md:justify-start gap-4 mt-3">
+          <a href="#" class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
+            <i class="fa-brands fa-instagram text-lg"></i>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
+            <i class="fa-brands fa-whatsapp text-lg"></i>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
+            <i class="fa-brands fa-tiktok text-lg"></i>
+          </a>
+          <a href="mailto:hello@bcake.local" class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
+            <i class="fa-solid fa-envelope text-lg"></i>
+          </a>
+        </div>
+      </div>
+
+      {{-- kolom kanan --}}
+      <div class="text-center md:text-right">
+        <p class="text-sm text-bcake-truffle/70">© {{ date('Y') }} B’cake Bakery. All rights reserved.</p>
+        <p class="text-xs text-bcake-truffle/60">Designed with 🍒 by Team B’cake</p>
+      </div>
+    </div>
+  </div>
+</footer>
 
 @endsection

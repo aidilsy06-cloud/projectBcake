@@ -1,7 +1,6 @@
 /* -------------------------------------------------------
    🅰️ SELF-HOSTED FONTS (agar tampilan sama di semua laptop)
 --------------------------------------------------------*/
-
 @font-face {
     font-family: 'Poppins';
     src: url('/fonts/Poppins-Regular.woff2') format('woff2');
@@ -17,18 +16,14 @@
 
 /* (nanti tambahkan Playfair Display di sini kalau sudah ada file-nya) */
 
-
-/* Kunci font default website */
 html {
     font-family: 'Poppins', system-ui, sans-serif;
-    font-size: 16px; /* konsisten 1rem = 16px */
+    font-size: 16px;
 }
 body {
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
 }
-
-
 
 /* -------------------------------------------------------
    🅱️ TAILWIND IMPORT (jangan dipindah)
@@ -37,38 +32,35 @@ body {
 @tailwind components;
 @tailwind utilities;
 
-
 /* -------------------------------------------------------
    🌸 B’cake Global Style Helpers
-   (bisa dipakai di semua blade secara langsung)
 --------------------------------------------------------*/
-
-/* Background grain (lembut seperti kertas bakery aesthetic) */
 .grain {
     @apply bg-grain bg-[length:12px_12px] bg-repeat;
 }
-
-/* Button default */
 .btn {
     @apply inline-flex items-center justify-center font-medium rounded-xl2 px-5 py-3 shadow-soft transition;
 }
-
-/* Button utama B’cake */
 .btn-primary {
     @apply bg-bcake-cherry text-white hover:bg-bcake-wine;
 }
-
-/* Button ghost (border soft, cocok untuk aksi sekunder) */
 .btn-ghost {
     @apply border border-bcake-truffle/25 text-bcake-bitter hover:border-bcake-cherry;
 }
-
-/* Card produk */
 .card {
     @apply rounded-xl2 shadow-soft bg-white border border-bcake-truffle/10 overflow-hidden;
 }
-
-/* Title section */
 .section-title {
     @apply font-display text-3xl mb-6;
 }
+
+/* -------------------------------------------------------
+   💫 Custom Utility Tambahan (mask lengkung hero)
+--------------------------------------------------------*/
+@layer utilities {
+  .mask-notch {
+    mask: radial-gradient(140px 70px at 50% 0, transparent 99%, black 101%);
+    -webkit-mask: radial-gradient(140px 70px at 50% 0, transparent 99%, black 101%);
+  }
+}
+

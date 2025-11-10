@@ -33,12 +33,20 @@
       <div class="grid items-center py-4 md:grid-cols-[auto_1fr_auto] gap-4">
 
         {{-- BRAND --}}
-        <div class="min-w-0">
+        <div class="min-w-0 flex items-center gap-3">
+          {{-- BTN: toggle sidebar (mobile) --}}
+          <button id="btnSidebar"
+            class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-rose-200/70 text-rose-800 md:hidden"
+            aria-label="Toggle sidebar" aria-expanded="false" aria-controls="sidebarMobile">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="opacity-80">
+              <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
           <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
             <img src="{{ asset('cake.jpg') }}" alt="B’cake"
-                 class="hidden xl:block h-10 w-10 rounded-lg object-cover ring-1 ring-rose-200/60">
-            <span class="font-serif text-2xl tracking-wide text-rose-800">B'cake</span>
-          </a>
+              class="hidden xl:block h-10 w-10 rounded-lg object-cover ring-1 ring-rose-200/60">
+              <span class="font-serif text-2xl tracking-wide text-rose-800">B'cake</span>
+            </a>
         </div>
 
         {{-- NAV + SEARCH (tengah, fleksibel) --}}
@@ -103,8 +111,28 @@
   </div>
 </header>
 
-  {{-- ====== PAGE CONTENT ====== --}}
-  @yield('content')
+ {{-- ====== MAIN (Sidebar + Content) ====== --}}
+<main class="max-w-7xl mx-auto px-6 lg:px-10 py-8">
+  @hasSection('sidebar')
+    {{-- Grid 2 kolom: 260px sidebar + konten --}}
+    <div class="grid md:grid-cols-[260px_1fr] gap-6">
+      {{-- SIDEBAR --}}
+      <aside id="appSidebar"
+             class="bg-white/80 backdrop-blur rounded-2xl border border-rose-200/60 shadow-soft p-4 h-max hidden md:block">
+        @yield('sidebar')
+      </aside>
 
+      {{-- CONTENT --}}
+      <section>
+        @yield('content')
+      </section>
+    </div>
+  @else
+    {{-- Tanpa sidebar: konten full --}}
+    <section>
+      @yield('content')
+    </section>
+  @endif
+</main>
 </body>
 </html>

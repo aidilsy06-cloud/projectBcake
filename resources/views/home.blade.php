@@ -4,30 +4,74 @@
 
 @section('content')
 
-{{-- ============ HERO ============ --}}
-<section class="bg-rose-50">
-  <div class="max-w-7xl mx-auto px-4">
-    <div class="rounded-3xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.06)]">
-      <svg viewBox="0 0 1440 640" class="w-full h-[640px] block">
-        <defs>
-          <mask id="bookNotch">
-            <rect width="1440" height="640" fill="#fff"/>
+{{-- ================= HERO / SLIDER (book-notch pakai SVG mask) ================= --}}
+<section class="bg-rose-50 py-10">
+  <div
+    x-data="{
+      active: 0,
+      slides: [
+        { image: '{{ asset('image/cake.jpg') }}', title: 'Delight in every bite!' },
+        { image: '{{ asset('image/lovecake.jpg') }}', title: 'Sweetness with love 💖' },
+      ],
+      next(){ this.active = (this.active+1) % this.slides.length },
+      prev(){ this.active = (this.active-1+this.slides.length) % this.slides.length },
+    }"
+    x-init="setInterval(()=>next(), 5000)"
+    class="relative max-w-6xl mx-auto"
+  >
+    <div class="relative rounded-[28px] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.08)]">
+      <template x-for="(s, i) in slides" :key="i">
+        <div
+          x-show="active === i"
+          x-transition:enter="transition ease-out duration-700"
+          x-transition:enter-start="opacity-0 scale-[1.02]"
+          x-transition:enter-end="opacity-100 scale-100"
+          class="relative"
+        >
+          <!-- ✅ POTONG GAMBAR DENGAN BOOK-NOTCH -->
+          <svg viewBox="0 0 1920 680" class="w-full h-[460px] md:h-[560px] lg:h-[680px] block">
+            <defs>
+              <mask :id="`bookNotch-${i}`">
+                <rect width="1920" height="680" fill="#fff"/>
+                <!-- Hitam = DIPOTONG (bentuk V) -->
+                <path fill="#000"
+                      d="M720 0
+                         C 880 0, 940 60, 960 130
+                         C 980 60, 1040 0, 1200 0
+                         Z" />
+              </mask>
+            </defs>
+            <image
+              :href="s.image"
+              width="1920" height="680"
+              preserveAspectRatio="xMidYMid slice"
+              :mask="`url(#bookNotch-${i})`" />
+          </svg>
 
-            <!-- 🔻 Notch runcing di tengah -->
-            <path fill="#000"
-                  d="M520 0
-                     C 640 0, 680 40, 720 100
-                     C 760 40, 800 0, 920 0
-                     Z" />
-          </mask>
-        </defs>
+          <!-- Overlay teks -->
+          <div class="absolute inset-0 flex flex-col items-center justify-center text-white text-center">
+            <h2 class="font-display text-4xl md:text-5xl drop-shadow-lg" x-text="s.title"></h2>
+            <a href="{{ route('products.index') }}" class="mt-6 px-7 py-3 rounded-full bg-bcake-cherry hover:bg-bcake-wine">
+              Order Now
+            </a>
+          </div>
+        </div>
+      </template>
 
-        <image
-          href="{{ asset('image/cake.jpg') }}"
-          width="1440" height="640"
-          preserveAspectRatio="xMidYMid slice"
-          mask="url(#bookNotch)" />
-      </svg>
+      <!-- Panah -->
+      <button @click="prev()"
+              class="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white/80 hover:bg-white shadow grid place-items-center">‹</button>
+      <button @click="next()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white/80 hover:bg-white shadow grid place-items-center">›</button>
+
+      <!-- Dots -->
+      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+        <template x-for="(s, i) in slides" :key="i">
+          <button @click="active=i"
+                  :class="active===i?'bg-bcake-wine':'bg-white/80'"
+                  class="h-2.5 w-2.5 rounded-full shadow"></button>
+        </template>
+      </div>
     </div>
   </div>
 </section>

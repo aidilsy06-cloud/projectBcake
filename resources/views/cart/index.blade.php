@@ -1,72 +1,116 @@
 @extends('layouts.app')
-@section('title', 'Keranjang — B’cake')
+
+@section('title','B’cake — Keranjang')
 
 @section('content')
-<section class="max-w-6xl mx-auto px-4 py-12">
-    <h1 class="font-display text-3xl mb-6">Keranjang</h1>
+<section class="min-h-[70vh] bg-rose-50 py-6">
+  <div class="max-w-md mx-auto px-4">
+    {{-- HEADER --}}
+    <div class="flex items-center justify-between mb-4">
+      <h1 class="font-display text-3xl">My Bag</h1>
+      <a href="{{ route('products.index') }}" class="text-sm text-bcake-wine hover:underline">×</a>
+    </div>
 
-    @if(session('ok'))
-        <div class="mb-4 p-3 rounded bg-green-100 border border-green-300 text-green-700">
-            {{ session('ok') }}
+    {{-- KARTU WRAPPER --}}
+    <div class="rounded-3xl bg-white border border-rose-200 shadow-[0_20px_40px_rgba(137,5,36,.06)] overflow-hidden">
+
+      {{-- LIST ITEM --}}
+      @php
+        // contoh bentuk $cartItems:
+        // $cartItems = collect(session('cart', [])); // id => ['name','price','qty','image']
+        $cartItems = $cartItems ?? collect(session('cart', []));
+        $isEmpty   = $cartItems->isEmpty();
+        $subtotal  = $cartItems->sum(fn($i)=> $i['price'] * $i['qty']);
+      @endphp
+
+      @if($isEmpty)
+        <div class="p-8 text-center">
+          <p class="text-bcake-truffle/70">Keranjangmu masih kosong.</p>
+          <a href="{{ route('products.index') }}" class="btn btn-primary mt-4">Belanja sekarang</a>
         </div>
-    @endif
+      @else
+        <ul class="divide-y divide-rose-100">
+          @foreach($cartItems as $rowId => $item)
+          <li class="p-4">
+            <div class="flex gap-3">
+              {{-- Thumbnail --}}
+              <img src="{{ $item['image'] ?? asset('image/cake.jpg') }}"
+                   alt="{{ $item['name'] }}"
+                   class="w-16 h-16 rounded-xl object-cover border border-rose-100">
 
-    @if(empty($cart))
-        <p class="text-bcake-truffle text-center py-10">Keranjang masih kosong.</p>
-    @else
-        <form method="POST" action="{{ route('cart.update') }}">
-            @csrf
+              <div class="flex-1">
+                <div class="flex items-start justify-between gap-2">
+                  <div>
+                    <div class="font-medium leading-tight">{{ $item['name'] }}</div>
+                    <div class="text-xs text-bcake-truffle/60 mt-0.5">
+                      {{ 'Rp '.number_format($item['price'],0,',','.') }}
+                    </div>
+                  </div>
 
-            <div class="overflow-hidden rounded-xl2 border border-bcake-truffle/20 bg-white">
-                <table class="w-full">
-                    <thead class="bg-bcake-icing">
-                        <tr class="text-left text-sm">
-                            <th class="p-4">Produk</th>
-                            <th class="p-4">Harga</th>
-                            <th class="p-4">Qty</th>
-                            <th class="p-4">Subtotal</th>
-                            <th class="p-4"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($cart as $row)
-                            <tr class="border-t">
-                                <td class="p-4 flex items-center gap-3">
-                                    <img src="{{ $row['product']->image_url }}" class="w-14 h-14 object-cover rounded-xl2">
-                                    <div class="font-medium">{{ $row['product']->name }}</div>
-                                </td>
-                                <td class="p-4">Rp {{ number_format($row['product']->price,0,',','.') }}</td>
-                                <td class="p-4">
-                                    <input type="number" name="qty[{{ $row['product']->slug }}]" value="{{ $row['qty'] }}" min="1" class="w-20 rounded-xl2 border">
-                                </td>
-                                <td class="p-4">Rp {{ number_format($row['qty'] * $row['product']->price,0,',','.') }}</td>
-                                <td class="p-4">
-                                    <form method="POST" action="{{ route('cart.remove', $row['product']->slug) }}">
-                                        @csrf
-                                        <button class="text-sm text-bcake-cherry hover:underline">Hapus</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="mt-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div class="text-bcake-truffle">Total:
-                    <span class="text-2xl font-semibold text-bcake-wine">Rp {{ number_format($total,0,',','.') }}</span>
+                  {{-- Hapus --}}
+                  <form action="{{ route('cart.remove', $rowId) }}" method="POST" onsubmit="return confirm('Hapus item ini?')">
+                    @csrf @method('DELETE')
+                    <button class="w-8 h-8 rounded-full border border-rose-200 text-bcake-truffle/60 hover:text-bcake-wine">×</button>
+                  </form>
                 </div>
 
-                <div class="flex gap-3">
-                    <button class="px-5 py-3 rounded-xl2 shadow-soft bg-bcake-cherry text-white hover:bg-bcake-wine">
-                        Perbarui
-                    </button>
-                    <a href="#" class="px-5 py-3 rounded-xl2 shadow-soft bg-bcake-wine text-white hover:bg-bcake-bitter">
-                        Checkout
-                    </a>
+                {{-- Qty controls --}}
+                <div class="mt-2 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <form action="{{ route('cart.update', $rowId) }}" method="POST">
+                      @csrf @method('PATCH')
+                      <input type="hidden" name="qty" value="{{ max(1, $item['qty'] - 1) }}">
+                      <button class="w-8 h-8 rounded-full border border-rose-200 flex items-center justify-center">−</button>
+                    </form>
+
+                    <div class="px-3 text-sm font-medium">{{ $item['qty'] }}</div>
+
+                    <form action="{{ route('cart.update', $rowId) }}" method="POST">
+                      @csrf @method('PATCH')
+                      <input type="hidden" name="qty" value="{{ $item['qty'] + 1 }}">
+                      <button class="w-8 h-8 rounded-full border border-rose-200 flex items-center justify-center">＋</button>
+                    </form>
+                  </div>
+
+                  {{-- line total --}}
+                  <div class="font-semibold">
+                    {{ 'Rp '.number_format($item['price'] * $item['qty'],0,',','.') }}
+                  </div>
                 </div>
+              </div>
             </div>
-        </form>
-    @endif
+          </li>
+          @endforeach
+        </ul>
+
+        {{-- Total + CTA --}}
+        <div class="px-4 pt-4 pb-5">
+          <div class="flex items-center justify-between text-sm text-bcake-truffle/70">
+            <span>Total Amount</span>
+            <span class="text-lg font-semibold text-bcake-bitter">
+              {{ 'Rp '.number_format($subtotal,0,',','.') }}
+            </span>
+          </div>
+
+          {{-- Checkout Button --}}
+          <a href="{{ route('checkout.index') }}"
+             class="mt-4 block text-center rounded-full bg-[#ffd89a] hover:bg-[#ffc96b] text-bcake-bitter font-medium py-3 shadow-[0_8px_18px_rgba(0,0,0,.08)]">
+            Check out
+          </a>
+
+          <a href="{{ route('products.index') }}"
+             class="mt-2 block text-center text-sm text-bcake-truffle/70 hover:text-bcake-wine">
+            Continue shopping
+          </a>
+        </div>
+      @endif
+    </div>
+
+    {{-- handle notch indikator bawah (opsional estetika mobile) --}}
+    <div class="mt-4 flex justify-center">
+      <span class="h-1.5 w-24 rounded-full bg-rose-200/80"></span>
+    </div>
+  </div>
 </section>
 @endsection
+

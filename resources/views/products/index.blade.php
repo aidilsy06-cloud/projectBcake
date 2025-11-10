@@ -3,24 +3,78 @@
 @section('title', 'Katalog — B’cake')
 
 @section('content')
-<section class="max-w-6xl mx-auto px-4 py-12">
-    <h1 class="font-display text-3xl mb-6">Katalog Produk</h1>
+{{-- ================== KATALOG (List ala brochure) ================== --}}
+<section class="max-w-6xl mx-auto px-6 py-10">
+  <h2 class="font-display text-3xl mb-6">Katalog Produk</h2>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        @foreach($products as $p)
-        <a href="{{ route('products.show', $p->slug) }}"
-            class="rounded-xl2 bg-white shadow-soft border border-bcake-truffle/10 overflow-hidden">
-            <img src="{{ $p->image_url }}" class="h-44 w-full object-cover" alt="{{ $p->name }}">
-            <div class="p-4">
-                <div class="font-medium">{{ $p->name }}</div>
-                <div class="mt-3 font-semibold text-bcake-wine">Rp {{ number_format($p->price,0,',','.') }}</div>
-            </div>
-        </a>
-        @endforeach
-    </div>
+  <div class="space-y-6">
+    @foreach($products as $p)
+      @php
+        $img = $p->image_path
+                ? asset('storage/'.$p->image_path)
+                : asset('image/cake.jpg');   // fallback
+      @endphp
 
-    <div class="mt-8">
-        {{ $products->links() }}
-    </div>
+      <article class="grid md:grid-cols-12 gap-4 items-center rounded-3xl bg-white/80 backdrop-blur border border-rose-200 shadow-[0_20px_40px_rgba(137,5,36,0.06)] overflow-hidden">
+        {{-- Thumbnail kiri --}}
+        <div class="md:col-span-3">
+          <div class="relative p-4">
+            <img src="{{ $img }}" alt="{{ $p->name }}"
+                 class="w-full aspect-[4/3] md:aspect-square object-cover rounded-2xl ring-1 ring-rose-100 shadow-md" />
+
+            {{-- contoh badge diskon opsional --}}
+            @if(isset($p->discount) && $p->discount > 0)
+              <div class="absolute left-3 top-3 bg-bcake-wine text-white text-xs font-semibold px-2 py-1 rounded-full">
+                -{{ $p->discount }}%
+              </div>
+            @endif
+          </div>
+        </div>
+
+        {{-- Konten kanan --}}
+        <div class="md:col-span-9 pr-4 md:pr-6 py-4">
+          {{-- Header: title + badge --}}
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <h3 class="font-medium text-lg md:text-xl text-bcake-bitter">
+              {{ $p->name }}
+            </h3>
+            <span class="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-bcake-truffle/70">
+              <span class="h-1.5 w-1.5 rounded-full bg-bcake-cherry"></span> New Arrival
+            </span>
+          </div>
+
+          {{-- Deskripsi singkat --}}
+          <p class="mt-2 text-sm text-bcake-truffle/80">
+            {{ $p->short_description ?? 'Lezat & elegan untuk momen spesial. Dibuat segar setiap hari dengan bahan premium.' }}
+          </p>
+
+          {{-- Bawah: harga pill + tombol --}}
+          <div class="mt-4 flex flex-wrap items-center gap-3">
+            <span class="inline-flex items-center rounded-full bg-[#fce7ef] text-bcake-wine font-semibold px-4 py-2">
+              {{ 'Rp '.number_format($p->price,0,',','.') }}
+            </span>
+
+            {{-- Aksi (pilih salah satu sesuai routing yang kamu punya) --}}
+            <a href="{{ route('products.show', $p->slug ?? $p->id) }}"
+               class="btn btn-ghost">Detail</a>
+
+            {{-- contoh add to cart kalau sudah ada routenya --}}
+            @isset($cartAddRoute)
+              <form action="{{ route($cartAddRoute, $p->slug ?? $p->id) }}" method="POST">
+                @csrf
+                <button class="btn btn-primary">Add to Cart</button>
+              </form>
+            @endisset
+          </div>
+        </div>
+      </article>
+    @endforeach
+  </div>
+
+  {{-- Pagination (opsional) --}}
+  <div class="mt-8">
+    {{ $products->links() ?? '' }}
+  </div>
 </section>
+
 @endsection

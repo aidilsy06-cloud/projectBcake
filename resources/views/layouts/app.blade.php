@@ -25,8 +25,8 @@
 </head>
 <body class="bg-rose-50 text-gray-800 antialiased">
 
-  {{-- ====== HEADER (satu-satunya header) ====== --}}
-  <header class="sticky top-0 z-50 w-full">
+  {{-- ====== HEADER (final) ====== --}}
+  <header class="sticky top-0 z-50 w-full" role="banner">
     {{-- announcement bar --}}
     <div class="hidden md:flex items-center justify-between px-6 lg:px-10 py-2 text-sm bg-rose-100/80 backdrop-blur border-b border-rose-200/60">
       <div class="text-rose-700/80">🎀 Gratis ongkir area kota tertentu — weekend sale!</div>
@@ -43,7 +43,7 @@
     </div>
 
     {{-- main navbar --}}
-    <div class="bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+    <div class="bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-rose-200/50">
       <div class="max-w-7xl mx-auto px-6 lg:px-10">
         <div class="grid grid-cols-12 items-center py-4">
           {{-- brand --}}
@@ -55,7 +55,7 @@
           </div>
 
           {{-- nav links (desktop) --}}
-          <nav class="col-span-12 md:col-span-6 hidden md:flex justify-center">
+          <nav class="col-span-12 md:col-span-6 hidden md:flex justify-center" aria-label="Primary">
             <ul class="flex items-center gap-7 text-rose-800/90">
               <li><a href="{{ route('home') }}" class="hover:text-rose-900">Home</a></li>
               <li><a href="{{ route('products.index') }}" class="hover:text-rose-900">Menu</a></li>
@@ -65,9 +65,10 @@
             </ul>
           </nav>
 
-          {{-- actions --}}
+          {{-- actions (search, cart, auth) --}}
           <div class="col-span-6 md:col-span-3 flex justify-end items-center gap-3">
-            <form action="{{ route('products.index') }}" method="get" class="hidden lg:block">
+            {{-- search (desktop) --}}
+            <form action="{{ route('products.index') }}" method="get" class="hidden lg:block" role="search">
               <div class="relative">
                 <input name="q" type="text" placeholder="Search cakes…"
                        class="peer w-56 rounded-full border border-rose-200/70 bg-white/70 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300">
@@ -77,16 +78,25 @@
               </div>
             </form>
 
-            <a href="{{ route('cart.index') }}" class="relative inline-flex items-center rounded-full border border-rose-200/70 bg-white/70 px-3 py-2 hover:border-rose-300">
+            {{-- cart --}}
+            <a href="{{ route('cart.index') }}" class="relative inline-flex items-center rounded-full border border-rose-200/70 bg-white/70 px-3 py-2 hover:border-rose-300" aria-label="Keranjang">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-700" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l3-8H6.4M7 13L5.4 5M7 13l-2 9m12-9l-2 9M9 22a1 1 0 100-2 1 1 0 000 2z"/>
               </svg>
             </a>
 
+            {{-- auth --}}
             @auth
               <a href="{{ route('dashboard') }}" class="rounded-full bg-rose-600 text-white px-4 py-2 text-sm hover:bg-rose-700">Dashboard</a>
+              <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">
+                  Logout
+                </button>
+              </form>
             @else
-              <a href="{{ route('login') }}" class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">Sign in</a>
+              <a href="{{ route('login') }}" class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">Login</a>
+              <a href="{{ route('register') }}" class="rounded-full bg-rose-700 text-white px-4 py-2 text-sm hover:bg-rose-800">Register</a>
             @endauth
           </div>
         </div>

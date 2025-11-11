@@ -166,16 +166,15 @@ Route::prefix('seller')->name('seller.')->middleware('auth')->group(function () 
 | BUYER
 |--------------------------------------------------------------------------
 */
+// BUYER
 Route::prefix('buyer')->name('buyer.')->middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         $user = auth()->user();
         if (($user->role ?? 'buyer') !== 'buyer') abort(403);
 
         $stats = ['wish' => 0];
-        return view(pickDashboardView('buyer'), compact('stats'));
+        // panggil view yang kamu buat
+        return view('buyer.index', compact('stats'));
     })->name('dashboard');
-
-    // === STORES: daftar toko & detail toko ===
-    Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
-    Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
 });
+

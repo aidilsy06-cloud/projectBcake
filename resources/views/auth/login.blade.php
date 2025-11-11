@@ -198,7 +198,7 @@
             </div>
             <div class="mt-1 relative">
               <input :type="show ? 'text' : 'password'" id="password" name="password" required autocomplete="current-password"
-                     class="w-full rounded-xl border-gray-300 pl-10 pr-16 py-2 ring-pink" placeholder="••••••••">
+                     class="w-full rounded-xl border-gray-300 pl-10 pr-16 py-2 ring-pink" placeholder="">
               <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c-1.657 0-3 1.343-3 3v3h6v-3c0-1.657-1.343-3-3-3z"/>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8V7a5 5 0 00-10 0v1"/>

@@ -5,16 +5,13 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Buyer\StoreController; // Controller untuk menu Toko (index & show)
-use App\Models\Product;
-use App\Models\User;
-
-// Admin Controllers
+use App\Http\Controllers\Buyer\StoreController;        // buyer/publik
+use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
+use App\Http\Controllers\Seller\StoreController as SellerStore;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
-
-// Seller Controller
-use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
+use App\Models\Product;
+use App\Models\User;
 
 /* ----------------------------------------
 | Healthcheck
@@ -33,67 +30,61 @@ if (! function_exists('pickDashboardView')) {
     function pickDashboardView(string $who): string {
         if (view()->exists("dashboard.$who"))  return "dashboard.$who";
         if (view()->exists("dashboards.$who")) return "dashboards.$who";
-        return 'static.dashboard'; // fallback agar tidak 500
+        return 'static.dashboard';
     }
 }
 
 /* ----------------------------------------
-| Public pages
+| PUBLIC PAGES
 |---------------------------------------- */
-
-// HOME / LANDING (aman tanpa DB)
 Route::get('/', function () {
     $products = collect();
     try {
         if (class_exists(Product::class)) {
             $products = Product::query()->take(3)->get();
         }
-    } catch (\Throwable $e) {
-        // biarkan kosong agar tidak 500 saat DB belum siap
-    }
+    } catch (\Throwable $e) {}
     return view('home', ['products' => $products]);
 })->name('home');
 
-// PRODUK (PUBLIC)
+// Produk publik
 Route::controller(ProductController::class)->group(function () {
     Route::get('/products', 'index')->name('products.index');
     Route::get('/product/{product:slug}', 'show')->name('products.show');
 });
 
-// KERANJANG (PUBLIC / SESSION)
+// Keranjang
 Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/add/{product:slug}', [CartController::class, 'add'])->name('add');
     Route::post('/update', [CartController::class, 'update'])->name('update');
-    Route::delete('/remove/{product:slug}', [CartController::class, 'remove'])->name('remove'); // form pakai @method('DELETE')
+    Route::delete('/remove/{product:slug}', [CartController::class, 'remove'])->name('remove');
 });
 
-// HALAMAN STATIS (publik)
+// Halaman statis
 Route::view('/tentang-kami', 'static.about')->name('about');
 Route::view('/bantuan', 'static.help')->name('help');
-Route::get('/help', fn () => redirect()->route('help'));
+Route::redirect('/help', '/bantuan');
 
-// TOKO (PUBLIK)
+// ===== TOKO (PUBLIK / BUYER) =====
 Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
-Route::get('/store/{seller}', [StoreController::class, 'show'])->name('stores.show'); // {seller} -> App\Models\User
+Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
 
 /* ----------------------------------------
-| Auth (custom login view + Breeze actions)
+| AUTH
 |---------------------------------------- */
 Route::middleware('guest')->group(function () {
     Route::view('/login', 'auth.login')->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store']);
 });
 
-// Logout (POST)
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')->name('logout');
 
 /* ----------------------------------------
-| Redirect /dashboard -> sesuai role
+| DASHBOARD REDIRECT
 |---------------------------------------- */
 Route::get('/dashboard', function () {
     $user = auth()->user();
@@ -105,24 +96,25 @@ Route::get('/dashboard', function () {
         default  => 'buyer.dashboard',
     };
 
-    return Route::has($target) ? redirect()->route($target) : view('dashboard');
+    return Route::has($target)
+        ? redirect()->route($target)
+        : view('dashboard');
 })->middleware('auth')->name('dashboard');
 
 /* ----------------------------------------
-| ADMIN (Dashboard + CRUD)
+| ADMIN
 |---------------------------------------- */
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/', function () {
         $user = auth()->user();
-        if (($user->role ?? null) !== 'admin') abort(403);
+        abort_unless(($user->role ?? null) === 'admin', 403);
 
         $stats = [
             'total_products' => safeCount(fn () => Product::count()),
             'users'          => safeCount(fn () => User::count()),
         ];
 
-        $users    = collect();
-        $products = collect();
+        $users = $products = collect();
         try { $users = User::latest()->paginate(8); } catch (\Throwable $e) {}
         try { $products = Product::latest()->paginate(8); } catch (\Throwable $e) {}
 
@@ -130,7 +122,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         return view($view, compact('stats','users','products'));
     })->name('dashboard');
 
-    Route::resource('users',    AdminUserController::class)->except(['show']);
+    Route::resource('users', AdminUserController::class)->except(['show']);
     Route::resource('products', AdminProductController::class)->except(['show']);
 });
 
@@ -138,25 +130,26 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 | SELLER
 |---------------------------------------- */
 Route::prefix('seller')->name('seller.')->middleware('auth')->group(function () {
-    Route::get('/', [SellerDashboard::class, 'index'])->name('dashboard'); // view: resources/views/seller/dashboard.blade.php
-    // kalau sudah siap role middleware khusus:
-    // ->middleware('role:seller')
+    Route::get('/', [SellerDashboard::class, 'index'])->name('dashboard');
+
+    // Toko penjual (private)
+    Route::get('/store', [SellerStore::class, 'show'])->name('store.show');
+    Route::get('/store/edit', [SellerStore::class, 'edit'])->name('store.edit');
+    Route::put('/store', [SellerStore::class, 'update'])->name('store.update');
 });
 
 /* ----------------------------------------
-| BUYER (opsional: rute versi /buyer/*)
+| BUYER
 |---------------------------------------- */
 Route::prefix('buyer')->name('buyer.')->middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         $user = auth()->user();
-        if (($user->role ?? 'buyer') !== 'buyer') abort(403);
-
+        abort_unless(($user->role ?? 'buyer') === 'buyer', 403);
         $stats = ['wish' => 0];
         return view('buyer.index', compact('stats'));
     })->name('dashboard');
 
-    // Toko versi buyer (nama rute otomatis buyer.stores.*)
     Route::view('/help', 'static.help')->name('help');
     Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
-    Route::get('/store/{seller}', [StoreController::class, 'show'])->name('stores.show');
+    Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
 });

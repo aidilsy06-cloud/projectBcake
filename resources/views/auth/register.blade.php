@@ -175,13 +175,13 @@
             <div>
               <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
               <input id="password" name="password" type="password" required
-                     class="w-full rounded-xl border-gray-300 px-4 py-2 ring-pink" placeholder="••••••••" autocomplete="new-password">
+                     class="w-full rounded-xl border-gray-300 px-4 py-2 ring-pink" placeholder="" autocomplete="new-password">
               @error('password') <p class="mt-2 text-sm text-rose-600">{{ $message }}</p> @enderror
             </div>
             <div>
               <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Ulangi Password</label>
               <input id="password_confirmation" name="password_confirmation" type="password" required
-                     class="w-full rounded-xl border-gray-300 px-4 py-2 ring-pink" placeholder="••••••••" autocomplete="new-password">
+                     class="w-full rounded-xl border-gray-300 px-4 py-2 ring-pink" placeholder="" autocomplete="new-password">
             </div>
           </div>
 

@@ -5,7 +5,7 @@
 @section('content')
 
 {{-- ================= HERO / SLIDER (book-notch pakai SVG mask) ================= --}}
-<section class="bg-rose-50 py-10">
+<section class="bg-rose-50 pt-0 pb-10 -mt-[1px]"> {{-- was: py-10 --}}
   <div
     x-data="{
       active: 0,
@@ -17,7 +17,7 @@
       prev(){ this.active = (this.active-1+this.slides.length) % this.slides.length },
     }"
     x-init="setInterval(()=>next(), 5000)"
-    class="relative max-w-6xl mx-auto"
+    class="relative max-w-6xl mx-auto -mt-4 md:-mt-6 lg:-mt-8" {{-- naikin aman --}}
   >
     <div class="relative rounded-[28px] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.08)]">
       <template x-for="(s, i) in slides" :key="i">
@@ -162,6 +162,7 @@
 
   </div>
 </section>
+
 {{-- ============ SIGNATURE ============ --}}
 <section id="signature" class="max-w-7xl mx-auto px-6 py-14">
   <h2 class="font-display text-3xl text-center">Signature</h2>
@@ -205,22 +206,17 @@
 </section>
 
 <footer class="relative mt-16 w-full bg-[#f7e3e7] text-bcake-truffle pt-10 pb-6 overflow-hidden">
-  {{-- Lace border atas --}}
   <div class="absolute top-0 left-0 w-full h-6 bg-repeat-x"
        style="background-image: url('{{ asset('image/lace-border.png') }}'); background-size: auto 100%;">
   </div>
 
-  {{-- isi footer di tengah --}}
   <div class="max-w-7xl mx-auto px-6">
     <div class="flex flex-col md:flex-row justify-between items-center md:items-start gap-6 md:gap-12">
-
-      {{-- kolom kiri --}}
       <div class="text-center md:text-left">
         <h2 class="font-display text-3xl text-bcake-wine">B’cake</h2>
         <p class="mt-2 italic text-bcake-truffle/80">“Because elegance can be sweet.”</p>
       </div>
 
-      {{-- kolom tengah --}}
       <div class="text-center">
         <h3 class="font-medium uppercase tracking-widest text-sm text-bcake-truffle/70 mb-2">
           Contact &amp; Socials
@@ -241,7 +237,6 @@
         </div>
       </div>
 
-      {{-- kolom kanan --}}
       <div class="text-center md:text-right">
         <p class="text-sm text-bcake-truffle/70">© {{ date('Y') }} B’cake Bakery. All rights reserved.</p>
         <p class="text-xs text-bcake-truffle/60">Designed with 🍒 by Team B’cake</p>

@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 // === Seller Controller ===
 use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
 
+<<<<<<< HEAD
 // (opsional) Buyer controller kamu sendiri
 // use App\Http\Controllers\Buyer\DashboardController as BuyerDashboard;
 
@@ -26,6 +27,20 @@ Route::get('/_health', fn () => 'ok');
 /* ----------------------------------------
 | Helpers (aman saat DB belum siap)
 |---------------------------------------- */
+=======
+/*
+|--------------------------------------------------------------------------
+| Healthcheck (untuk cek hidup)
+|--------------------------------------------------------------------------
+*/
+Route::get('/_health', fn () => 'ok');
+
+/*
+|--------------------------------------------------------------------------
+| Helper kecil (aman saat DB belum siap)
+|--------------------------------------------------------------------------
+*/
+>>>>>>> 3a42f34011c4a49c0f9265cf5828a7ff891dcb76
 if (! function_exists('safeCount')) {
     function safeCount(callable $cb): int {
         try { return (int) $cb(); } catch (\Throwable $e) { return 0; }
@@ -70,9 +85,12 @@ Route::prefix('cart')->name('cart.')->group(function () {
     Route::delete('/remove/{product:slug}', [CartController::class, 'remove'])->name('remove'); // form pakai @method('DELETE')
 });
 
-// HALAMAN STATIS
+// HALAMAN STATIS (publik)
 Route::view('/tentang-kami', 'static.about')->name('about');
+
+// Bantuan publik: tersedia di /bantuan dan alias /help
 Route::view('/bantuan', 'static.help')->name('help');
+Route::get('/help', fn () => redirect()->route('help'));
 
 /* ----------------------------------------
 | Auth (custom login view + Breeze actions)
@@ -82,7 +100,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register',[RegisteredUserController::class, 'store']);
+    Route::post('/register', [RegisteredUserController::class, 'store']);
 });
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
@@ -141,13 +159,31 @@ Route::prefix('seller')->name('seller.')->middleware('auth')->group(function () 
 
 /* ----------------------------------------
 | BUYER
+<<<<<<< HEAD
 |---------------------------------------- */
+=======
+|--------------------------------------------------------------------------
+*/
+>>>>>>> 3a42f34011c4a49c0f9265cf5828a7ff891dcb76
 Route::prefix('buyer')->name('buyer.')->middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         $user = auth()->user();
         if (($user->role ?? 'buyer') !== 'buyer') abort(403);
 
         $stats = ['wish' => 0];
+<<<<<<< HEAD
         return view('buyer.index', compact('stats')); // pastikan view ada
     })->name('dashboard');
+=======
+        // panggil view dashboard buyer yang kamu buat
+        return view('buyer.index', compact('stats'));
+    })->name('dashboard');
+
+    // Bantuan versi buyer (login) -> view sama dengan publik
+    Route::view('/help', 'static.help')->name('help');
+
+    // STORES (daftar toko & detail toko) — opsional sesuai kebutuhanmu
+    Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
+    Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
+>>>>>>> 3a42f34011c4a49c0f9265cf5828a7ff891dcb76
 });

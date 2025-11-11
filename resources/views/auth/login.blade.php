@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="csrf-token" content="{{ csrf_token() }}"><!-- penting utk CSRF -->
   <title>Masuk — B’cake</title>
   @vite(['resources/css/app.css','resources/js/app.js'])
   <style>
@@ -35,7 +36,7 @@
     .btn-outline:hover{ background:#fff; color:var(--pink-700); }
     .ring-pink:focus{ outline:none; box-shadow:0 0 0 4px rgba(244,63,94,.25); }
 
-    /* ===== Slide transitions (masuk/keluar samping) ===== */
+    /* ===== Slide transitions ===== */
     .slide-in-right  { animation: slideInRight .35s ease-out both; }
     .slide-in-left   { animation: slideInLeft  .35s ease-out both;  }
     .slide-out-left  { animation: slideOutLeft .28s ease-in both;   }
@@ -54,7 +55,7 @@
       animation: drop linear infinite;
     }
     @keyframes drop{ from{ transform: translateY(-40px) rotate(var(--rot,25deg)); }
-                     to  { transform: translateY(110vh) rotate(var(--rot,25deg)); } }
+                     to  { transform: translateY(110vh) rotate(calc(var(--rot,25deg))); } }
     .sprinkle:nth-child(4n){ --spr-color:#fb7185; }
     .sprinkle:nth-child(4n+1){ --spr-color:#fda4af; }
     .sprinkle:nth-child(4n+2){ --spr-color:#be123c; }
@@ -88,7 +89,7 @@
     @endfor
   </div>
 
-  {{-- STRAWBERRY SPRITE --}}
+  {{-- STRAWBERRY SPRITE (defs) --}}
   <svg width="0" height="0" style="position:absolute">
     <defs>
       <linearGradient id="berryFill" x1="0" y1="0" x2="0" y2="1">
@@ -132,7 +133,7 @@
   <div id="pageCard" class="w-full max-w-5xl card overflow-hidden relative z-[1]">
     <div class="grid md:grid-cols-2">
 
-      {{-- LEFT: Welcome panel (pink gradient) --}}
+      {{-- LEFT: Welcome --}}
       <div class="relative hidden md:block">
         <div class="absolute inset-0 grid place-items-center px-10">
           <div class="welcome p-10 md:p-12 w-[92%]">
@@ -161,20 +162,19 @@
         <h1 class="text-2xl font-semibold text-gray-900">Login</h1>
         <p class="text-sm text-gray-500 mt-1">Welcome back! Please enter your details.</p>
 
-        {{-- Flash status --}}
         @if (session('status'))
           <div class="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 px-3 py-2 text-sm">
             {{ session('status') }}
           </div>
         @endif
-        {{-- Error global --}}
+
         @if ($errors->any())
           <div class="mt-4 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 px-3 py-2 text-sm">
             {{ $errors->first() }}
           </div>
-        @endif>
+        @endif
 
-        <form method="POST" action="{{ Route::has('login') ? route('login') : url('/login') }}" class="mt-6 space-y-4" x-data="{show:false}">
+        <form method="POST" action="{{ url('/login') }}" class="mt-6 space-y-4" x-data="{show:false}">
           @csrf
 
           <div>
@@ -182,7 +182,7 @@
             <div class="mt-1 relative">
               <input id="email" name="email" type="email" required autocomplete="email" value="{{ old('email') }}"
                      class="w-full rounded-xl border-gray-300 pl-10 pr-3 py-2 ring-pink" placeholder="you@example.com">
-              <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
               </svg>
             </div>
@@ -199,7 +199,7 @@
             <div class="mt-1 relative">
               <input :type="show ? 'text' : 'password'" id="password" name="password" required autocomplete="current-password"
                      class="w-full rounded-xl border-gray-300 pl-10 pr-16 py-2 ring-pink" placeholder="">
-              <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c-1.657 0-3 1.343-3 3v3h6v-3c0-1.657-1.343-3-3-3z"/>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8V7a5 5 0 00-10 0v1"/>
                 <rect x="5" y="11" width="14" height="10" rx="2" ry="2" stroke="currentColor" fill="none"/>
@@ -233,33 +233,20 @@
   <script>
     (function () {
       const card = document.getElementById('pageCard');
-
-      // Arah masuk: kalau datang dari register → login masuk dari kiri
       const dir = sessionStorage.getItem('bcake_nav_dir'); // 'to-register' | 'to-login'
-      if (dir === 'to-login') {
-        card.classList.add('slide-in-left');
-      } else if (dir === 'to-register') {
-        card.classList.add('slide-in-right');
-      } else {
-        // default saat direct hit login
-        card.classList.add('slide-in-left');
-      }
+      if (dir === 'to-login')       card.classList.add('slide-in-left');
+      else if (dir === 'to-register') card.classList.add('slide-in-right');
+      else                           card.classList.add('slide-in-left');
       sessionStorage.removeItem('bcake_nav_dir');
 
-      // Klik link ke register: simpan arah & animasi keluar
       document.querySelectorAll('[data-slide]').forEach(a => {
         a.addEventListener('click', function (e) {
-          const next = this.getAttribute('href');
-          if (!next) return;
+          const next = this.getAttribute('href'); if (!next) return;
           e.preventDefault();
-
           const to = this.dataset.slide; // 'to-register'
           sessionStorage.setItem('bcake_nav_dir', to);
-
-          // dari login -> register: geser keluar ke kiri
           card.classList.remove('slide-in-left', 'slide-in-right');
           card.classList.add(to === 'to-register' ? 'slide-out-left' : 'slide-out-right');
-
           setTimeout(() => { window.location.href = next; }, 230);
         });
       });

@@ -1,249 +1,230 @@
 @extends('layouts.app')
+
 @section('title','Bantuan — B’cake')
 
 @push('head')
 <style>
-/* ===== THEME (pakai palet B’cake) ===== */
-:root{
-  --icing:#d0d1c9; --icing-2:#e6e7e3;
-  --truffle:#6a4e4a; --truffle-2:#c7c2bf;
-  --wine:#890524; --deep:#57091d; --cocoa:#362320; --rose:#fff1f2;
-}
-.cherry{color:var(--wine)} .deep{color:var(--deep)}
-.btn-wine{background:var(--wine);color:#fff} .btn-wine:hover{background:var(--deep)}
-.bcake-border{border-color:color-mix(in oklab,var(--wine),white 72%)}
-.bcake-shadow{box-shadow:0 14px 40px rgba(54,35,32,.12)}
-.glass{background:rgba(255,255,255,.78);backdrop-filter:blur(10px)}
-details .chev{transition:transform .2s ease} details[open] .chev{transform:rotate(180deg)}
-details[open] .acc-body{animation:fade .25s ease}
-@keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-/* Floating widget */
-#help-widget{position:fixed;right:18px;bottom:18px;z-index:60}
-.widget-card{width:320px;max-width:92vw}
-/* Simple star rating */
-.star{font-size:22px;cursor:pointer;opacity:.55} .star.active{opacity:1}
+  :root{
+    --bcake-wine:#890524;
+    --bcake-deep:#57091d;
+    --bcake-cocoa:#362320;
+  }
+  .page-bg{
+    background:
+      radial-gradient(900px 500px at 5% -10%, #ffe6eb 0%, transparent 60%),
+      radial-gradient(900px 500px at 95% -10%, #ffeef2 0%, transparent 60%),
+      #fff7f8;
+  }
+  .bg-bcake-grad{
+    background: linear-gradient(135deg, var(--bcake-deep) 0%, var(--bcake-wine) 55%, var(--bcake-cocoa) 100%);
+  }
+  .card-soft{
+    background: linear-gradient(145deg, #fff, #fff6f7 60%, #ffecef 100%);
+  }
+  .shadow-soft{box-shadow:0 18px 40px rgba(54,35,32,.10)}
+  .ring-soft{box-shadow:inset 0 0 0 1px rgba(244, 63, 94, .25)}
 </style>
 @endpush
 
 @section('content')
-{{-- ===== HERO ===== --}}
-<section class="relative">
-  <div class="absolute inset-0 bg-gradient-to-b from-rose-50 to-rose-100/60"></div>
-  <div class="relative max-w-6xl mx-auto px-5 md:px-8 py-14">
-    <div class="grid md:grid-cols-2 gap-8 items-center">
-      <div>
-        <h1 class="font-display text-4xl md:text-5xl cherry">Bantuan & Panduan Belanja</h1>
-        <p class="mt-3 text-[color:var(--truffle)]">
-          Semua jawaban tentang pemesanan, pembayaran, dan pengiriman. Kalau masih bingung, tinggal chat kami ya! 🍒
-        </p>
+<div class="page-bg">
+  <div class="max-w-6xl mx-auto px-4 lg:px-8 py-10 space-y-8">
 
-        {{-- Quick Actions --}}
-        <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <a href="{{ route('products.index') }}" class="glass bcake-shadow border bcake-border rounded-2xl p-4 text-center hover:-translate-y-0.5 transition">
-            <div class="text-2xl">🛍️</div><div class="text-sm mt-1 font-medium">Katalog</div>
-          </a>
-          <a href="{{ route('cart.index') }}" class="glass bcake-shadow border bcake-border rounded-2xl p-4 text-center hover:-translate-y-0.5 transition">
-            <div class="text-2xl">🧺</div><div class="text-sm mt-1 font-medium">Keranjang</div>
-          </a>
-          <a href="#kebijakan" class="glass bcake-shadow border bcake-border rounded-2xl p-4 text-center hover:-translate-y-0.5 transition">
-            <div class="text-2xl">📜</div><div class="text-sm mt-1 font-medium">Kebijakan</div>
-          </a>
-          <a href="https://wa.me/6281234567890" target="_blank" class="glass bcake-shadow border bcake-border rounded-2xl p-4 text-center hover:-translate-y-0.5 transition">
-            <div class="text-2xl">💬</div><div class="text-sm mt-1 font-medium">WhatsApp</div>
-          </a>
+    {{-- HERO bantuan --}}
+    <header class="rounded-3xl bg-bcake-grad text-white p-8 shadow-soft">
+      <div class="grid md:grid-cols-2 gap-6 items-center">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-semibold">Butuh Bantuan? 🍰</h1>
+          <p class="mt-2 text-white/90">Kami siap bantu soal pesanan, pembayaran, akun, atau pengiriman.</p>
+          <div class="mt-5 flex flex-wrap gap-3">
+            <a href="#faq" class="inline-flex items-center gap-2 bg-white text-[var(--bcake-wine)] px-4 py-2 rounded-xl font-medium">Lihat FAQ →</a>
+            <a href="#kontak" class="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-4 py-2 rounded-xl ring-1 ring-white/30">Hubungi Kami</a>
+          </div>
+        </div>
+        <div class="hidden md:block rounded-2xl overflow-hidden ring-1 ring-white/20">
+          <img src="{{ asset('image/cake.jpg') }}" alt="" class="w-full h-full object-cover">
         </div>
       </div>
+    </header>
 
-      {{-- Search FAQ --}}
-      <div class="glass bcake-shadow border bcake-border rounded-2xl p-5">
-        <label class="text-sm text-[color:var(--truffle)]">Cari topik bantuan</label>
-        <div class="mt-2 flex items-center gap-3 border bcake-border rounded-xl px-3 py-2 bg-white">
-          <svg class="w-5 h-5 cherry" viewBox="0 0 24 24" fill="currentColor"><path d="M10 2a8 8 0 105.293 14.293l4.707 4.707 1.414-1.414-4.707-4.707A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z"/></svg>
-          <input id="faqSearch" type="text" placeholder="cth: pembayaran, pengiriman..."
-                 class="w-full outline-none py-2" />
+    <div class="grid lg:grid-cols-3 gap-8">
+
+      {{-- Kolom kiri: FAQ --}}
+      <section id="faq" class="lg:col-span-2 space-y-6">
+        <div class="bg-white rounded-2xl shadow-soft ring-soft p-6">
+          <h2 class="text-lg font-semibold">Pesanan & Katalog</h2>
+          <div class="mt-3 divide-y">
+            <details class="group py-3">
+              <summary class="flex items-center justify-between cursor-pointer">
+                <span>Bagaimana cara memesan produk?</span>
+                <span class="text-rose-600">＋</span>
+              </summary>
+              <div class="mt-2 text-gray-600">
+                Buka menu <b>Produk</b> → pilih produk → klik <b>Tambah ke Keranjang</b> → buka <b>Keranjang</b> → <b>Checkout</b>.
+              </div>
+            </details>
+
+            <details class="group py-3">
+              <summary class="flex items-center justify-between cursor-pointer">
+                <span>Apakah bisa custom tulisan pada kue?</span>
+                <span class="text-rose-600">＋</span>
+              </summary>
+              <div class="mt-2 text-gray-600">
+                Bisa. Tulis permintaan di catatan saat checkout. Untuk desain khusus, chat WhatsApp kami dulu.
+              </div>
+            </details>
+          </div>
         </div>
-        <p class="text-xs mt-2 text-[color:var(--truffle)]/80">Hasil akan memfilter daftar FAQ di bawah secara realtime.</p>
-      </div>
+
+        <div class="bg-white rounded-2xl shadow-soft ring-soft p-6">
+          <h2 class="text-lg font-semibold">Pembayaran</h2>
+          <div class="mt-3 divide-y">
+            <details class="group py-3">
+              <summary class="flex items-center justify-between cursor-pointer">
+                <span>Metode pembayaran apa saja yang tersedia?</span>
+                <span class="text-rose-600">＋</span>
+              </summary>
+              <div class="mt-2 text-gray-600">
+                Transfer bank, e-wallet (OVO/DANA/GoPay), dan COD (khusus area tertentu).
+              </div>
+            </details>
+
+            <details class="group py-3">
+              <summary class="flex items-center justify-between cursor-pointer">
+                <span>Mengunggah bukti bayar bagaimana?</span>
+                <span class="text-rose-600">＋</span>
+              </summary>
+              <div class="mt-2 text-gray-600">
+                Setelah checkout, unggah bukti pada halaman <b>Pesanan</b> atau kirim via WhatsApp ke admin.
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-soft ring-soft p-6">
+          <h2 class="text-lg font-semibold">Akun & Keamanan</h2>
+          <div class="mt-3 divide-y">
+            <details class="group py-3">
+              <summary class="flex items-center justify-between cursor-pointer">
+                <span>Lupa password, bagaimana reset?</span>
+                <span class="text-rose-600">＋</span>
+              </summary>
+              <div class="mt-2 text-gray-600">
+                Di halaman <b>Login</b> klik <b>Forgot password?</b>, masukkan email, lalu ikuti instruksi yang dikirim.
+              </div>
+            </details>
+
+            <details class="group py-3">
+              <summary class="flex items-center justify-between cursor-pointer">
+                <span>Bagaimana menjaga keamanan akun?</span>
+                <span class="text-rose-600">＋</span>
+              </summary>
+              <div class="mt-2 text-gray-600">
+                Gunakan password kuat, jangan bagikan OTP, dan selalu logout dari perangkat umum.
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-soft ring-soft p-6">
+          <h2 class="text-lg font-semibold">Pengiriman</h2>
+          <div class="mt-3 divide-y">
+            <details class="group py-3">
+              <summary class="flex items-center justify-between cursor-pointer">
+                <span>Berapa lama pengiriman?</span>
+                <span class="text-rose-600">＋</span>
+              </summary>
+              <div class="mt-2 text-gray-600">
+                Same-day untuk area kota; 1–2 hari untuk sekitar; pre-order kue custom menyesuaikan jadwal produksi.
+              </div>
+            </details>
+
+            <details class="group py-3">
+              <summary class="flex items-center justify-between cursor-pointer">
+                <span>Produk saya rusak saat sampai, apa yang harus saya lakukan?</span>
+                <span class="text-rose-600">＋</span>
+              </summary>
+              <div class="mt-2 text-gray-600">
+                Foto kondisi paket maksimal 24 jam, lalu hubungi kami melalui WhatsApp untuk penggantian/solusi terbaik.
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      {{-- Kolom kanan: Kontak & Form --}}
+      <aside id="kontak" class="space-y-6">
+        <div class="card-soft rounded-2xl p-6 shadow-soft ring-soft">
+          <h3 class="font-semibold">Hubungi Kami</h3>
+          <p class="text-sm text-gray-600 mt-1">Pilih salah satu jalur dukungan:</p>
+
+          <div class="mt-4 grid gap-3">
+            <a href="https://wa.me/6281234567890?text=Halo%20B%E2%80%99cake%2C%20saya%20butuh%20bantuan%20soal%20pesanan."
+               class="flex items-center justify-between rounded-xl px-4 py-3 bg-white ring-1 ring-rose-200/60 hover:bg-rose-50">
+              <span>💬 WhatsApp Admin</span>
+              <span class="text-rose-700 text-sm">Buka WA →</span>
+            </a>
+
+            <a href="mailto:support@bcake.local?subject=Butuh%20Bantuan&body=Halo%20B%E2%80%99cake..."
+               class="flex items-center justify-between rounded-xl px-4 py-3 bg-white ring-1 ring-rose-200/60 hover:bg-rose-50">
+              <span>✉️ Email Support</span>
+              <span class="text-rose-700 text-sm">Tulis Email →</span>
+            </a>
+
+            <a href="https://instagram.com/" target="_blank"
+               class="flex items-center justify-between rounded-xl px-4 py-3 bg-white ring-1 ring-rose-200/60 hover:bg-rose-50">
+              <span>📷 DM Instagram</span>
+              <span class="text-rose-700 text-sm">Kunjungi IG →</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-soft ring-soft">
+          <h3 class="font-semibold">Kirim Pertanyaan</h3>
+          <p class="text-sm text-gray-600">Form ini tidak menyimpan ke server (aman di halaman statis) — klik kirim akan membuka WhatsApp dengan isi pesan kamu.</p>
+
+          <form class="mt-4 space-y-3" onsubmit="openWA(this); return false;">
+            <div>
+              <label class="text-sm text-gray-700">Nama</label>
+              <input class="mt-1 w-full rounded-xl border-rose-200 px-3 h-10" name="nama" required>
+            </div>
+            <div>
+              <label class="text-sm text-gray-700">Email (opsional)</label>
+              <input class="mt-1 w-full rounded-xl border-rose-200 px-3 h-10" name="email" type="email">
+            </div>
+            <div>
+              <label class="text-sm text-gray-700">Pesan</label>
+              <textarea class="mt-1 w-full rounded-xl border-rose-200 px-3 py-2 min-h-[100px]" name="pesan" required placeholder="Tulis pertanyaanmu…"></textarea>
+            </div>
+            <button class="w-full bg-bcake-grad text-white rounded-xl h-11 shadow-soft">Kirim via WhatsApp</button>
+          </form>
+          <script>
+            function openWA(form){
+              const q = new URLSearchParams({
+                text:
+`Halo B’cake, saya ${form.nama.value}.
+Email: ${form.email.value || '-'}
+Pesan: ${form.pesan.value}`
+              }).toString();
+              // ganti nomor WA admin di bawah ini
+              const wa = '6281234567890';
+              window.open(`https://wa.me/${wa}?${q}`,'_blank');
+            }
+          </script>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-soft ring-soft">
+          <h3 class="font-semibold">Cek Status Pesanan</h3>
+          <p class="text-sm text-gray-600">Masukkan kode pesanan (mis. BC-2025-001):</p>
+          <div class="mt-3 flex gap-2">
+            <input id="ordcode" class="flex-1 rounded-xl border-rose-200 px-3 h-10" placeholder="BC-XXXX-XXX">
+            <button class="rounded-xl h-10 px-4 bg-rose-100 text-rose-700" onclick="alert('Fitur cek status akan terhubung ke halaman pesanan.');">Cek</button>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">Catatan: tombol ini contoh. Nanti bisa diarahkan ke halaman /orders.</p>
+        </div>
+      </aside>
     </div>
+
   </div>
-</section>
-
-<div class="max-w-6xl mx-auto px-5 md:px-8 space-y-10 -mt-6 pb-16">
-
-  {{-- ===== TIMELINE ===== --}}
-  <section class="glass bcake-shadow border bcake-border rounded-2xl p-6 md:p-8">
-    <h2 class="font-semibold text-xl cherry mb-5 flex items-center gap-2">🛒 Cara Memesan</h2>
-    <ol class="relative border-s ps-6 space-y-6 border-[color:var(--truffle-2)]/70">
-      <li class="relative">
-        <span class="absolute -start-3 top-0 w-6 h-6 rounded-full bg-[color:var(--wine)] ring-4 ring-rose-50"></span>
-        <p class="font-medium">Buka <a href="{{ route('products.index') }}" class="underline cherry">katalog</a> dan pilih produk favoritmu.</p>
-      </li>
-      <li class="relative">
-        <span class="absolute -start-3 top-0 w-6 h-6 rounded-full bg-[color:var(--wine)] ring-4 ring-rose-50"></span>
-        <p class="font-medium">Klik <em>Tambah ke Keranjang</em> → cek <a href="{{ route('cart.index') }}" class="underline cherry">Keranjang</a>.</p>
-      </li>
-      <li class="relative">
-        <span class="absolute -start-3 top-0 w-6 h-6 rounded-full bg-[color:var(--wine)] ring-4 ring-rose-50"></span>
-        <p class="font-medium">Isi alamat & catatan (tulisan kue, lilin, dll), lalu pilih metode pembayaran.</p>
-      </li>
-      <li class="relative">
-        <span class="absolute -start-3 top-0 w-6 h-6 rounded-full bg-[color:var(--wine)] ring-4 ring-rose-50"></span>
-        <p class="font-medium">Upload bukti bayar. Kami proses & update via WhatsApp. 🎉</p>
-      </li>
-    </ol>
-
-    {{-- Mini tracker (dummy) --}}
-    <form class="mt-6 grid sm:grid-cols-3 gap-3" onsubmit="event.preventDefault();alert('Tracking contoh: #BC-001 sedang dikemas 🎁');">
-      <input class="border bcake-border rounded-xl px-4 py-3" placeholder="Masukkan Kode Pesanan (cth: BC-001)">
-      <button class="btn-wine rounded-xl px-5 py-3">Lacak Pesanan</button>
-      <a href="{{ route('cart.index') }}" class="rounded-xl px-5 py-3 border bcake-border text-center hover:bg-rose-50">Lihat Riwayat</a>
-    </form>
-  </section>
-
-  {{-- ===== FAQ / ACCORDION ===== --}}
-  @php
-    $faqs = [
-      ['t'=>'Metode Pembayaran','b'=>'Transfer bank & e-wallet (DANA/OVO/Gopay). Pastikan nominal tepat agar verifikasi cepat.'],
-      ['t'=>'Pengiriman','b'=>'Kurir instan / local courier. Estimasi 30–90 menit area kota (tergantung cuaca & antrian).'],
-      ['t'=>'Jam Operasional','b'=>'08:00 – 21:00 WIB setiap hari. Balasan chat ± 1–10 menit saat jam aktif.'],
-      ['t'=>'Custom & Pre-Order','b'=>'Bisa tulis ucapan dan request warna sederhana. Untuk desain khusus disarankan PO H-1 s/d H-3.'],
-      ['t'=>'Alergen','b'=>'Produk dapat mengandung gluten, susu, telur. Mohon info alergi saat checkout.'],
-      ['t'=>'Penyimpanan','b'=>'Kue cream: suhu kulkas 2–3 hari. Brownies/cookies: suhu ruang kedap 3–5 hari.'],
-      ['t'=>'Batal & Refund','b'=>'Bisa batal maksimal 30 menit setelah order. Jika produk rusak saat antar, hubungi admin (foto/video) untuk solusi.'],
-      ['t'=>'Area Jangkauan','b'=>'Bengkalis, Dumai, Rupat & sekitar. Ongkir mengikuti aplikasi kurir/driver.'],
-      ['t'=>'COD','b'=>'Saat ini belum tersedia COD. Gunakan transfer bank/e-wallet.'],
-      ['t'=>'Resi / Bukti Antar','b'=>'Driver akan mengirimkan foto serah-terima ke WhatsApp penerima.'],
-    ];
-  @endphp
-
-  <section>
-    <h2 class="font-semibold text-xl cherry mb-4 flex items-center gap-2">❓ Pertanyaan Umum</h2>
-    <div id="faqList" class="grid md:grid-cols-2 gap-5">
-      @foreach($faqs as $f)
-      <details class="group glass bcake-shadow border bcake-border rounded-2xl p-5">
-        <summary class="flex items-center justify-between cursor-pointer font-semibold cherry">
-          <span class="faq-title">{{ $f['t'] }}</span>
-          <svg class="chev w-5 h-5 cherry" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd"/></svg>
-        </summary>
-        <div class="acc-body text-[color:var(--truffle)] leading-relaxed mt-3 faq-body">
-          {{ $f['b'] }}
-        </div>
-      </details>
-      @endforeach
-    </div>
-  </section>
-
-  {{-- ===== POLICY & TIPS ===== --}}
-  <section id="kebijakan" class="grid lg:grid-cols-3 gap-6">
-    <div class="glass bcake-shadow border bcake-border rounded-2xl p-6">
-      <h3 class="font-semibold cherry text-lg">📜 Kebijakan Singkat</h3>
-      <ul class="mt-3 text-[color:var(--truffle)] space-y-2">
-        <li>• Cancel max 30 menit setelah order.</li>
-        <li>• Salah alamat/jam terima di luar tanggung jawab kami.</li>
-        <li>• Komplain produk max 6 jam setelah diterima (sertakan bukti).</li>
-      </ul>
-    </div>
-    <div class="glass bcake-shadow border bcake-border rounded-2xl p-6">
-      <h3 class="font-semibold cherry text-lg">🥛 Alergen & Nutrisi</h3>
-      <p class="mt-2 text-[color:var(--truffle)]">Mengandung gluten, susu, telur. Bebas pengawet; sebaiknya dikonsumsi fresh.</p>
-      <div class="mt-3 flex flex-wrap gap-2 text-xs">
-        <span class="px-3 py-1 rounded-full border bcake-border bg-white">Gluten</span>
-        <span class="px-3 py-1 rounded-full border bcake-border bg-white">Dairy</span>
-        <span class="px-3 py-1 rounded-full border bcake-border bg-white">Egg</span>
-      </div>
-    </div>
-    <div class="glass bcake-shadow border bcake-border rounded-2xl p-6">
-      <h3 class="font-semibold cherry text-lg">📦 Tips Penyimpanan</h3>
-      <ul class="mt-3 text-[color:var(--truffle)] space-y-2">
-        <li>• Simpan cake ber-cream dalam box tertutup di kulkas.</li>
-        <li>• Keluarkan 10–15 menit sebelum disajikan.</li>
-        <li>• Hindari paparan panas langsung saat pengantaran.</li>
-      </ul>
-    </div>
-  </section>
-
-  {{-- ===== CONTACT / CTA ===== --}}
-  <section class="glass bcake-shadow border bcake-border rounded-2xl p-6 md:p-8">
-    <div class="grid md:grid-cols-2 gap-6 items-center">
-      <div>
-        <h3 class="font-semibold text-2xl cherry">Masih butuh bantuan?</h3>
-        <p class="mt-2 text-[color:var(--truffle)]">Tim B’cake siap membantu. Chat admin untuk rekomendasi produk, cek ketersediaan, atau masalah pesanan.</p>
-        <div class="mt-5 flex gap-3 flex-wrap">
-          <a href="https://wa.me/6281234567890" target="_blank" class="btn-wine rounded-xl px-5 py-3 bcake-shadow">Chat WhatsApp</a>
-          <a href="mailto:cs@bcake.id" class="rounded-xl px-5 py-3 border bcake-border hover:bg-rose-50">Email cs@bcake.id</a>
-        </div>
-      </div>
-      <div class="border bcake-border rounded-2xl p-4 bg-white">
-        <div class="text-sm text-[color:var(--truffle)] mb-2">Nilai pengalamanmu hari ini:</div>
-        <div id="rating" class="flex gap-2">
-          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-        </div>
-        <textarea id="fb" class="mt-3 w-full border bcake-border rounded-xl p-3" rows="3" placeholder="Tulis saran singkat…"></textarea>
-        <button onclick="sendFeedback()" class="btn-wine rounded-xl px-4 py-2 mt-3">Kirim</button>
-        <p id="fbMsg" class="text-sm mt-2 text-green-700 hidden">Terima kasih! Feedback kamu tersimpan 🙌</p>
-      </div>
-    </div>
-  </section>
 </div>
-
-{{-- ===== FLOATING HELP WIDGET ===== --}}
-<div id="help-widget">
-  <button id="helpBtn" class="btn-wine rounded-full w-14 h-14 bcake-shadow text-2xl">?</button>
-  <div id="helpCard" class="hidden widget-card mt-3 glass bcake-shadow border bcake-border rounded-2xl p-4">
-    <div class="flex items-center justify-between">
-      <div class="font-semibold cherry">Butuh cepat?</div>
-      <button onclick="toggleHelp()" class="text-xl">✕</button>
-    </div>
-    <div class="mt-3 grid gap-2 text-sm">
-      <a href="{{ route('products.index') }}" class="underline cherry">Lihat Katalog</a>
-      <a href="#kebijakan" class="underline cherry">Baca Kebijakan</a>
-      <a href="https://wa.me/6281234567890" target="_blank" class="underline cherry">Chat WhatsApp</a>
-    </div>
-  </div>
-</div>
-
-{{-- ===== SEO: FAQ Schema ===== --}}
-<script type="application/ld+json">
-{
- "@context":"https://schema.org","@type":"FAQPage",
- "mainEntity":[
-  @foreach($faqs as $i=>$f){"@type":"Question","name":"{{ $f['t'] }}",
-   "acceptedAnswer":{"@type":"Answer","text":"{{ $f['b'] }}"} }@if(!$loop->last),@endif
-  @endforeach
- ]
-}
-</script>
-
-{{-- ===== Tiny JS (tanpa library) ===== --}}
-<script>
-// Toggle floating widget
-function toggleHelp(){ document.getElementById('helpCard').classList.toggle('hidden'); }
-document.getElementById('helpBtn').addEventListener('click',toggleHelp);
-
-// FAQ live search
-const s = document.getElementById('faqSearch');
-const items = Array.from(document.querySelectorAll('#faqList details'));
-s.addEventListener('input', () => {
-  const q = s.value.toLowerCase();
-  items.forEach(d => {
-    const t = d.querySelector('.faq-title').textContent.toLowerCase();
-    const b = d.querySelector('.faq-body').textContent.toLowerCase();
-    d.style.display = (t.includes(q) || b.includes(q)) ? '' : 'none';
-  });
-});
-
-// Rating simple
-let score = Number(localStorage.getItem('bcake_rate')||0);
-const stars = Array.from(document.querySelectorAll('#rating .star'));
-const paint = (n)=>stars.forEach((el,i)=>el.classList.toggle('active',i<n));
-paint(score);
-stars.forEach((el,i)=>el.onclick=()=>{score=i+1; localStorage.setItem('bcake_rate',score); paint(score);});
-
-function sendFeedback(){
-  const txt = document.getElementById('fb').value.trim();
-  // di real-app bisa POST ke route khusus. Ini dummy local:
-  localStorage.setItem('bcake_feedback', JSON.stringify({score, txt, at: new Date().toISOString()}));
-  document.getElementById('fbMsg').classList.remove('hidden');
-}
-</script>
 @endsection

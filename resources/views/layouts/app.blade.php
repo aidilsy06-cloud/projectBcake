@@ -6,6 +6,9 @@
 
   <title>@yield('title','B’cake — Elegant Bakery')</title>
 
+  {{-- CSRF (dipakai form/AJAX) --}}
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
   {{-- Vite (Tailwind + JS) --}}
   @vite(['resources/css/app.css','resources/js/app.js'])
 
@@ -19,6 +22,14 @@
     body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
     .shadow-soft{box-shadow:0 20px 40px rgba(54,35,32,.10)}
     .bcake-divider{height:4px;background:linear-gradient(90deg,var(--bcake-cocoa),var(--bcake-deep) 40%,var(--bcake-wine));border-radius:999px}
+
+    /* Anti-overlay: pastikan link/tombol bisa diklik, dekorasi tidak nindih */
+    .decorative, .grain, .bg-overlay, .mask-overlay, .sprinkles, .berryLayer {
+      pointer-events: none !important; z-index: 0 !important;
+    }
+    main, header, nav, aside, section, a, button, .card, .btn {
+      position: relative; z-index: 1;
+    }
   </style>
 
   @stack('head')
@@ -42,8 +53,8 @@
               </svg>
             </button>
             <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
-              <img src="{{ asset('cake.jpg') }}" alt="B’cake"
-                class="hidden xl:block h-10 w-10 rounded-lg object-cover ring-1 ring-rose-200/60">
+              <img src="{{ asset('image/cake.jpg') }}" alt="B’cake"
+                   class="hidden xl:block h-10 w-10 rounded-lg object-cover ring-1 ring-rose-200/60">
               <span class="font-serif text-2xl tracking-wide text-rose-800">B'cake</span>
             </a>
           </div>
@@ -55,7 +66,12 @@
                 <li><a href="{{ route('home') }}" class="hover:text-rose-900">Home</a></li>
                 <li><a href="{{ route('products.index') }}" class="hover:text-rose-900">Produk</a></li>
                 <li><a href="{{ route('cart.index') }}" class="hover:text-rose-900">Keranjang</a></li>
-                <li><a href="#" class="hover:text-rose-900">Bantuan</a></li>
+                <li>
+                  <a href="{{ auth()->check() ? route('buyer.help') : route('help') }}"
+                     class="hover:text-rose-900">
+                    Bantuan
+                  </a>
+                </li>
               </ul>
 
               <form action="{{ route('products.index') }}" method="get"
@@ -65,7 +81,7 @@
                               focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-rose-400"
-                     viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/>
                 </svg>
@@ -79,7 +95,7 @@
                class="relative inline-flex items-center rounded-full border border-rose-200/70 bg-white/70 px-3 py-2 hover:border-rose-300"
                aria-label="Keranjang">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-700"
-                   viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M3 3h2l.4 2M7 13h10l3-8H6.4M7 13L5.4 5M7 13l-2 9m12-9l-2 9M9 22a1 1 0 100-2 1 1 0 000 2z"/>
               </svg>

@@ -5,19 +5,16 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Buyer\StoreController; // jika belum ada, hapus baris ini
 use App\Models\Product;
 use App\Models\User;
 
-// === Admin Controllers ===
+// Admin Controllers
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 
-// === Seller Controller ===
+// Seller Controller
 use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
-
-<<<<<<< HEAD
-// (opsional) Buyer controller kamu sendiri
-// use App\Http\Controllers\Buyer\DashboardController as BuyerDashboard;
 
 /* ----------------------------------------
 | Healthcheck
@@ -27,20 +24,6 @@ Route::get('/_health', fn () => 'ok');
 /* ----------------------------------------
 | Helpers (aman saat DB belum siap)
 |---------------------------------------- */
-=======
-/*
-|--------------------------------------------------------------------------
-| Healthcheck (untuk cek hidup)
-|--------------------------------------------------------------------------
-*/
-Route::get('/_health', fn () => 'ok');
-
-/*
-|--------------------------------------------------------------------------
-| Helper kecil (aman saat DB belum siap)
-|--------------------------------------------------------------------------
-*/
->>>>>>> 3a42f34011c4a49c0f9265cf5828a7ff891dcb76
 if (! function_exists('safeCount')) {
     function safeCount(callable $cb): int {
         try { return (int) $cb(); } catch (\Throwable $e) { return 0; }
@@ -87,8 +70,6 @@ Route::prefix('cart')->name('cart.')->group(function () {
 
 // HALAMAN STATIS (publik)
 Route::view('/tentang-kami', 'static.about')->name('about');
-
-// Bantuan publik: tersedia di /bantuan dan alias /help
 Route::view('/bantuan', 'static.help')->name('help');
 Route::get('/help', fn () => redirect()->route('help'));
 
@@ -103,6 +84,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store']);
 });
 
+// Logout (POST)
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')->name('logout');
 
@@ -153,37 +135,23 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 | SELLER (pakai Controller biar rapi)
 |---------------------------------------- */
 Route::prefix('seller')->name('seller.')->middleware('auth')->group(function () {
-    // /seller -> dashboard penjual
     Route::get('/', [SellerDashboard::class, 'index'])->name('dashboard'); // view: resources/views/seller/dashboard.blade.php
 });
 
 /* ----------------------------------------
 | BUYER
-<<<<<<< HEAD
 |---------------------------------------- */
-=======
-|--------------------------------------------------------------------------
-*/
->>>>>>> 3a42f34011c4a49c0f9265cf5828a7ff891dcb76
 Route::prefix('buyer')->name('buyer.')->middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         $user = auth()->user();
         if (($user->role ?? 'buyer') !== 'buyer') abort(403);
 
         $stats = ['wish' => 0];
-<<<<<<< HEAD
         return view('buyer.index', compact('stats')); // pastikan view ada
     })->name('dashboard');
-=======
-        // panggil view dashboard buyer yang kamu buat
-        return view('buyer.index', compact('stats'));
-    })->name('dashboard');
 
-    // Bantuan versi buyer (login) -> view sama dengan publik
+    // opsional (hapus jika belum ada controllernya)
     Route::view('/help', 'static.help')->name('help');
-
-    // STORES (daftar toko & detail toko) — opsional sesuai kebutuhanmu
     Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
     Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
->>>>>>> 3a42f34011c4a49c0f9265cf5828a7ff891dcb76
 });

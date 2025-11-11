@@ -5,7 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Buyer\StoreController; // jika belum ada, hapus baris ini
+use App\Http\Controllers\Buyer\StoreController; // Controller untuk menu Toko (index & show)
 use App\Models\Product;
 use App\Models\User;
 
@@ -73,6 +73,10 @@ Route::view('/tentang-kami', 'static.about')->name('about');
 Route::view('/bantuan', 'static.help')->name('help');
 Route::get('/help', fn () => redirect()->route('help'));
 
+// TOKO (PUBLIK)
+Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
+Route::get('/store/{seller}', [StoreController::class, 'show'])->name('stores.show'); // {seller} -> App\Models\User
+
 /* ----------------------------------------
 | Auth (custom login view + Breeze actions)
 |---------------------------------------- */
@@ -101,7 +105,6 @@ Route::get('/dashboard', function () {
         default  => 'buyer.dashboard',
     };
 
-    // kalau rute target ada => redirect, kalau tidak ada => fallback view
     return Route::has($target) ? redirect()->route($target) : view('dashboard');
 })->middleware('auth')->name('dashboard');
 
@@ -132,14 +135,16 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 });
 
 /* ----------------------------------------
-| SELLER (pakai Controller biar rapi)
+| SELLER
 |---------------------------------------- */
 Route::prefix('seller')->name('seller.')->middleware('auth')->group(function () {
     Route::get('/', [SellerDashboard::class, 'index'])->name('dashboard'); // view: resources/views/seller/dashboard.blade.php
+    // kalau sudah siap role middleware khusus:
+    // ->middleware('role:seller')
 });
 
 /* ----------------------------------------
-| BUYER
+| BUYER (opsional: rute versi /buyer/*)
 |---------------------------------------- */
 Route::prefix('buyer')->name('buyer.')->middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
@@ -147,11 +152,11 @@ Route::prefix('buyer')->name('buyer.')->middleware('auth')->group(function () {
         if (($user->role ?? 'buyer') !== 'buyer') abort(403);
 
         $stats = ['wish' => 0];
-        return view('buyer.index', compact('stats')); // pastikan view ada
+        return view('buyer.index', compact('stats'));
     })->name('dashboard');
 
-    // opsional (hapus jika belum ada controllernya)
+    // Toko versi buyer (nama rute otomatis buyer.stores.*)
     Route::view('/help', 'static.help')->name('help');
     Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
-    Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
+    Route::get('/store/{seller}', [StoreController::class, 'show'])->name('stores.show');
 });

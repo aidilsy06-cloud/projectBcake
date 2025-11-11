@@ -23,31 +23,34 @@
     .shadow-soft{box-shadow:0 20px 40px rgba(54,35,32,.10)}
     .bcake-divider{height:4px;background:linear-gradient(90deg,var(--bcake-cocoa),var(--bcake-deep) 40%,var(--bcake-wine));border-radius:999px}
 
-    /* Anti-overlay: pastikan link/tombol bisa diklik, dekorasi tidak nindih */
+    /* Anti-overlay: dekorasi jangan blok klik */
     .decorative, .grain, .bg-overlay, .mask-overlay, .sprinkles, .berryLayer {
       pointer-events: none !important; z-index: 0 !important;
     }
-    main, header, nav, aside, section, a, button, .card, .btn {
-      position: relative; z-index: 1;
-    }
+    main, header, nav, aside, section, a, button, .card, .btn { position: relative; z-index: 1; }
+
+    /* Drawer mobile */
+    #sidebarMobile{ transition: transform .25s ease; transform: translateX(-100%); }
+    #sidebarMobile[data-open="true"]{ transform: translateX(0); }
+    #backdropMobile{ display:none; }
+    #backdropMobile[data-open="true"]{ display:block; }
   </style>
 
   @stack('head')
 </head>
-<body class="bg-rose-50 text-gray-800 antialiased min-h-screen flex flex-col"> {{-- ⬅️ penting untuk sticky footer --}}
+<body class="bg-rose-50 text-gray-800 antialiased min-h-screen flex flex-col">
 
-  {{-- ====== HEADER (final) ====== --}}
+  {{-- ====== HEADER ====== --}}
   <header class="sticky top-0 z-50 w-full" role="banner">
     <div class="bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-rose-200/50">
       <div class="max-w-7xl mx-auto px-6 lg:px-10">
-        {{-- 3 kolom: brand | nav+search (fleksibel) | actions --}}
         <div class="grid items-center py-4 md:grid-cols-[auto_1fr_auto] gap-4">
 
-          {{-- BRAND --}}
+          {{-- BRAND + TOGGLE --}}
           <div class="min-w-0 flex items-center gap-3">
             <button id="btnSidebar"
               class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-rose-200/70 text-rose-800 md:hidden"
-              aria-label="Toggle sidebar" aria-expanded="false" aria-controls="sidebarMobile">
+              aria-label="Buka menu" aria-expanded="false" aria-controls="sidebarMobile">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="opacity-80">
                 <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
@@ -59,16 +62,29 @@
             </a>
           </div>
 
-          {{-- NAV + SEARCH (tengah, fleksibel) --}}
+          {{-- NAV + SEARCH (desktop) --}}
           <div class="min-w-0">
             <div class="hidden md:flex items-center gap-6">
               <ul class="flex items-center gap-7 flex-none text-rose-800/90">
-                <li><a href="{{ route('home') }}" class="hover:text-rose-900">Home</a></li>
-                <li><a href="{{ route('products.index') }}" class="hover:text-rose-900">Produk</a></li>
-                <li><a href="{{ route('cart.index') }}" class="hover:text-rose-900">Keranjang</a></li>
                 <li>
-                  <a href="{{ auth()->check() ? route('buyer.help') : route('help') }}"
-                     class="hover:text-rose-900">
+                  <a href="{{ route('home') }}"
+                     class="hover:text-rose-900 {{ request()->routeIs('home') ? 'text-rose-900 font-medium' : '' }}">Home</a>
+                </li>
+                <li>
+                  <a href="{{ route('products.index') }}"
+                     class="hover:text-rose-900 {{ request()->routeIs('products.*') ? 'text-rose-900 font-medium' : '' }}">Produk</a>
+                </li>
+                <li>
+                  <a href="{{ route('stores.index') }}"
+                     class="hover:text-rose-900 {{ request()->routeIs('stores.*') ? 'text-rose-900 font-medium' : '' }}">Toko</a>
+                </li>
+                <li>
+                  <a href="{{ route('cart.index') }}"
+                     class="hover:text-rose-900 {{ request()->routeIs('cart.*') ? 'text-rose-900 font-medium' : '' }}">Keranjang</a>
+                </li>
+                <li>
+                  <a href="{{ auth()->check() && Route::has('buyer.help') ? route('buyer.help') : route('help') }}"
+                     class="hover:text-rose-900 {{ request()->routeIs('help') || request()->routeIs('buyer.help') ? 'text-rose-900 font-medium' : '' }}">
                     Bantuan
                   </a>
                 </li>
@@ -89,7 +105,7 @@
             </div>
           </div>
 
-          {{-- ACTIONS (kanan, fixed width) --}}
+          {{-- ACTIONS --}}
           <div class="flex justify-end items-center gap-3 flex-none">
             <a href="{{ route('cart.index') }}"
                class="relative inline-flex items-center rounded-full border border-rose-200/70 bg-white/70 px-3 py-2 hover:border-rose-300"
@@ -125,8 +141,52 @@
     </div>
   </header>
 
+  {{-- ====== MOBILE DRAWER ====== --}}
+  <div id="backdropMobile" class="fixed inset-0 bg-black/30 z-40" hidden></div>
+  <aside id="sidebarMobile"
+         class="fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] bg-white z-50 p-5 border-r border-rose-200/60"
+         role="dialog" aria-modal="true" aria-labelledby="mobileNavTitle">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-3">
+        <img src="{{ asset('image/cake.jpg') }}" class="h-8 w-8 rounded-lg object-cover ring-1 ring-rose-200/60" alt="">
+        <h2 id="mobileNavTitle" class="font-semibold">Menu</h2>
+      </div>
+      <button id="btnSidebarClose" aria-label="Tutup menu"
+              class="w-9 h-9 inline-flex items-center justify-center rounded-full border border-rose-200/70">
+        ✕
+      </button>
+    </div>
+
+    <nav class="space-y-1 text-rose-800/90">
+      <a href="{{ route('home') }}"
+         class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('home') ? 'bg-rose-50 font-medium' : '' }}">🏠 Home</a>
+      <a href="{{ route('products.index') }}"
+         class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('products.*') ? 'bg-rose-50 font-medium' : '' }}">🧁 Produk</a>
+      <a href="{{ route('stores.index') }}"
+         class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('stores.*') ? 'bg-rose-50 font-medium' : '' }}">🏪 Toko</a>
+      <a href="{{ route('cart.index') }}"
+         class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('cart.*') ? 'bg-rose-50 font-medium' : '' }}">🧺 Keranjang</a>
+      <a href="{{ auth()->check() && Route::has('buyer.help') ? route('buyer.help') : route('help') }}"
+         class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('help') || request()->routeIs('buyer.help') ? 'bg-rose-50 font-medium' : '' }}">🆘 Bantuan</a>
+    </nav>
+
+    <div class="mt-6 border-t pt-4">
+      @auth
+        <a href="{{ route('dashboard') }}" class="block px-3 py-2 rounded-lg bg-rose-600 text-white text-center">Dashboard</a>
+        <form method="POST" action="{{ route('logout') }}" class="mt-2">@csrf
+          <button class="w-full px-3 py-2 rounded-lg border border-rose-200/70">Logout</button>
+        </form>
+      @else
+        <div class="grid grid-cols-2 gap-2">
+          <a href="{{ route('login') }}" class="px-3 py-2 rounded-lg border border-rose-200/70 text-center">Login</a>
+          <a href="{{ route('register') }}" class="px-3 py-2 rounded-lg bg-rose-700 text-white text-center">Register</a>
+        </div>
+      @endauth
+    </div>
+  </aside>
+
   {{-- ====== MAIN (Sidebar + Content) ====== --}}
-  <main class="flex-1 w-full"> {{-- ⬅️ biar ngisi tinggi sisa, footer terdorong ke bawah --}}
+  <main class="flex-1 w-full">
     <div class="max-w-7xl mx-auto px-6 lg:px-10 py-8">
       @hasSection('sidebar')
         <div class="grid md:grid-cols-[260px_1fr] gap-6">
@@ -147,12 +207,40 @@
     </div>
   </main>
 
-  {{-- ====== FOOTER SLOT (full-bleed, mentok kiri-kanan & nempel bawah) ====== --}}
+  {{-- ====== FOOTER SLOT ====== --}}
   @hasSection('footer')
-    @yield('footer')   {{-- taruh footer page-mu di sini: @section('footer') ... @endsection --}}
+    @yield('footer')
   @else
-    @includeIf('partials.footer') {{-- atau siapkan partial default --}}
+    @includeIf('partials.footer')
   @endif
 
+  @push('scripts')
+  <script>
+    (function(){
+      const btnOpen  = document.getElementById('btnSidebar');
+      const btnClose = document.getElementById('btnSidebarClose');
+      const drawer   = document.getElementById('sidebarMobile');
+      const backdrop = document.getElementById('backdropMobile');
+
+      function open() {
+        drawer?.setAttribute('data-open','true');
+        backdrop?.setAttribute('data-open','true');
+        btnOpen?.setAttribute('aria-expanded','true');
+      }
+      function close() {
+        drawer?.removeAttribute('data-open');
+        backdrop?.removeAttribute('data-open');
+        btnOpen?.setAttribute('aria-expanded','false');
+      }
+      btnOpen?.addEventListener('click', open);
+      btnClose?.addEventListener('click', close);
+      backdrop?.addEventListener('click', close);
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
+    })();
+  </script>
+  @endpush
+
+  {{-- render stack scripts --}}
+  @stack('scripts')
 </body>
 </html>

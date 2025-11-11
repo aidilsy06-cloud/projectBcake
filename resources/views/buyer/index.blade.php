@@ -38,11 +38,11 @@
     .dash-aside{
       width: var(--sbw);
       position: fixed;
-      left: 16px;              /* geser ke kiri (sedikit memberi margin) */
-      top: 96px;               /* mulai di bawah header sticky ~ 96px */
-      bottom: 24px;            /* jarak bawah */
-      overflow: auto;          /* kalau konten sidebar panjang */
-      z-index: 40;             /* di bawah header (header z-50) */
+      left: 16px;
+      top: 96px;
+      bottom: 24px;
+      overflow: auto;
+      z-index: 40;
     }
   }
 </style>
@@ -70,12 +70,26 @@
         <a href="{{ route('products.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-rose-50 focus:bg-rose-50 focus:outline-none">
           🧁 Produk
         </a>
+
+        {{-- MENU TOKO (PUBLIK) --}}
+        <a href="{{ route('stores.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-rose-50 focus:bg-rose-50 focus:outline-none">
+          🏪 Toko
+        </a>
+
         <a href="{{ route('cart.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-rose-50 focus:bg-rose-50 focus:outline-none">
           🧺 Keranjang
         </a>
-        <a href="{{ route('buyer.help') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-rose-50 focus:bg-rose-50 focus:outline-none">
-          🆘 Bantuan
-        </a>
+
+        {{-- Bantuan: pakai versi buyer kalau ada, fallback ke publik --}}
+        @if (Route::has('buyer.help'))
+          <a href="{{ route('buyer.help') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-rose-50 focus:bg-rose-50 focus:outline-none">
+            🆘 Bantuan
+          </a>
+        @else
+          <a href="{{ route('help') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-rose-50 focus:bg-rose-50 focus:outline-none">
+            🆘 Bantuan
+          </a>
+        @endif
       </nav>
 
       <div class="mt-6 p-5 rounded-2xl bg-bcake-grad text-white shadow-soft">
@@ -100,7 +114,7 @@
         <div class="inline-flex bg-rose-100 text-rose-700 px-2 py-1 rounded-full text-xs font-medium w-max">
           Dashboard
         </div>
-        <form action="{{ route('products.index') }}" class="sm:ml-auto w-full">
+        <form action="{{ route('products.index') }}" class="sm:ml-auto w-full" method="get">
           <div class="relative">
             <input name="q" placeholder="Search cakes…" class="w-full rounded-xl border-rose-200 bg-white px-4 h-11 focus:ring-2 focus:ring-rose-300 focus:outline-none"/>
             <button class="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--bcake-wine)]" aria-label="Cari">🔎</button>
@@ -153,6 +167,56 @@
           </div>
         </div>
       </div>
+
+      {{-- ============ TOKO POPULER (BARU DITAMBAH) ============ --}}
+      <section class="bg-white rounded-2xl shadow-soft ring-soft p-6">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold">Toko Populer</h3>
+
+          {{-- Tombol ke halaman semua toko --}}
+          <a href="{{ route('stores.index') }}"
+             class="text-sm px-3 py-1.5 rounded-full border border-rose-200/60 bg-white hover:bg-rose-50">
+            Lihat Semua →
+          </a>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          @php
+            // aman walau controller belum kirim $stores
+            $storesSafe = collect($stores ?? [])->take(8);
+          @endphp
+
+          @forelse($storesSafe as $s)
+            <article class="rounded-2xl p-4 card-soft shadow-soft ring-soft">
+              <div class="flex items-center gap-3">
+                <img
+                  src="{{ $s->logo_url ?? 'https://ui-avatars.com/api/?name='.urlencode($s->name).'&background=ffe9f0&color=890524' }}"
+                  class="h-12 w-12 rounded-xl object-cover ring-1 ring-rose-200/60" alt="">
+                <div>
+                  <div class="font-medium line-clamp-1">{{ $s->name }}</div>
+                  <div class="text-xs text-gray-500 line-clamp-1">{{ $s->tagline ?? 'Sweet & Elegant' }}</div>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center justify-between">
+                <span class="text-xs text-gray-500">
+                  {{ $s->products_count ?? ($s->products_count ?? '-') }} produk
+                </span>
+                @if (Route::has('stores.show'))
+                  {{-- jika pakai slug binding {store:slug}, cukup kirim $s --}}
+                  <a href="{{ route('stores.show', $s->slug ?? $s) }}"
+                     class="inline-flex items-center px-3 py-1.5 rounded-full bg-bcake-grad text-white text-sm hover:brightness-110">
+                    Kunjungi
+                  </a>
+                @endif
+              </div>
+            </article>
+          @empty
+            <div class="col-span-full text-center text-gray-500 py-6">
+              Belum ada toko untuk ditampilkan.
+            </div>
+          @endforelse
+        </div>
+      </section>
 
       {{-- ARTICLES + ORDERS --}}
       <div class="grid lg:grid-cols-3 gap-8">

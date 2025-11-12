@@ -127,14 +127,16 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 });
 
 /* ----------------------------------------
-| SELLER (DIPERBARUI)
+| SELLER (FINAL — SEMPURNA)
 |---------------------------------------- */
-// ================= SELLER AREA =================
 Route::prefix('seller')->name('seller.')->middleware('auth')->group(function () {
+    // dashboard utama seller
     Route::get('/', [SellerDashboard::class, 'index'])->name('dashboard');
-    Route::get('/store', [SellerStore::class, 'show'])->name('store.show');
-    Route::get('/store/edit', [SellerStore::class, 'edit'])->name('store.edit');
-    Route::post('/store/update', [SellerStore::class, 'update'])->name('store.update');
+
+    // toko saya
+    Route::get('/store',       [SellerStore::class, 'show'])->name('store.show');   // lihat toko (public preview)
+    Route::get('/store/edit',  [SellerStore::class, 'edit'])->name('store.edit');   // form edit toko
+    Route::put('/store',       [SellerStore::class, 'update'])->name('store.update'); // simpan perubahan toko
 });
 
 /* ----------------------------------------

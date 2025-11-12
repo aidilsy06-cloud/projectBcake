@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Store;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class StoreController extends Controller
 {
     /**
-     * Ambil / buat Store milik seller saat ini.
+     * Ambil / buat Store milik seller login.
      * Aman walau kolom user_id belum ada di tabel stores.
      */
     protected function myStore(): Store
@@ -21,40 +21,38 @@ class StoreController extends Controller
         $user = auth()->user();
         abort_unless(($user->role ?? null) === 'seller', 403);
 
-        // Cek apakah tabel stores punya kolom user_id
+        // Jika tabel stores punya kolom user_id → jadikan owner
         if (Schema::hasColumn('stores', 'user_id')) {
-            // Cari toko berdasarkan user_id
             return Store::firstOrCreate(
                 ['user_id' => $user->id],
                 [
-                    'name'    => $user->name . ' Store',
-                    'slug'    => Str::slug($user->name) ?: ('store-' . $user->id),
+                    'name'    => $user->name.' Store',
+                    'slug'    => Str::slug($user->name) ?: ('store-'.$user->id),
                     'tagline' => 'Sweet & Elegant',
                 ]
             );
         }
 
-        // fallback kalau belum ada kolom user_id
+        // Fallback tanpa user_id (pakai slug unik)
         return Store::firstOrCreate(
-            ['slug' => Str::slug($user->name) ?: ('store-' . $user->id)],
+            ['slug' => Str::slug($user->name) ?: ('store-'.$user->id)],
             [
-                'name'    => $user->name . ' Store',
+                'name'    => $user->name.' Store',
                 'tagline' => 'Sweet & Elegant',
             ]
         );
     }
 
     /**
-     * Preview toko saya (produk milik saya)
+     * Tampilkan toko + produk milik toko (pakai store_id / seller_id / user_id yang tersedia)
      */
     public function show(Request $request)
     {
         $store = $this->myStore();
-
-        $sort = $request->input('sort', 'latest'); // latest|price_asc|price_desc
-        $query = Product::query();
+        $sort  = $request->input('sort', 'latest'); // latest|price_asc|price_desc
 
         // Tentukan kolom relasi yang ada di tabel products
+        $query = Product::query();
         if (Schema::hasColumn('products', 'store_id')) {
             $query->where('store_id', $store->id);
         } elseif (Schema::hasColumn('products', 'seller_id')) {
@@ -62,7 +60,7 @@ class StoreController extends Controller
         } elseif (Schema::hasColumn('products', 'user_id')) {
             $query->where('user_id', $store->user_id);
         } else {
-            // Kalau gak ada kolom yang cocok, cegah error dan hasilkan kosong
+            // Tidak ada kolom owner yang cocok → kosongkan agar aman
             $query->whereRaw('1=0');
         }
 
@@ -73,7 +71,13 @@ class StoreController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        return view('seller.store.show', compact('store', 'products', 'sort'));
+        // Meta sederhana untuk head
+        $meta = [
+            'title'       => ($store->name ?? 'Toko').' — B’cake',
+            'description' => $store->tagline ?? 'Toko manis & elegan di B’cake.',
+        ];
+
+        return view('seller.store.show', compact('store', 'products', 'meta', 'sort'));
     }
 
     /**
@@ -93,12 +97,12 @@ class StoreController extends Controller
         $store = $this->myStore();
 
         $data = $request->validate([
-            'name'        => ['required', 'string', 'max:100'],
-            'slug'        => ['required', 'alpha_dash', 'max:120', 'unique:stores,slug,' . $store->id],
-            'tagline'     => ['nullable', 'string', 'max:160'],
-            'description' => ['nullable', 'string', 'max:2000'],
-            'logo'        => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            'banner'      => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'name'        => ['required','string','max:100'],
+            'slug'        => ['required','alpha_dash','max:120','unique:stores,slug,'.$store->id],
+            'tagline'     => ['nullable','string','max:160'],
+            'description' => ['nullable','string','max:2000'],
+            'logo'        => ['nullable','image','mimes:jpg,jpeg,png,webp','max:2048'],
+            'banner'      => ['nullable','image','mimes:jpg,jpeg,png,webp','max:4096'],
         ]);
 
         // Normalisasi slug

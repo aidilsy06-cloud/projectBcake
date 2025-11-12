@@ -10,8 +10,8 @@
     x-data="{
       active: 0,
       slides: [
-        { image: '{{ asset('image/cake.jpg') }}', title: 'Delight in every bite!' },
-        { image: '{{ asset('image/lovecake.jpg') }}', title: 'Sweetness with love 💖' },
+        { image: '{{ asset('image/cake.jpg') }}', title: 'B’cake — Sweet. Stunning. So you.' },
+        { image: '{{ asset('image/lovecake.jpg') }}', title: 'Cantik di mata, manis di rasa.' },
       ],
       next(){ this.active = (this.active+1) % this.slides.length },
       prev(){ this.active = (this.active-1+this.slides.length) % this.slides.length },
@@ -93,10 +93,11 @@
       <div class="md:col-span-6">
         <div class="card h-full flex flex-col items-center justify-center text-center p-8">
           <p class="uppercase tracking-widest text-bcake-truffle/60 text-xs">Since 2025</p>
-          <h2 class="font-display text-3xl md:text-4xl mt-2">Why Choose Us?</h2>
+          <h2 class="font-display text-3xl md:text-4xl mt-2">Kenapa Harus B'cake?</h2>
           <p class="mt-3 text-bcake-truffle/80 max-w-xl">
-            Kue kami dibuat dari bahan premium, dengan resep artisan dan cita rasa khas B’cake —
-            lembut, elegan, dan selalu segar setiap hari.
+            B'cake menghadirkan ruang istemewa bagi para pembuat kue untuk menmaplkan kreasi terbaik mereka.
+            Kami menghubungkan para pembuat kue dengan menampilkan kreasi terbaik mereka dan pecinta kue dalam
+            satu tempat yang hangat, dan penuh cita rasa.
           </p>
           <a href="{{ route('products.index') }}" class="btn btn-ghost mt-6">Lihat Menu Kami</a>
         </div>

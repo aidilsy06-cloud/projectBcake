@@ -6,32 +6,35 @@
 
   <title>@yield('title','B’cake — Elegant Bakery')</title>
 
-  {{-- CSRF (dipakai form/AJAX) --}}
+  {{-- CSRF Token --}}
   <meta name="csrf-token" content="{{ csrf_token() }}">
+
+  {{-- ✅ Favicon & Logo (file ada di public/image/logo_bcake.jpg) --}}
+  <link rel="icon" type="image/jpeg" sizes="32x32" href="{{ asset('image/logo_bcake.jpg') }}?v=2">
+  <link rel="icon" type="image/jpeg" sizes="16x16" href="{{ asset('image/logo_bcake.jpg') }}?v=2">
+  <link rel="apple-touch-icon" href="{{ asset('image/logo_bcake.jpg') }}?v=2">
 
   {{-- Vite (Tailwind + JS) --}}
   @vite(['resources/css/app.css','resources/js/app.js'])
 
-  {{-- Google Fonts (opsional) --}}
+  {{-- Google Fonts --}}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    :root{--bcake-wine:#890524;--bcake-deep:#57091d;--bcake-cocoa:#362320}
-    body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    .shadow-soft{box-shadow:0 20px 40px rgba(54,35,32,.10)}
-    .bcake-divider{height:4px;background:linear-gradient(90deg,var(--bcake-cocoa),var(--bcake-deep) 40%,var(--bcake-wine));border-radius:999px}
+    :root{ --bcake-wine:#890524; --bcake-deep:#57091d; --bcake-cocoa:#362320; }
+    body{ font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .shadow-soft{ box-shadow:0 20px 40px rgba(54,35,32,.10); }
 
-    /* Anti-overlay: dekorasi jangan blok klik */
-    .decorative, .grain, .bg-overlay, .mask-overlay, .sprinkles, .berryLayer {
-      pointer-events: none !important; z-index: 0 !important;
+    .decorative,.grain,.bg-overlay,.mask-overlay,.sprinkles,.berryLayer{
+      pointer-events:none!important; z-index:0!important;
     }
-    main, header, nav, aside, section, a, button, .card, .btn { position: relative; z-index: 1; }
+    main,header,nav,aside,section,a,button,.card,.btn{ position:relative; z-index:1; }
 
     /* Drawer mobile */
-    #sidebarMobile{ transition: transform .25s ease; transform: translateX(-100%); }
-    #sidebarMobile[data-open="true"]{ transform: translateX(0); }
+    #sidebarMobile{ transition:transform .25s ease; transform:translateX(-100%); }
+    #sidebarMobile[data-open="true"]{ transform:translateX(0); }
     #backdropMobile{ display:none; }
     #backdropMobile[data-open="true"]{ display:block; }
   </style>
@@ -40,14 +43,14 @@
 </head>
 <body class="bg-rose-50 text-gray-800 antialiased min-h-screen flex flex-col">
 
-  {{-- ====== HEADER ====== --}}
-  <header class="sticky top-0 z-50 w-full" role="banner">
-    <div class="bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-rose-200/50">
+  {{-- ================= HEADER ================= --}}
+  <header class="sticky top-0 z-50 w-full">
+    <div class="bg-white/80 backdrop-blur border-b border-rose-200/50">
       <div class="max-w-7xl mx-auto px-6 lg:px-10">
         <div class="grid items-center py-4 md:grid-cols-[auto_1fr_auto] gap-4">
 
           {{-- BRAND + TOGGLE --}}
-          <div class="min-w-0 flex items-center gap-3">
+          <div class="flex items-center gap-3">
             <button id="btnSidebar"
               class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-rose-200/70 text-rose-800 md:hidden"
               aria-label="Buka menu" aria-expanded="false" aria-controls="sidebarMobile">
@@ -55,83 +58,61 @@
                 <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </button>
+
             <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
-              <img src="{{ asset('image/cake.jpg') }}" alt="B’cake"
-                   class="hidden xl:block h-10 w-10 rounded-lg object-cover ring-1 ring-rose-200/60">
-              <span class="font-serif text-2xl tracking-wide text-rose-800">B'cake</span>
+              {{-- ✅ LOGO NAVBAR --}}
+              <img src="{{ asset('image/logo_bcake.jpg') }}" alt="Logo B’cake"
+                   class="h-10 w-10 rounded-lg object-cover ring-1 ring-rose-200/60">
+              <span class="font-serif text-2xl tracking-wide text-rose-800">B’cake</span>
             </a>
           </div>
 
-          {{-- NAV + SEARCH (desktop) --}}
-          <div class="min-w-0">
-            <div class="hidden md:flex items-center gap-6">
-              <ul class="flex items-center gap-7 flex-none text-rose-800/90">
-                <li>
-                  <a href="{{ route('home') }}"
-                     class="hover:text-rose-900 {{ request()->routeIs('home') ? 'text-rose-900 font-medium' : '' }}">Home</a>
-                </li>
-                <li>
-                  <a href="{{ route('products.index') }}"
-                     class="hover:text-rose-900 {{ request()->routeIs('products.*') ? 'text-rose-900 font-medium' : '' }}">Produk</a>
-                </li>
-                <li>
-                  <a href="{{ route('stores.index') }}"
-                     class="hover:text-rose-900 {{ request()->routeIs('stores.*') ? 'text-rose-900 font-medium' : '' }}">Toko</a>
-                </li>
-                <li>
-                  <a href="{{ route('cart.index') }}"
-                     class="hover:text-rose-900 {{ request()->routeIs('cart.*') ? 'text-rose-900 font-medium' : '' }}">Keranjang</a>
-                </li>
-                <li>
-                  <a href="{{ auth()->check() && Route::has('buyer.help') ? route('buyer.help') : route('help') }}"
-                     class="hover:text-rose-900 {{ request()->routeIs('help') || request()->routeIs('buyer.help') ? 'text-rose-900 font-medium' : '' }}">
-                    Bantuan
-                  </a>
-                </li>
-              </ul>
+          {{-- NAV DESKTOP --}}
+          <div class="hidden md:flex items-center gap-6">
+            <ul class="flex items-center gap-7 text-rose-800/90">
+              <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">Home</a></li>
+              <li><a href="{{ route('products.index') }}" class="{{ request()->routeIs('products.*') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">Produk</a></li>
+              @if (Route::has('stores.index'))
+                <li><a href="{{ route('stores.index') }}" class="{{ request()->routeIs('stores.*') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">Toko</a></li>
+              @endif
+              <li><a href="{{ route('cart.index') }}" class="{{ request()->routeIs('cart.*') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">Keranjang</a></li>
+              <li><a href="{{ Route::has('buyer.help') && auth()->check() ? route('buyer.help') : route('help') }}" class="{{ request()->routeIs('help') || request()->routeIs('buyer.help') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">Bantuan</a></li>
+            </ul>
 
-              <form action="{{ route('products.index') }}" method="get"
-                    class="relative flex-1 min-w-0 max-w-xl" role="search">
-                <input name="q" type="text" placeholder="Search cakes…"
-                       class="w-full rounded-full border border-rose-200/70 bg-white/70 px-4 py-2 text-sm
-                              focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-rose-400"
-                     viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/>
-                </svg>
-              </form>
-            </div>
+            {{-- Pencarian --}}
+            <form action="{{ route('products.index') }}" method="get" class="relative flex-1 min-w-0 max-w-xl" role="search">
+              <input name="q" type="text" placeholder="Cari kue…"
+                class="w-full rounded-full border border-rose-200/70 bg-white/70 px-4 py-2 text-sm
+                       focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-rose-400"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/>
+              </svg>
+            </form>
           </div>
 
           {{-- ACTIONS --}}
-          <div class="flex justify-end items-center gap-3 flex-none">
+          <div class="flex items-center gap-3">
             <a href="{{ route('cart.index') }}"
-               class="relative inline-flex items-center rounded-full border border-rose-200/70 bg-white/70 px-3 py-2 hover:border-rose-300"
+               class="inline-flex items-center rounded-full border border-rose-200/70 bg-white/70 px-3 py-2 hover:border-rose-300"
                aria-label="Keranjang">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-700"
-                   viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M3 3h2l.4 2M7 13h10l3-8H6.4M7 13L5.4 5M7 13l-2 9m12-9l-2 9M9 22a1 1 0 100-2 1 1 0 000 2z"/>
               </svg>
             </a>
 
             @auth
-              <a href="{{ route('dashboard') }}"
-                 class="rounded-full bg-rose-600 text-white px-4 py-2 text-sm hover:bg-rose-700">Dashboard</a>
+              <a href="{{ route('dashboard') }}" class="rounded-full bg-rose-600 text-white px-4 py-2 text-sm hover:bg-rose-700">Dashboard</a>
               <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit"
-                        class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">
-                  Logout
-                </button>
+                <button type="submit" class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">Logout</button>
               </form>
             @else
-              <a href="{{ route('login') }}"
-                 class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">Login</a>
-              <a href="{{ route('register') }}"
-                 class="rounded-full bg-rose-700 text-white px-4 py-2 text-sm hover:bg-rose-800">Register</a>
+              <a href="{{ route('login') }}" class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">Login</a>
+              <a href="{{ route('register') }}" class="rounded-full bg-rose-700 text-white px-4 py-2 text-sm hover:bg-rose-800">Daftar</a>
             @endauth
           </div>
 
@@ -141,32 +122,28 @@
     </div>
   </header>
 
-  {{-- ====== MOBILE DRAWER ====== --}}
-  <div id="backdropMobile" class="fixed inset-0 bg-black/30 z-40" hidden></div>
+  {{-- ================= MOBILE DRAWER ================= --}}
+  <div id="backdropMobile" class="fixed inset-0 bg-black/30 z-40" aria-hidden="true"></div>
   <aside id="sidebarMobile"
          class="fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] bg-white z-50 p-5 border-r border-rose-200/60"
          role="dialog" aria-modal="true" aria-labelledby="mobileNavTitle">
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center gap-3">
-        <img src="{{ asset('image/cake.jpg') }}" class="h-8 w-8 rounded-lg object-cover ring-1 ring-rose-200/60" alt="">
+        <img src="{{ asset('image/logo_bcake.jpg') }}" class="h-8 w-8 rounded-lg object-cover ring-1 ring-rose-200/60" alt="Logo B’cake">
         <h2 id="mobileNavTitle" class="font-semibold">Menu</h2>
       </div>
       <button id="btnSidebarClose" aria-label="Tutup menu"
-              class="w-9 h-9 inline-flex items-center justify-center rounded-full border border-rose-200/70">
-        ✕
-      </button>
+              class="w-9 h-9 inline-flex items-center justify-center rounded-full border border-rose-200/70">✕</button>
     </div>
 
     <nav class="space-y-1 text-rose-800/90">
-      <a href="{{ route('home') }}"
-         class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('home') ? 'bg-rose-50 font-medium' : '' }}">🏠 Home</a>
-      <a href="{{ route('products.index') }}"
-         class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('products.*') ? 'bg-rose-50 font-medium' : '' }}">🧁 Produk</a>
-      <a href="{{ route('stores.index') }}"
-         class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('stores.*') ? 'bg-rose-50 font-medium' : '' }}">🏪 Toko</a>
-      <a href="{{ route('cart.index') }}"
-         class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('cart.*') ? 'bg-rose-50 font-medium' : '' }}">🧺 Keranjang</a>
-      <a href="{{ auth()->check() && Route::has('buyer.help') ? route('buyer.help') : route('help') }}"
+      <a href="{{ route('home') }}" class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('home') ? 'bg-rose-50 font-medium' : '' }}">🏠 Home</a>
+      <a href="{{ route('products.index') }}" class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('products.*') ? 'bg-rose-50 font-medium' : '' }}">🧁 Produk</a>
+      @if (Route::has('stores.index'))
+        <a href="{{ route('stores.index') }}" class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('stores.*') ? 'bg-rose-50 font-medium' : '' }}">🏪 Toko</a>
+      @endif
+      <a href="{{ route('cart.index') }}" class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('cart.*') ? 'bg-rose-50 font-medium' : '' }}">🧺 Keranjang</a>
+      <a href="{{ Route::has('buyer.help') && auth()->check() ? route('buyer.help') : route('help') }}"
          class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('help') || request()->routeIs('buyer.help') ? 'bg-rose-50 font-medium' : '' }}">🆘 Bantuan</a>
     </nav>
 
@@ -179,68 +156,53 @@
       @else
         <div class="grid grid-cols-2 gap-2">
           <a href="{{ route('login') }}" class="px-3 py-2 rounded-lg border border-rose-200/70 text-center">Login</a>
-          <a href="{{ route('register') }}" class="px-3 py-2 rounded-lg bg-rose-700 text-white text-center">Register</a>
+          <a href="{{ route('register') }}" class="px-3 py-2 rounded-lg bg-rose-700 text-white text-center">Daftar</a>
         </div>
       @endauth
     </div>
   </aside>
 
-  {{-- ====== MAIN (Sidebar + Content) ====== --}}
+  {{-- ================= MAIN ================= --}}
   <main class="flex-1 w-full">
     <div class="max-w-7xl mx-auto px-6 lg:px-10 py-8">
-      @hasSection('sidebar')
-        <div class="grid md:grid-cols-[260px_1fr] gap-6">
-          <aside id="appSidebar"
-                 class="bg-white/80 backdrop-blur rounded-2xl border border-rose-200/60 shadow-soft p-4 h-max hidden md:block">
-            @yield('sidebar')
-          </aside>
-
-          <section>
-            @yield('content')
-          </section>
-        </div>
-      @else
-        <section>
-          @yield('content')
-        </section>
-      @endif
+      @yield('content')
     </div>
   </main>
 
-  {{-- ====== FOOTER SLOT ====== --}}
-  @hasSection('footer')
-    @yield('footer')
-  @else
-    @includeIf('partials.footer')
-  @endif
+  {{-- ================= FOOTER ================= --}}
+  <footer class="border-t border-rose-200/50 bg-white mt-auto">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 py-6 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500 gap-2">
+      <p>© {{ date('Y') }} <b>B’cake</b>. Semua hak cipta dilindungi.</p>
+      <p class="text-gray-400">Crafted with <span class="text-rose-500">♥</span> & cocoa.</p>
+    </div>
+  </footer>
 
-  @push('scripts')
+  {{-- ================= SCRIPT SIDEBAR ================= --}}
   <script>
-    (function(){
+    document.addEventListener('DOMContentLoaded', () => {
       const btnOpen  = document.getElementById('btnSidebar');
-      const btnClose = document.getElementById('btnSidebarClose');
       const drawer   = document.getElementById('sidebarMobile');
+      const btnClose = document.getElementById('btnSidebarClose');
       const backdrop = document.getElementById('backdropMobile');
 
-      function open() {
+      function openSidebar(){
         drawer?.setAttribute('data-open','true');
         backdrop?.setAttribute('data-open','true');
         btnOpen?.setAttribute('aria-expanded','true');
       }
-      function close() {
+      function closeSidebar(){
         drawer?.removeAttribute('data-open');
         backdrop?.removeAttribute('data-open');
         btnOpen?.setAttribute('aria-expanded','false');
       }
-      btnOpen?.addEventListener('click', open);
-      btnClose?.addEventListener('click', close);
-      backdrop?.addEventListener('click', close);
-      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
-    })();
-  </script>
-  @endpush
 
-  {{-- render stack scripts --}}
+      btnOpen?.addEventListener('click', openSidebar);
+      btnClose?.addEventListener('click', closeSidebar);
+      backdrop?.addEventListener('click', closeSidebar);
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+    });
+  </script>
+
   @stack('scripts')
 </body>
 </html>

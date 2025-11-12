@@ -6,18 +6,34 @@
 
   <title>@yield('title','B’cake — Elegant Bakery')</title>
 
-  {{-- CSRF Token --}}
+  {{-- CSRF --}}
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  {{-- ✅ Favicon & Logo (file ada di public/image/logo_bcake.jpg) --}}
+  {{-- SEO / OG --}}
+  <link rel="canonical" href="{{ url()->current() }}">
+  <meta name="description" content="@yield('meta_description','Marketplace kue elegan — jual & beli cake favorit di B’cake.')">
+  <meta name="theme-color" content="#890524">
+  <meta name="color-scheme" content="light">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="@yield('og_title', trim($__env->yieldContent('title','B’cake — Elegant Bakery')))">
+  <meta property="og:description" content="@yield('og_description','Tempat istimewa untuk menampilkan & menemukan kue terbaik.')">
+  <meta property="og:url" content="{{ url()->current() }}">
+  <meta property="og:image" content="{{ asset('image/logo_bcake.jpg') }}">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="@yield('tw_title', trim($__env->yieldContent('title','B’cake — Elegant Bakery')))">
+  <meta name="twitter:description" content="@yield('tw_description','Tempat istimewa untuk menampilkan & menemukan kue terbaik.')">
+  <meta name="twitter:image" content="{{ asset('image/logo_bcake.jpg') }}">
+
+  {{-- Favicon --}}
   <link rel="icon" type="image/jpeg" sizes="32x32" href="{{ asset('image/logo_bcake.jpg') }}?v=2">
   <link rel="icon" type="image/jpeg" sizes="16x16" href="{{ asset('image/logo_bcake.jpg') }}?v=2">
   <link rel="apple-touch-icon" href="{{ asset('image/logo_bcake.jpg') }}?v=2">
 
-  {{-- Vite (Tailwind + JS) --}}
+  {{-- Vite --}}
   @vite(['resources/css/app.css','resources/js/app.js'])
 
-  {{-- Google Fonts --}}
+  {{-- Fonts --}}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
@@ -25,14 +41,10 @@
   <style>
     :root{ --bcake-wine:#890524; --bcake-deep:#57091d; --bcake-cocoa:#362320; }
     body{ font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    .font-display{font-family:'Playfair Display',serif}
     .shadow-soft{ box-shadow:0 20px 40px rgba(54,35,32,.10); }
-
-    .decorative,.grain,.bg-overlay,.mask-overlay,.sprinkles,.berryLayer{
-      pointer-events:none!important; z-index:0!important;
-    }
+    .decorative,.grain,.bg-overlay,.mask-overlay,.sprinkles,.berryLayer{ pointer-events:none!important; z-index:0!important; }
     main,header,nav,aside,section,a,button,.card,.btn{ position:relative; z-index:1; }
-
-    /* Drawer mobile */
     #sidebarMobile{ transition:transform .25s ease; transform:translateX(-100%); }
     #sidebarMobile[data-open="true"]{ transform:translateX(0); }
     #backdropMobile{ display:none; }
@@ -43,13 +55,12 @@
 </head>
 <body class="bg-rose-50 text-gray-800 antialiased min-h-screen flex flex-col">
 
-  {{-- ================= HEADER ================= --}}
+  {{-- HEADER --}}
   <header class="sticky top-0 z-50 w-full">
     <div class="bg-white/80 backdrop-blur border-b border-rose-200/50">
       <div class="max-w-7xl mx-auto px-6 lg:px-10">
         <div class="grid items-center py-4 md:grid-cols-[auto_1fr_auto] gap-4">
-
-          {{-- BRAND + TOGGLE --}}
+          {{-- brand + toggle --}}
           <div class="flex items-center gap-3">
             <button id="btnSidebar"
               class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-rose-200/70 text-rose-800 md:hidden"
@@ -60,14 +71,13 @@
             </button>
 
             <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
-              {{-- ✅ LOGO NAVBAR --}}
               <img src="{{ asset('image/logo_bcake.jpg') }}" alt="Logo B’cake"
                    class="h-10 w-10 rounded-lg object-cover ring-1 ring-rose-200/60">
-              <span class="font-serif text-2xl tracking-wide text-rose-800">B’cake</span>
+              <span class="font-display text-2xl tracking-wide text-rose-800">B’cake</span>
             </a>
           </div>
 
-          {{-- NAV DESKTOP --}}
+          {{-- nav desktop --}}
           <div class="hidden md:flex items-center gap-6">
             <ul class="flex items-center gap-7 text-rose-800/90">
               <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">Home</a></li>
@@ -76,10 +86,13 @@
                 <li><a href="{{ route('stores.index') }}" class="{{ request()->routeIs('stores.*') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">Toko</a></li>
               @endif
               <li><a href="{{ route('cart.index') }}" class="{{ request()->routeIs('cart.*') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">Keranjang</a></li>
-              <li><a href="{{ Route::has('buyer.help') && auth()->check() ? route('buyer.help') : route('help') }}" class="{{ request()->routeIs('help') || request()->routeIs('buyer.help') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">Bantuan</a></li>
+              <li>
+                <a href="{{ Route::has('buyer.help') && auth()->check() ? route('buyer.help') : route('help') }}"
+                   class="{{ request()->routeIs('help') || request()->routeIs('buyer.help') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">Bantuan</a>
+              </li>
             </ul>
 
-            {{-- Pencarian --}}
+            {{-- search --}}
             <form action="{{ route('products.index') }}" method="get" class="relative flex-1 min-w-0 max-w-xl" role="search">
               <input name="q" type="text" placeholder="Cari kue…"
                 class="w-full rounded-full border border-rose-200/70 bg-white/70 px-4 py-2 text-sm
@@ -93,7 +106,7 @@
             </form>
           </div>
 
-          {{-- ACTIONS --}}
+          {{-- actions --}}
           <div class="flex items-center gap-3">
             <a href="{{ route('cart.index') }}"
                class="inline-flex items-center rounded-full border border-rose-200/70 bg-white/70 px-3 py-2 hover:border-rose-300"
@@ -106,7 +119,7 @@
 
             @auth
               <a href="{{ route('dashboard') }}" class="rounded-full bg-rose-600 text-white px-4 py-2 text-sm hover:bg-rose-700">Dashboard</a>
-              <form method="POST" action="{{ route('logout') }}">
+              <form method="POST" action="{{ route('logout') }}"><!-- logout -->
                 @csrf
                 <button type="submit" class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">Logout</button>
               </form>
@@ -122,7 +135,7 @@
     </div>
   </header>
 
-  {{-- ================= MOBILE DRAWER ================= --}}
+  {{-- MOBILE DRAWER --}}
   <div id="backdropMobile" class="fixed inset-0 bg-black/30 z-40" aria-hidden="true"></div>
   <aside id="sidebarMobile"
          class="fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] bg-white z-50 p-5 border-r border-rose-200/60"
@@ -162,14 +175,30 @@
     </div>
   </aside>
 
-  {{-- ================= MAIN ================= --}}
+  {{-- MAIN --}}
   <main class="flex-1 w-full">
     <div class="max-w-7xl mx-auto px-6 lg:px-10 py-8">
+      {{-- flash --}}
+      @if(session('success') || session('error') || session('status'))
+        <div id="flashWrap" class="mb-6">
+          @if(session('success') || session('status'))
+            <div class="mb-3 rounded-xl border border-emerald-200/70 bg-emerald-50 text-emerald-900 px-4 py-3">
+              {{ session('success') ?? session('status') }}
+            </div>
+          @endif
+          @if(session('error'))
+            <div class="mb-3 rounded-xl border border-rose-200/70 bg-rose-50 text-rose-900 px-4 py-3">
+              {{ session('error') }}
+            </div>
+          @endif
+        </div>
+      @endif
+
       @yield('content')
     </div>
   </main>
 
-  {{-- ================= FOOTER ================= --}}
+  {{-- FOOTER --}}
   <footer class="border-t border-rose-200/50 bg-white mt-auto">
     <div class="max-w-7xl mx-auto px-6 lg:px-10 py-6 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500 gap-2">
       <p>© {{ date('Y') }} <b>B’cake</b>. Semua hak cipta dilindungi.</p>
@@ -177,7 +206,7 @@
     </div>
   </footer>
 
-  {{-- ================= SCRIPT SIDEBAR ================= --}}
+  {{-- SCRIPTS --}}
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const btnOpen  = document.getElementById('btnSidebar');
@@ -200,6 +229,10 @@
       btnClose?.addEventListener('click', closeSidebar);
       backdrop?.addEventListener('click', closeSidebar);
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+
+      // auto dismiss flash
+      const fw = document.getElementById('flashWrap');
+      if (fw) setTimeout(() => fw.remove(), 3500);
     });
   </script>
 

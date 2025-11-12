@@ -127,15 +127,14 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 });
 
 /* ----------------------------------------
-| SELLER
+| SELLER (DIPERBARUI)
 |---------------------------------------- */
+// ================= SELLER AREA =================
 Route::prefix('seller')->name('seller.')->middleware('auth')->group(function () {
     Route::get('/', [SellerDashboard::class, 'index'])->name('dashboard');
-
-    // Toko penjual (private)
     Route::get('/store', [SellerStore::class, 'show'])->name('store.show');
     Route::get('/store/edit', [SellerStore::class, 'edit'])->name('store.edit');
-    Route::put('/store', [SellerStore::class, 'update'])->name('store.update');
+    Route::post('/store/update', [SellerStore::class, 'update'])->name('store.update');
 });
 
 /* ----------------------------------------

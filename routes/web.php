@@ -127,17 +127,26 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 });
 
 /* ----------------------------------------
-| SELLER (FINAL — SEMPURNA)
+| SELLER (FINAL)
 |---------------------------------------- */
-Route::prefix('seller')->name('seller.')->middleware('auth')->group(function () {
-    // dashboard utama seller
-    Route::get('/', [SellerDashboard::class, 'index'])->name('dashboard');
+Route::middleware(['auth','verified'])
+    ->prefix('seller')
+    ->as('seller.')
+    ->group(function () {
+        // Dashboard utama
+        Route::get('/', [SellerDashboard::class, 'index'])->name('dashboard');
 
-    // toko saya
-    Route::get('/store',       [SellerStore::class, 'show'])->name('store.show');   // lihat toko (public preview)
-    Route::get('/store/edit',  [SellerStore::class, 'edit'])->name('store.edit');   // form edit toko
-    Route::put('/store',       [SellerStore::class, 'update'])->name('store.update'); // simpan perubahan toko
-});
+        // Kelola toko
+        Route::get('/store', [SellerStore::class, 'show'])->name('store.show');
+        Route::get('/store/edit', [SellerStore::class, 'edit'])->name('store.edit');
+        Route::put('/store', [SellerStore::class, 'update'])->name('store.update');
+
+        // Placeholder halaman tambahan (biar nggak 404)
+        Route::get('/products', fn() => view('seller.placeholders.products'))->name('products.index');
+        Route::get('/orders', fn() => view('seller.placeholders.orders'))->name('orders.index');
+        Route::get('/promos', fn() => view('seller.placeholders.promos'))->name('promos.index');
+        Route::get('/settings', fn() => view('seller.placeholders.settings'))->name('settings');
+    });
 
 /* ----------------------------------------
 | BUYER

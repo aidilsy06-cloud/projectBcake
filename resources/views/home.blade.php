@@ -5,19 +5,19 @@
 @section('content')
 
 {{-- ================= HERO / SLIDER (book-notch pakai SVG mask) ================= --}}
-<section class="bg-rose-50 pt-0 pb-10 -mt-[1px]"> {{-- was: py-10 --}}
+<section class="bg-rose-50 pt-0 pb-10 -mt-[1px]">
   <div
     x-data="{
       active: 0,
       slides: [
-        { image: '{{ asset('image/cake.jpg') }}', title: 'B’cake — Sweet. Stunning. So you.' },
-        { image: '{{ asset('image/lovecake.jpg') }}', title: 'Cantik di mata, manis di rasa.' },
+        { image: '{{ asset('image/slicecake.jpg') }}', title: 'Sweet. Stunning. So You.' },
+        { image: '{{ asset('image/longcake.jpg') }}', title: 'Cantik di mata, manis di rasa.' },
       ],
       next(){ this.active = (this.active+1) % this.slides.length },
       prev(){ this.active = (this.active-1+this.slides.length) % this.slides.length },
     }"
     x-init="setInterval(()=>next(), 5000)"
-    class="relative max-w-6xl mx-auto -mt-4 md:-mt-6 lg:-mt-8" {{-- naikin aman --}}
+    class="relative max-w-6xl mx-auto -mt-4 md:-mt-6 lg:-mt-8"
   >
     <div class="relative rounded-[28px] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.08)]">
       <template x-for="(s, i) in slides" :key="i">
@@ -28,12 +28,11 @@
           x-transition:enter-end="opacity-100 scale-100"
           class="relative"
         >
-          <!-- ✅ POTONG GAMBAR DENGAN BOOK-NOTCH -->
+          {{-- POTONG GAMBAR DENGAN BOOK-NOTCH --}}
           <svg viewBox="0 0 1920 680" class="w-full h-[460px] md:h-[560px] lg:h-[680px] block">
             <defs>
               <mask :id="`bookNotch-${i}`">
                 <rect width="1920" height="680" fill="#fff"/>
-                <!-- Hitam = DIPOTONG (bentuk V) -->
                 <path fill="#000"
                       d="M720 0
                          C 880 0, 940 60, 960 130
@@ -45,32 +44,57 @@
               :href="s.image"
               width="1920" height="680"
               preserveAspectRatio="xMidYMid slice"
+              class="scale-125 origin-center"
               :mask="`url(#bookNotch-${i})`" />
           </svg>
 
-          <!-- Overlay teks -->
-          <div class="absolute inset-0 flex flex-col items-center justify-center text-white text-center">
-            <h2 class="font-display text-4xl md:text-5xl drop-shadow-lg" x-text="s.title"></h2>
-            <a href="{{ route('products.index') }}" class="mt-6 px-7 py-3 rounded-full bg-bcake-cherry hover:bg-bcake-wine">
+          {{-- =============== OVERLAY TEKS + LOGO =============== --}}
+          <div class="absolute inset-0 flex flex-col items-center justify-center text-center z-20 px-4">
+
+            {{-- LOGO hanya untuk slide pertama --}}
+            <template x-if="i === 0">
+              <div class="mb-4 flex flex-col items-center">
+                <div class="rounded-3xl bg-white/12 border border-white/30 p-3 md:p-4 shadow-[0_18px_40px_rgba(0,0,0,0.45)] backdrop-blur-md">
+                  <img 
+                    src="{{ asset('image/logo_bcake.jpg') }}"
+                    class="w-16 md:w-20 rounded-2xl object-contain"
+                    alt="Bcake Logo">
+                </div>
+              </div>
+            </template>
+
+            {{-- TEKS UTAMA --}}
+            <h2
+              class="font-display text-3xl md:text-5xl leading-tight
+                     bg-gradient-to-r from-[#e78b2d] to-[#c74e51]
+                     bg-clip-text text-transparent
+                     drop-shadow-[0_4px_14px_rgba(0,0,0,0.45)]"
+              x-text="s.title">
+            </h2>
+
+            {{-- BUTTON --}}
+            <a href="{{ route('products.index') }}" 
+               class="mt-6 px-7 py-3 rounded-full bg-bcake-cherry hover:bg-bcake-wine text-white font-medium shadow-soft">
               Order Now
             </a>
           </div>
         </div>
       </template>
 
-      <!-- Panah -->
+      {{-- Panah --}}
       <button @click="prev()"
               class="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white/80 hover:bg-white shadow grid place-items-center">‹</button>
       <button @click="next()"
               class="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white/80 hover:bg-white shadow grid place-items-center">›</button>
-
-      <!-- Dots -->
+  
+      {{-- Dots --}}
       <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
         <template x-for="(s, i) in slides" :key="i">
           <button @click="active=i"
-                  :class="active===i?'bg-bcake-wine':'bg-white/80'"
+                  :class="active===i ? 'bg-bcake-wine' : 'bg-white/80'"
                   class="h-2.5 w-2.5 rounded-full shadow"></button>
         </template>
+
       </div>
     </div>
   </div>
@@ -80,16 +104,24 @@
 <section class="py-10 md:py-14">
   <div class="max-w-[90rem] mx-auto px-4">
 
-    {{-- ROW 1: image – text – image --}}
+    {{-- ROW 1 --}}
     <div class="grid md:grid-cols-12 gap-6 items-stretch">
-      {{-- Left image --}}
+
+      {{-- Left category --}}
       <div class="md:col-span-3">
-        <div class="card h-full">
-          <img src="{{ asset('image/cake.jpg') }}" alt="Cake" class="w-full aspect-[4/3] object-cover">
+        <div class="rounded-3xl shadow-sm overflow-hidden" style="background-color:#6a4e4a4d;">
+          <img src="{{ asset('image/cakemodern.jpg') }}"
+               alt="Artisan Breads"
+               class="w-full aspect-[4/3] object-cover">
+          <div class="py-4 text-center">
+            <h3 class="text-sm font-medium tracking-wide text-[#362320]">
+              Artisan Breads
+            </h3>
+          </div>
         </div>
       </div>
 
-      {{-- Center text card --}}
+      {{-- Center content --}}
       <div class="md:col-span-6">
         <div class="card h-full flex flex-col items-center justify-center text-center p-8">
           <p class="uppercase tracking-widest text-bcake-truffle/60 text-xs">Since 2025</p>
@@ -103,47 +135,68 @@
         </div>
       </div>
 
-      {{-- Right image --}}
+      {{-- Right category --}}
       <div class="md:col-span-3">
-        <div class="card h-full">
-          <img src="{{ asset('image/cake.jpg') }}" alt="Cake" class="w-full aspect-[4/3] object-cover">
+        <div class="rounded-3xl shadow-sm overflow-hidden" style="background-color:#6a4e4a4d;">
+          <img src="{{ asset('image/cakemodern.jpg') }}"
+               alt="Custom Cakes"
+               class="w-full aspect-[4/3] object-cover">
+          <div class="py-4 text-center">
+            <h3 class="text-sm font-medium tracking-wide text-[#362320]">
+              Custom Cakes
+            </h3>
+          </div>
         </div>
       </div>
+
     </div>
 
-    {{-- ROW 2: 3 product tiles + right promo --}}
+    {{-- ROW 2 --}}
     <div class="grid md:grid-cols-12 gap-6 mt-6">
+
       {{-- Product 1 --}}
       <div class="md:col-span-3">
-        <div class="card group">
-          <img src="{{ asset('image/cake.jpg') }}" alt="Cake" class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
-          <div class="p-4">
-            <h3 class="text-sm tracking-wide text-bcake-truffle/70">Artisan Breads</h3>
+        <div class="rounded-3xl shadow-sm overflow-hidden group" style="background-color:#6a4e4a4d;">
+          <img src="{{ asset('image/cakemodern.jpg') }}"
+               alt="Artisan Breads"
+               class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
+          <div class="py-4 text-center">
+            <h3 class="text-sm font-medium tracking-wide text-[#362320]">
+              Artisan Breads
+            </h3>
           </div>
         </div>
       </div>
 
       {{-- Product 2 --}}
       <div class="md:col-span-3">
-        <div class="card group">
-          <img src="{{ asset('image/cake.jpg') }}" alt="Cake" class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
-          <div class="p-4">
-            <h3 class="text-sm tracking-wide text-bcake-truffle/70">Sweet Pastries</h3>
+        <div class="rounded-3xl shadow-sm overflow-hidden group" style="background-color:#6a4e4a4d;">
+          <img src="{{ asset('image/cakemodern.jpg') }}"
+               alt="Sweet Pastries"
+               class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
+          <div class="py-4 text-center">
+            <h3 class="text-sm font-medium tracking-wide text-[#362320]">
+              Sweet Pastries
+            </h3>
           </div>
         </div>
       </div>
 
       {{-- Product 3 --}}
       <div class="md:col-span-3">
-        <div class="card group">
-          <img src="{{ asset('image/cake.jpg') }}" alt="Cake" class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
-          <div class="p-4">
-            <h3 class="text-sm tracking-wide text-bcake-truffle/70">Custom Cakes</h3>
+        <div class="rounded-3xl shadow-sm overflow-hidden group" style="background-color:#6a4e4a4d;">
+          <img src="{{ asset('image/cakemodern.jpg') }}"
+               alt="Custom Cakes"
+               class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
+          <div class="py-4 text-center">
+            <h3 class="text-sm font-medium tracking-wide text-[#362320]">
+              Custom Cakes
+            </h3>
           </div>
         </div>
       </div>
 
-      {{-- Right promo text block --}}
+      {{-- Right promo (biarkan seperti sebelumnya) --}}
       <div class="md:col-span-3">
         <div class="card h-full p-6 flex flex-col justify-between">
           <div>
@@ -159,10 +212,12 @@
           </a>
         </div>
       </div>
+
     </div>
 
   </div>
 </section>
+
 
 {{-- ============ SIGNATURE ============ --}}
 <section id="signature" class="max-w-7xl mx-auto px-6 py-14">

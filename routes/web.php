@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 
 // Buyer / publik
 use App\Http\Controllers\Buyer\StoreController;
+use App\Http\Controllers\Buyer\HomeController;
 
 // Seller
 use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
@@ -50,18 +52,7 @@ if (! function_exists('pickDashboardView')) {
 /* ----------------------------------------
 | PUBLIC PAGES
 |---------------------------------------- */
-Route::get('/', function () {
-    $products = collect();
-
-    try {
-        if (class_exists(Product::class)) {
-            $products = Product::query()->take(3)->get();
-        }
-    } catch (\Throwable $e) {}
-
-    return view('home', ['products' => $products]);
-})->name('home');
-
+Route::get('/', [HomeController::class, 'index'])->name('home');
 // Produk publik
 Route::controller(ProductController::class)->group(function () {
     Route::get('/products', 'index')->name('products.index');

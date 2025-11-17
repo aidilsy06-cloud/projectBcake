@@ -111,11 +111,11 @@
       <div class="md:col-span-3">
         <div class="rounded-3xl shadow-sm overflow-hidden" style="background-color:#6a4e4a4d;">
           <img src="{{ asset('image/cakemodern.jpg') }}"
-               alt="Artisan Breads"
+               alt="Modern & Custom Cake"
                class="w-full aspect-[4/3] object-cover">
           <div class="py-4 text-center">
             <h3 class="text-sm font-medium tracking-wide text-[#362320]">
-              Artisan Breads
+              Custom Cake & Modern Cake
             </h3>
           </div>
         </div>
@@ -127,7 +127,7 @@
           <p class="uppercase tracking-widest text-bcake-truffle/60 text-xs">Since 2025</p>
           <h2 class="font-display text-3xl md:text-4xl mt-2">Kenapa Harus B'cake?</h2>
           <p class="mt-3 text-bcake-truffle/80 max-w-xl">
-            B'cake menghadirkan ruang istemewa bagi para pembuat kue untuk menmaplkan kreasi terbaik mereka.
+            B'cake menghadirkan ruang istemewa bagi para pembuat kue untuk menampilkan kreasi terbaik mereka.
             Kami menghubungkan para pembuat kue dengan menampilkan kreasi terbaik mereka dan pecinta kue dalam
             satu tempat yang hangat, dan penuh cita rasa.
           </p>
@@ -138,12 +138,12 @@
       {{-- Right category --}}
       <div class="md:col-span-3">
         <div class="rounded-3xl shadow-sm overflow-hidden" style="background-color:#6a4e4a4d;">
-          <img src="{{ asset('image/cakemodern.jpg') }}"
-               alt="Custom Cakes"
+          <img src="{{ asset('image/cupcake.jpg') }}"
+               alt="Cupcake & Brownies"
                class="w-full aspect-[4/3] object-cover">
           <div class="py-4 text-center">
             <h3 class="text-sm font-medium tracking-wide text-[#362320]">
-              Custom Cakes
+              Cupcake & Brownies
             </h3>
           </div>
         </div>
@@ -157,12 +157,12 @@
       {{-- Product 1 --}}
       <div class="md:col-span-3">
         <div class="rounded-3xl shadow-sm overflow-hidden group" style="background-color:#6a4e4a4d;">
-          <img src="{{ asset('image/cakemodern.jpg') }}"
-               alt="Artisan Breads"
+          <img src="{{ asset('image/Pastry.jpg') }}"
+               alt="Pastry & Roti"
                class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
           <div class="py-4 text-center">
             <h3 class="text-sm font-medium tracking-wide text-[#362320]">
-              Artisan Breads
+              Pastry & Roti
             </h3>
           </div>
         </div>
@@ -171,12 +171,12 @@
       {{-- Product 2 --}}
       <div class="md:col-span-3">
         <div class="rounded-3xl shadow-sm overflow-hidden group" style="background-color:#6a4e4a4d;">
-          <img src="{{ asset('image/cakemodern.jpg') }}"
-               alt="Sweet Pastries"
+          <img src="{{ asset('image/dessertbox.jpg') }}"
+               alt="Dessertbox"
                class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
           <div class="py-4 text-center">
             <h3 class="text-sm font-medium tracking-wide text-[#362320]">
-              Sweet Pastries
+              Dessert Box
             </h3>
           </div>
         </div>
@@ -185,12 +185,12 @@
       {{-- Product 3 --}}
       <div class="md:col-span-3">
         <div class="rounded-3xl shadow-sm overflow-hidden group" style="background-color:#6a4e4a4d;">
-          <img src="{{ asset('image/cakemodern.jpg') }}"
-               alt="Custom Cakes"
+          <img src="{{ asset('image/snack.jpg') }}"
+               alt="Snack"
                class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
           <div class="py-4 text-center">
             <h3 class="text-sm font-medium tracking-wide text-[#362320]">
-              Custom Cakes
+              Snack
             </h3>
           </div>
         </div>
@@ -201,10 +201,10 @@
         <div class="card h-full p-6 flex flex-col justify-between">
           <div>
             <p class="uppercase tracking-widest text-bcake-truffle/60 text-xs">Daily Fresh</p>
-            <h3 class="font-display text-2xl mt-1 leading-tight">Sweety, Sweet Bakes…</h3>
+            <h3 class="font-display text-2xl mt-1 leading-tight">Explore. Taste. Celebrate.</h3>
             <p class="mt-3 text-bcake-truffle/80">
-              Koleksi musiman dengan bahan pilihan, buah segar, dan krim premium khas B’cake.
-              Siap membuat harimu manis!
+              Temukan, pilih, dan pesan kue hingga nikmatin manisnya.
+              Semudah itu di B'cake 💗
             </p>
           </div>
           <a href="{{ route('products.index') }}" class="btn btn-primary mt-6 self-start">
@@ -217,29 +217,60 @@
 
   </div>
 </section>
-
-
-{{-- ============ SIGNATURE ============ --}}
-<section id="signature" class="max-w-7xl mx-auto px-6 py-14">
-  <h2 class="font-display text-3xl text-center">Signature</h2>
-  <p class="text-center text-gray-600 mt-2">Favorit pelanggan kami — manis, elegan, dan berkesan.</p>
+{{-- ============ REKOMENDASI SPESIAL ============ --}}
+<section id="rekomendasi" class="max-w-7xl mx-auto px-6 py-14">
+  <h2 class="font-display text-3xl text-center">Rekomendasi Spesial</h2>
+  <p class="text-center text-gray-600 mt-2">
+    Deretan pilihan kue terbaik yang direkomendasikan untuk kamu.
+  </p>
 
   <div class="relative mt-8">
-    <button class="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 h-9 w-9 items-center justify-center rounded-full ring-1 ring-rose-200 bg-white shadow hover:bg-rose-50">‹</button>
+    <!-- Tombol kiri -->
+    <button class="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 h-9 w-9
+                    items-center justify-center rounded-full ring-1 ring-rose-200
+                    bg-white shadow hover:bg-rose-50">
+      ‹
+    </button>
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      @foreach ([['Custom Cakes'],['Macarons'],['Cupcake Collections']] as $card)
-        <a href="{{ route('products.index') }}" class="group rounded-3xl bg-white border border-rose-200 shadow-soft overflow-hidden">
-          <img src="{{ asset('image/cake.jpg') }}" alt="{{ $card[0] }}" class="h-56 w-full object-cover group-hover:scale-[1.02] transition">
-          <div class="p-5">
-            <div class="font-display text-xl">{{ $card[0] }}</div>
-            <p class="text-sm text-gray-600 mt-1">Lezat & elegan untuk momen spesial.</p>
+      @forelse ($bestSellers as $product)
+        <div class="rounded-lg shadow bg-white overflow-hidden">
+          <img
+            src="{{ asset('image/dessertbox.jpg') }}"
+            class="w-full h-56 object-cover"
+          >
+
+          <div class="p-4">
+            <h3 class="font-semibold text-lg text-bcake-cocoa">
+              {{ $product->name }}
+            </h3>
+            <p class="text-sm text-gray-500 mt-1">
+              Rekomendasi pilihan B’cake
+            </p>
           </div>
-        </a>
-      @endforeach
+        </div>
+      @empty
+        <p class="col-span-3 text-center text-gray-400 py-6">
+          Belum ada produk yang bisa ditampilkan saat ini.
+        </p>
+      @endforelse
     </div>
 
-    <button class="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 h-9 w-9 items-center justify-center rounded-full ring-1 ring-rose-200 bg-white shadow hover:bg-rose-50">›</button>
+    <!-- Tombol kanan -->
+    <button class="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 h-9 w-9
+                    items-center justify-center rounded-full ring-1 ring-rose-200
+                    bg-white shadow hover:bg-rose-50">
+      ›
+    </button>
+  </div>
+</section>
+
+    <!-- Tombol kanan -->
+    <button class="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 h-9 w-9 
+                    items-center justify-center rounded-full ring-1 ring-rose-200 
+                    bg-white shadow hover:bg-rose-50">
+      ›
+    </button>
   </div>
 </section>
 

@@ -30,21 +30,29 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            // role dikirim dari form (radio): buyer atau seller
+            'role'     => ['required', 'in:buyer,seller'],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
+            'role'     => $request->role, // ⬅️ simpan enum role
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Redirect sesuai role
+        return match ($user->role) {
+            'seller' => redirect()->route('seller.dashboard'),
+            'admin'  => redirect()->route('admin.dashboard'),
+            default  => redirect()->route('buyer.dashboard'),
+        };
     }
 }

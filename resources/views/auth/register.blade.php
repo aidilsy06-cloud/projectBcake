@@ -86,7 +86,8 @@
         $dur   = rand(4000,9000)/1000;
         $rot   = rand(-40,40);
       @endphp
-      <span class="sprinkle" style="left:{{ $left }}%; animation-duration:{{ $dur }}s; animation-delay:{{ $delay }}s; --rot:{{ $rot }}deg;"></span>
+      <span class="sprinkle"
+            style="left:{{ $left }}%; animation-duration:{{ $dur }}s; animation-delay:{{ $delay }}s; --rot:{{ $rot }}deg;"></span>
     @endfor
   </div>
 
@@ -94,23 +95,44 @@
   <svg width="0" height="0" style="position:absolute">
     <defs>
       <linearGradient id="berryFill" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#ff6a8a"/><stop offset="50%" stop-color="#ff4d6d"/><stop offset="100%" stop-color="#b1123a"/>
+        <stop offset="0%" stop-color="#ff6a8a"/>
+        <stop offset="50%" stop-color="#ff4d6d"/>
+        <stop offset="100%" stop-color="#b1123a"/>
       </linearGradient>
-      <linearGradient id="leafFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8dd417"/><stop offset="100%" stop-color="#2b9c00"/></linearGradient>
-      <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="rgba(255,255,255,.98)"/><stop offset="35%" stop-color="rgba(255,255,255,.45)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></linearGradient>
-      <radialGradient id="rim" cx="80%" cy="10%" r="60%"><stop offset="0%" stop-color="rgba(255,255,255,.6)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient>
+      <linearGradient id="leafFill" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#8dd417"/>
+        <stop offset="100%" stop-color="#2b9c00"/>
+      </linearGradient>
+      <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,.98)"/>
+        <stop offset="35%" stop-color="rgba(255,255,255,.45)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </linearGradient>
+      <radialGradient id="rim" cx="80%" cy="10%" r="60%">
+        <stop offset="0%" stop-color="rgba(255,255,255,.6)"/>
+        <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+      </radialGradient>
+
       <symbol id="strawberryHD" viewBox="0 0 128 128" shape-rendering="geometricPrecision">
-        <path d="M64 118c-26 0-50-35-44-60 7-30 40-28 44-8 4-20 37-22 44 8 6 25-18 60-44 60z" fill="url(#berryFill)"/>
+        <path d="M64 118c-26 0-50-35-44-60 7-30 40-28 44-8 4-20 37-22 44 8 6 25-18 60-44 60z"
+              fill="url(#berryFill)"/>
         <ellipse cx="88" cy="24" rx="30" ry="18" fill="url(#rim)"/>
-        <path d="M45 26c8 5 19 7 31 0 0 0-9 14-15 14S45 26 45 26z" fill="url(#leafFill)"/>
-        <path d="M52 25c6 3 12 4 21 0 -4 6-8 9-11 9s-10-6-10-9z" fill="#2a8f00" opacity=".22"/>
+        <path d="M45 26c8 5 19 7 31 0 0 0-9 14-15 14S45 26 45 26z"
+              fill="url(#leafFill)"/>
+        <path d="M52 25c6 3 12 4 21 0 -4 6-8 9-11 9s-10-6-10-9z"
+              fill="#2a8f00" opacity=".22"/>
         <g fill="#ffd3db" opacity=".95">
-          <circle cx="48" cy="66" r="2.6"/><circle cx="66" cy="76" r="2.6"/>
-          <circle cx="82" cy="60" r="2.6"/><circle cx="54" cy="88" r="2.6"/>
-          <circle cx="74" cy="94" r="2.3"/><circle cx="90" cy="78" r="2.3"/>
-          <circle cx="36" cy="76" r="2.3"/><circle cx="58" cy="70" r="2.3"/>
+          <circle cx="48" cy="66" r="2.6"/>
+          <circle cx="66" cy="76" r="2.6"/>
+          <circle cx="82" cy="60" r="2.6"/>
+          <circle cx="54" cy="88" r="2.6"/>
+          <circle cx="74" cy="94" r="2.3"/>
+          <circle cx="90" cy="78" r="2.3"/>
+          <circle cx="36" cy="76" r="2.3"/>
+          <circle cx="58" cy="70" r="2.3"/>
         </g>
-        <path d="M34 56c12-24 42-28 58-12 3 3 3 7 1 10-12-9-26-11-39-6-8 3-14 7-20 14z" fill="url(#gloss)"/>
+        <path d="M34 56c12-24 42-28 58-12 3 3 3 7 1 10-12-9-26-11-39-6-8 3-14 7-20 14z"
+              fill="url(#gloss)"/>
       </symbol>
     </defs>
   </svg>
@@ -124,7 +146,8 @@
         $dur   = rand(9000,15000)/1000;
         $rot   = rand(-12,12);
       @endphp
-      <svg class="berry berryFall" style="left:{{ $left }}%; --delay:{{ $delay }}s; --dur:{{ $dur }}s; --rot:{{ $rot }}deg;">
+      <svg class="berry berryFall"
+           style="left:{{ $left }}%; --delay:{{ $delay }}s; --dur:{{ $dur }}s; --rot:{{ $rot }}deg;">
         <use href="#strawberryHD"></use>
       </svg>
     @endfor
@@ -145,7 +168,10 @@
         </div>
 
         <h1 class="text-2xl font-semibold text-gray-900">Buat Akun</h1>
-        <p class="text-sm text-gray-500 mt-1">Yuk daftar buat mulai belanja kue favoritmu.</p>
+        <p class="text-sm text-gray-500 mt-1">
+          Yuk daftar dulu, pilih mau jadi <span class="font-medium" style="color:var(--pink-700)">Pembeli</span> atau
+          <span class="font-medium" style="color:var(--pink-700)">Penjual (Seller)</span>.
+        </p>
 
         {{-- Error global --}}
         @if ($errors->any())
@@ -154,48 +180,95 @@
           </div>
         @endif
 
-        <form method="POST" action="{{ Route::has('register') ? route('register') : url('/register') }}" class="mt-6 space-y-4">
+        @php
+          $loginUrl = Route::has('login') ? route('login') : url('/login');
+          $registerUrl = Route::has('register') ? route('register') : url('/register');
+          $oldRole = old('role','buyer');
+        @endphp
+
+        <form method="POST" action="{{ $registerUrl }}" class="mt-6 space-y-4">
           @csrf
 
+          {{-- Nama --}}
           <div>
             <label for="name" class="block text-sm font-medium text-gray-700">Nama</label>
             <input id="name" name="name" type="text" required value="{{ old('name') }}"
-                   class="w-full rounded-xl border-gray-300 px-4 py-2 ring-pink" placeholder="Nama lengkap">
+                   class="w-full rounded-xl border-gray-300 px-4 py-2 ring-pink"
+                   placeholder="Nama lengkap">
             @error('name') <p class="mt-2 text-sm text-rose-600">{{ $message }}</p> @enderror
           </div>
 
+          {{-- Email --}}
           <div>
             <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
             <input id="email" name="email" type="email" required value="{{ old('email') }}"
-                   class="w-full rounded-xl border-gray-300 px-4 py-2 ring-pink" placeholder="kamu@contoh.com">
+                   class="w-full rounded-xl border-gray-300 px-4 py-2 ring-pink"
+                   placeholder="kamu@contoh.com">
             @error('email') <p class="mt-2 text-sm text-rose-600">{{ $message }}</p> @enderror
           </div>
 
+          {{-- Password + Konfirmasi --}}
           <div class="grid md:grid-cols-2 gap-3">
             <div>
               <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
               <input id="password" name="password" type="password" required
-                     class="w-full rounded-xl border-gray-300 px-4 py-2 ring-pink" placeholder="" autocomplete="new-password">
+                     class="w-full rounded-xl border-gray-300 px-4 py-2 ring-pink"
+                     autocomplete="new-password">
               @error('password') <p class="mt-2 text-sm text-rose-600">{{ $message }}</p> @enderror
             </div>
             <div>
               <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Ulangi Password</label>
               <input id="password_confirmation" name="password_confirmation" type="password" required
-                     class="w-full rounded-xl border-gray-300 px-4 py-2 ring-pink" placeholder="" autocomplete="new-password">
+                     class="w-full rounded-xl border-gray-300 px-4 py-2 ring-pink"
+                     autocomplete="new-password">
             </div>
           </div>
 
+          {{-- ROLE: buyer / seller --}}
+          <div>
+            <span class="block text-sm font-medium text-gray-700 mb-1">Daftar sebagai</span>
+            <div class="flex flex-wrap gap-3 text-sm">
+              <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer
+                            @if($oldRole === 'buyer') border-rose-400 bg-rose-50 @else border-gray-200 bg-white @endif">
+                <input type="radio" name="role" value="buyer" class="text-rose-600"
+                       @checked($oldRole === 'buyer')>
+                <div class="flex flex-col leading-tight">
+                  <span class="font-medium text-gray-800">Pembeli</span>
+                  <span class="text-xs text-gray-500">Belanja dan pesan kue di B’cake</span>
+                </div>
+              </label>
+
+              <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer
+                            @if($oldRole === 'seller') border-rose-400 bg-rose-50 @else border-gray-200 bg-white @endif">
+                <input type="radio" name="role" value="seller" class="text-rose-600"
+                       @checked($oldRole === 'seller')>
+                <div class="flex flex-col leading-tight">
+                  <span class="font-medium text-gray-800">Penjual (Seller)</span>
+                  <span class="text-xs text-gray-500">Buka etalase toko dan jualan kue</span>
+                </div>
+              </label>
+            </div>
+            @error('role') <p class="mt-2 text-sm text-rose-600">{{ $message }}</p> @enderror
+          </div>
+
+          {{-- Terms --}}
           <label class="inline-flex items-start gap-2 text-sm text-gray-700">
-            <input type="checkbox" name="terms" required class="mt-1 rounded border-gray-300 text-rose-600 focus:ring-rose-500">
-            <span>Saya setuju dengan <a href="#" class="underline" style="color:var(--pink-700)">Syarat & Ketentuan</a>.</span>
+            <input type="checkbox" name="terms" required
+                   class="mt-1 rounded border-gray-300 text-rose-600 focus:ring-rose-500">
+            <span>
+              Saya setuju dengan
+              <a href="#" class="underline" style="color:var(--pink-700)">Syarat &amp; Ketentuan</a>.
+            </span>
           </label>
 
+          {{-- Tombol submit --}}
           <button type="submit" class="w-full btn-primary">Daftar</button>
 
           <p class="text-center text-sm text-gray-600">
             Sudah punya akun?
-            @php $loginUrl = Route::has('login') ? route('login') : url('/login'); @endphp
-            <a href="{{ $loginUrl }}" data-slide="to-login" class="font-medium" style="color:var(--pink-700)">Masuk</a>
+            <a href="{{ $loginUrl }}" data-slide="to-login" class="font-medium" style="color:var(--pink-700)">
+              Masuk
+            </a>
           </p>
         </form>
       </div>
@@ -205,9 +278,9 @@
         <div class="absolute inset-0 grid place-items-center px-10">
           <div class="welcome p-10 md:p-12 w-[92%]">
             <h2 class="text-2xl font-semibold">Welcome Back!</h2>
-            <p class="mt-2 text-white/90 text-sm">Sudah punya akun?</p>
-            @php $loginUrl = Route::has('login') ? route('login') : url('/login'); @endphp
-            <a href="{{ $loginUrl }}" data-slide="to-login" class="btn-outline mt-5 inline-flex items-center gap-2">
+            <p class="mt-2 text-white/90 text-sm">Sudah punya akun? Langsung login aja yuk.</p>
+            <a href="{{ $loginUrl }}" data-slide="to-login"
+               class="btn-outline mt-5 inline-flex items-center gap-2">
               <span>Login</span>
             </a>
           </div>

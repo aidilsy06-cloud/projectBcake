@@ -17,8 +17,10 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View|RedirectResponse
     {
+        // Kalau user sudah login, jangan ke halaman login lagi
         if (Auth::check()) {
-            $role = Auth::user()->role ?? 'buyer';
+            $user = Auth::user();
+            $role = $user->role ?? 'buyer';
 
             $target = match ($role) {
                 'admin'  => route('admin.dashboard'),
@@ -29,18 +31,23 @@ class AuthenticatedSessionController extends Controller
             return redirect()->to($target);
         }
 
+        // Belum login → tampilkan form login
         return view('auth.login');
     }
 
     /**
-     * Proses autentikasi.
+     * Proses autentikasi (login).
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // method authenticate() dari LoginRequest akan cek email + password
         $request->authenticate();
+
+        // regenerate session untuk keamanan
         $request->session()->regenerate();
 
-        $role = Auth::user()->role ?? 'buyer';
+        $user = Auth::user();
+        $role = $user->role ?? 'buyer';
 
         $target = match ($role) {
             'admin'  => route('admin.dashboard'),
@@ -48,12 +55,13 @@ class AuthenticatedSessionController extends Controller
             default  => route('buyer.dashboard'),
         };
 
-        // intended: kalau ada niat URL sebelumnya, pakai itu; kalau tidak, pakai $target
+        // intended() = kalau sebelumnya ada URL yang mau diakses, pakai itu.
+        // Kalau tidak ada, fallback ke $target sesuai role.
         return redirect()->intended($target);
     }
 
     /**
-     * Logout.
+     * Logout user dari sesi saat ini.
      */
     public function destroy(Request $request): RedirectResponse
     {

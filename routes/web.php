@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Buyer\StoreController;        // buyer/publik
 use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
 use App\Http\Controllers\Seller\StoreController as SellerStore;
+use App\Http\Controllers\Seller\ProductController as SellerProductController; // seller
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Models\Product;
@@ -141,11 +142,35 @@ Route::middleware(['auth','verified'])
         Route::get('/store/edit', [SellerStore::class, 'edit'])->name('store.edit');
         Route::put('/store', [SellerStore::class, 'update'])->name('store.update');
 
-        // Placeholder halaman tambahan (biar nggak 404)
-        Route::get('/products', fn() => view('seller.placeholders.products'))->name('products.index');
-        Route::get('/orders', fn() => view('seller.placeholders.orders'))->name('orders.index');
-        Route::get('/promos', fn() => view('seller.placeholders.promos'))->name('promos.index');
-        Route::get('/settings', fn() => view('seller.placeholders.settings'))->name('settings');
+        // ==== PRODUK SELLER ====
+        // katalog
+        Route::get('/products', [SellerProductController::class, 'index'])
+            ->name('products.index');
+
+        // form tambah produk
+        Route::get('/products/create', [SellerProductController::class, 'create'])
+            ->name('products.create');
+
+        // simpan produk baru
+        Route::post('/products', [SellerProductController::class, 'store'])
+            ->name('products.store');
+
+        // form edit produk
+        Route::get('/products/{product}/edit', [SellerProductController::class, 'edit'])
+            ->name('products.edit');
+
+        // update produk
+        Route::put('/products/{product}', [SellerProductController::class, 'update'])
+            ->name('products.update');
+
+        // hapus produk
+        Route::delete('/products/{product}', [SellerProductController::class, 'destroy'])
+            ->name('products.destroy');
+
+        // Halaman lain (masih placeholder)
+        Route::get('/orders', fn () => view('seller.placeholders.orders'))->name('orders.index');
+        Route::get('/promos', fn () => view('seller.placeholders.promos'))->name('promos.index');
+        Route::get('/settings', fn () => view('seller.placeholders.settings'))->name('settings');
     });
 
 /* ----------------------------------------

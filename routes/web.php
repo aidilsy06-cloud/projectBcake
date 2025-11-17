@@ -31,9 +31,14 @@ Route::get('/_health', fn () => 'ok');
 |---------------------------------------- */
 if (! function_exists('safeCount')) {
     function safeCount(callable $cb): int {
-        try { return (int) $cb(); } catch (\Throwable $e) { return 0; }
+        try {
+            return (int) $cb();
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 }
+
 if (! function_exists('pickDashboardView')) {
     function pickDashboardView(string $who): string {
         if (view()->exists("dashboard.$who"))  return "dashboard.$who";
@@ -84,7 +89,7 @@ Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('store
 | AUTH (LOGIN / REGISTER / LOGOUT)
 |---------------------------------------- */
 Route::middleware('guest')->group(function () {
-    // Login pakai controller (bisa redirect kalau sudah login)
+    // Login
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 

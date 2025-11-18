@@ -217,6 +217,7 @@
 
   </div>
 </section>
+
 {{-- ============ REKOMENDASI SPESIAL ============ --}}
 <section id="rekomendasi" class="max-w-7xl mx-auto px-6 py-14">
   <h2 class="font-display text-3xl text-center">Rekomendasi Spesial</h2>
@@ -225,19 +226,20 @@
   </p>
 
   <div class="relative mt-8">
-    <!-- Tombol kiri -->
-    <button class="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 h-9 w-9
-                    items-center justify-center rounded-full ring-1 ring-rose-200
+    <!-- Tombol kiri (sedikit lebih jauh dari kartu) -->
+    <button class="hidden md:flex absolute -left-10 top-1/2 -translate-y-1/2 h-9 w-9
+                    items-center justify-center rounded-full ring-1 ring-rose-200 
                     bg-white shadow hover:bg-rose-50">
       ‹
     </button>
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
       @forelse ($bestSellers as $product)
-        <div class="rounded-lg shadow bg-white overflow-hidden">
-          <img
-            src="{{ asset('image/dessertbox.jpg') }}"
-            class="w-full h-56 object-cover"
+        <div class="rounded-2xl bg-white shadow hover:shadow-lg transition overflow-hidden">
+          {{-- Foto dibuat sedang --}}
+          <img 
+            src="{{ asset('image/dessertbox.jpg') }}" 
+            class="w-full h-52 object-cover"
           >
 
           <div class="p-4">
@@ -247,6 +249,13 @@
             <p class="text-sm text-gray-500 mt-1">
               Rekomendasi pilihan B’cake
             </p>
+
+            {{-- Harga produk --}}
+            @if(! is_null($product->price ?? null))
+              <p class="mt-2 text-base font-semibold text-rose-700">
+                Rp {{ number_format($product->price, 0, ',', '.') }}
+              </p>
+            @endif
           </div>
         </div>
       @empty
@@ -256,17 +265,8 @@
       @endforelse
     </div>
 
-    <!-- Tombol kanan -->
-    <button class="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 h-9 w-9
-                    items-center justify-center rounded-full ring-1 ring-rose-200
-                    bg-white shadow hover:bg-rose-50">
-      ›
-    </button>
-  </div>
-</section>
-
-    <!-- Tombol kanan -->
-    <button class="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 h-9 w-9 
+    <!-- Tombol kanan (sedikit lebih jauh dari kartu) -->
+    <button class="hidden md:flex absolute -right-10 top-1/2 -translate-y-1/2 h-9 w-9
                     items-center justify-center rounded-full ring-1 ring-rose-200 
                     bg-white shadow hover:bg-rose-50">
       ›

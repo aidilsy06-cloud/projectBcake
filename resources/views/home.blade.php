@@ -274,21 +274,134 @@
   </div>
 </section>
 
-{{-- ============ BANNER PROMO ============ --}}
-<section class="max-w-7xl mx-auto px-6 pb-16">
-  <div class="rounded-3xl overflow-hidden border border-rose-200 shadow-soft grid md:grid-cols-2 bg-rose-50">
-    <img src="{{ asset('image/cake.jpg') }}" alt="Holiday cake" class="w-full h-[260px] md:h-full object-cover">
-    <div class="p-8 md:p-10 bg-white/80 backdrop-blur">
-      <h3 class="font-display text-3xl">Holiday Collection</h3>
-      <p class="text-gray-700 mt-2 max-w-md">Kue edisi spesial dengan dekor elegan. Stok terbatas!</p>
-      <div class="mt-6 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-3">
-        <span class="text-rose-900 font-semibold text-xl">20% OFF</span>
-        <span class="text-gray-600 text-sm">untuk pembelian paket</span>
-      </div>
-      <div class="mt-6">
-        <a href="{{ route('products.index') }}" class="rounded-full bg-rose-700 text-white px-6 py-3 hover:opacity-90">Order Today</a>
+{{-- ============ BANNER PROMO (HARI BESAR — SLIDER) ============ --}}
+<section 
+  class="max-w-7xl mx-auto px-6 pb-16"
+  x-data="{
+    active: 0,
+    max: 3,
+    touchStartX: 0,
+    touchEndX: 0,
+    next() { this.active = (this.active === this.max) ? 0 : this.active + 1 },
+    prev() { this.active = (this.active === 0) ? this.max : this.active - 1 },
+    onTouchStart(e) { this.touchStartX = e.touches[0].clientX },
+    onTouchEnd(e) {
+      this.touchEndX = e.changedTouches[0].clientX;
+      const diff = this.touchEndX - this.touchStartX;
+      if (Math.abs(diff) > 50) diff < 0 ? this.next() : this.prev();
+    }
+  }"
+>
+  <div 
+    class="relative rounded-3xl overflow-hidden border border-rose-200 shadow-soft bg-white"
+    @touchstart.passive="onTouchStart"
+    @touchend.passive="onTouchEnd"
+  >
+
+    {{-- ===== Slide 1 – Valentine / Anniversary ===== --}}
+    <div x-show="active === 0" x-transition>
+      <div class="grid md:grid-cols-2">
+        <img src="{{ asset('image/Cake-Pink.jpg') }}" class="w-full h-[260px] md:h-full object-cover">
+        <div class="p-8 md:p-10 bg-rose-50/80 backdrop-blur">
+          <h3 class="font-display text-3xl">Valentine Collection</h3>
+          <p class="text-gray-700 mt-2 max-w-md">Rayakan momen spesial dengan kue pastel romantis pilihan para seller terbaik.</p>
+          <div class="mt-6 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-3">
+            <span class="text-rose-900 font-semibold text-xl">Sweet Deals</span>
+            <span class="text-gray-600 text-sm">slot terbatas!</span>
+          </div>
+          <div class="mt-6">
+            <a href="{{ route('products.index') }}" class="rounded-full bg-rose-700 text-white px-6 py-3 hover:opacity-90">
+              Pesan Sekarang
+            </a>
+          </div>
+        </div>
       </div>
     </div>
+
+    {{-- ===== Slide 2 – Holiday / Christmas / New Year ===== --}}
+    <div x-show="active === 1" x-transition>
+      <div class="grid md:grid-cols-2">
+        <img src="{{ asset('image/Cake-Pinky.jpg') }}" class="w-full h-[260px] md:h-full object-cover">
+        <div class="p-8 md:p-10 bg-rose-50/80 backdrop-blur">
+          <h3 class="font-display text-3xl">Holiday Collection</h3>
+          <p class="text-gray-700 mt-2 max-w-md">Kue elegan untuk merayakan liburan akhir tahun bersama keluarga.</p>
+          <div class="mt-6 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-3">
+            <span class="text-rose-900 font-semibold text-xl">20% OFF</span>
+            <span class="text-gray-600 text-sm">untuk pembelian paket</span>
+          </div>
+          <div class="mt-6">
+            <a href="{{ route('products.index') }}" class="rounded-full bg-rose-700 text-white px-6 py-3 hover:opacity-90">
+              Order Today
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{-- ===== Slide 3 – Birthday Collection ===== --}}
+    <div x-show="active === 2" x-transition>
+      <div class="grid md:grid-cols-2">
+        <img src="{{ asset('image/Cake-Rainbow.jpg') }}" class="w-full h-[260px] md:h-full object-cover">
+        <div class="p-8 md:p-10 bg-rose-50/80 backdrop-blur">
+          <h3 class="font-display text-3xl">Birthday Collection</h3>
+          <p class="text-gray-700 mt-2 max-w-md">Kue warna-warni meriah untuk rayakan ulang tahun dengan cara paling manis.</p>
+          <div class="mt-6 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-3">
+            <span class="text-rose-900 font-semibold text-xl">Best Seller</span>
+            <span class="text-gray-600 text-sm">disukai banyak pembeli</span>
+          </div>
+          <div class="mt-6">
+            <a href="{{ route('products.index') }}" class="rounded-full bg-rose-700 text-white px-6 py-3 hover:opacity-90">
+              Lihat Kue Ulang Tahun
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{-- ===== Slide 4 – Mother’s Day / Hari Ibu ===== --}}
+    <div x-show="active === 3" x-transition>
+      <div class="grid md:grid-cols-2">
+        <img src="{{ asset('image/Cake-Softpink.jpg') }}" class="w-full h-[260px] md:h-full object-cover">
+        <div class="p-8 md:p-10 bg-rose-50/80 backdrop-blur">
+          <h3 class="font-display text-3xl">Mother’s Day</h3>
+          <p class="text-gray-700 mt-2 max-w-md">Kue lembut pastel untuk hadiah manis penuh cinta buat ibu tersayang.</p>
+          <div class="mt-6 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-3">
+            <span class="text-rose-900 font-semibold text-xl">Special Gift</span>
+            <span class="text-gray-600 text-sm">siap kirim</span>
+          </div>
+          <div class="mt-6">
+            <a href="{{ route('products.index') }}" class="rounded-full bg-rose-700 text-white px-6 py-3 hover:opacity-90">
+              Kirim ke Ibu
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{-- ===== TOMBOL KIRI / KANAN ===== --}}
+    <button
+      type="button"
+      class="hidden md:flex absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/90 hover:bg-white shadow-soft border border-rose-200 text-[#890524]"
+      @click="prev()"
+    >‹</button>
+
+    <button
+      type="button"
+      class="hidden md:flex absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/90 hover:bg-white shadow-soft border border-rose-200 text-[#890524]"
+      @click="next()"
+    >›</button>
+
+    {{-- ===== DOTS ===== --}}
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+      <template x-for="i in 4">
+        <button
+          class="h-2.5 rounded-full transition-all"
+          :class="active === (i-1) ? 'w-6 bg-[#890524]' : 'w-2.5 bg-rose-200 hover:bg-rose-300'"
+          @click="active=i-1"
+        ></button>
+      </template>
+    </div>
+
   </div>
 </section>
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Produk — Admin')
+@section('title','Kelola Toko — Admin')
 
 @push('head')
 <style>
@@ -12,7 +12,7 @@
   .badge{
     display:inline-flex;
     align-items:center;
-    padding:.15rem .55rem;
+    padding:.15rem .6rem;
     font-size:.75rem;
     border-radius:999px;
   }
@@ -23,15 +23,15 @@
 <div class="max-w-7xl mx-auto px-6 py-8">
   <div class="flex items-center justify-between mb-6">
     <div>
-      <h1 class="text-2xl font-semibold text-[color:var(--cocoa)]">Kelola Produk</h1>
+      <h1 class="text-2xl font-semibold text-[color:var(--cocoa)]">Kelola Toko</h1>
       <p class="text-sm text-gray-600 mt-1">
-        Daftar seluruh produk di B’cake. Admin bisa menambah, mengubah, dan menghapus produk.
+        Daftar seluruh toko yang terdaftar di B’cake.
       </p>
     </div>
-    <a href="{{ route('admin.products.create') }}"
+    <a href="{{ route('admin.stores.create') }}"
        class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium text-white"
        style="background:var(--wine);box-shadow:0 12px 30px rgba(137,5,36,.25)">
-      + Tambah Produk
+      + Tambah Toko
     </a>
   </div>
 
@@ -47,13 +47,13 @@
     </div>
   @endif
 
-  @if($products->isEmpty())
+  @if ($stores->isEmpty())
     <div class="rounded-2xl border border-dashed border-rose-200 bg-white px-6 py-10 text-center">
-      <p class="text-gray-600 mb-2">Belum ada produk yang terdaftar.</p>
-      <a href="{{ route('admin.products.create') }}"
+      <p class="text-gray-600 mb-2">Belum ada toko yang terdaftar.</p>
+      <a href="{{ route('admin.stores.create') }}"
          class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium text-white"
          style="background:var(--wine);">
-        + Tambah produk pertama
+        + Tambah toko pertama
       </a>
     </div>
   @else
@@ -62,67 +62,50 @@
         <thead class="bg-rose-50/70">
           <tr class="text-left text-xs font-semibold text-gray-600">
             <th class="px-5 py-3">#</th>
-            <th class="px-5 py-3">Produk</th>
-            <th class="px-5 py-3">Toko</th>
-            <th class="px-5 py-3">Harga</th>
-            <th class="px-5 py-3">Stok</th>
-            <th class="px-5 py-3">Status</th>
+            <th class="px-5 py-3">Nama Toko</th>
+            <th class="px-5 py-3">Pemilik</th>
+            <th class="px-5 py-3">Kota</th>
+            <th class="px-5 py-3">Dibuat</th>
             <th class="px-5 py-3 text-right">Aksi</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-rose-50">
-          @foreach($products as $product)
+          @foreach ($stores as $store)
+            @php
+              // cari nama owner dari user_id (simple aja, karena datanya masih sedikit)
+              $owner = \App\Models\User::find($store->user_id);
+            @endphp
             <tr class="hover:bg-rose-50/40">
               <td class="px-5 py-3 align-top text-gray-500">
-                {{ $loop->iteration + ($products->currentPage()-1)*$products->perPage() }}
+                {{ $loop->iteration + ($stores->currentPage()-1)*$stores->perPage() }}
               </td>
               <td class="px-5 py-3 align-top">
                 <div class="font-medium text-[color:var(--cocoa)]">
-                  {{ $product->name }}
+                  {{ $store->name }}
                 </div>
                 <div class="text-xs text-gray-500">
-                  {{ $product->slug ?? '—' }}
-                </div>
-              </td>
-              <td class="px-5 py-3 align-top">
-                <div class="text-sm text-gray-700">
-                  {{ optional($product->store)->name ?? '—' }}
+                  {{ $store->slug ?? '—' }}
                 </div>
               </td>
               <td class="px-5 py-3 align-top text-gray-700">
-                @if(isset($product->price))
-                  Rp {{ number_format($product->price,0,',','.') }}
-                @else
-                  —
-                @endif
+                {{ $owner->name ?? '—' }}
               </td>
               <td class="px-5 py-3 align-top text-gray-700">
-                {{ $product->stock ?? '—' }}
+                {{ $store->city ?? '—' }}
               </td>
-              <td class="px-5 py-3 align-top">
-                @php
-                  $status = $product->status ?? 'active';
-                @endphp
-                @if($status === 'active')
-                  <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-100">
-                    Aktif
-                  </span>
-                @else
-                  <span class="badge bg-rose-50 text-rose-700 border border-rose-100">
-                    Nonaktif
-                  </span>
-                @endif
+              <td class="px-5 py-3 align-top text-gray-500">
+                {{ $store->created_at?->format('d M Y') ?? '—' }}
               </td>
               <td class="px-5 py-3 align-top text-right space-x-2">
-                <a href="{{ route('admin.products.edit', $product) }}"
+                <a href="{{ route('admin.stores.edit', $store) }}"
                    class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-[color:var(--wine)] bg-rose-50 hover:bg-rose-100">
                   Edit
                 </a>
 
-                <form action="{{ route('admin.products.destroy', $product) }}"
+                <form action="{{ route('admin.stores.destroy', $store) }}"
                       method="POST"
                       class="inline-block"
-                      onsubmit="return confirm('Yakin ingin menghapus produk ini?')">
+                      onsubmit="return confirm('Yakin ingin menghapus toko ini?')">
                   @csrf
                   @method('DELETE')
                   <button type="submit"
@@ -138,7 +121,7 @@
     </div>
 
     <div class="mt-4">
-      {{ $products->links() }}
+      {{ $stores->links() }}
     </div>
   @endif
 </div>

@@ -1,13 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Produk — Admin')
+@section('title','Edit Toko — Admin')
 
 @push('head')
 <style>
-  :root{
-    --wine:#890524;
-    --cocoa:#362320;
-  }
+  :root{ --wine:#890524; --cocoa:#362320; }
   .form-label{font-size:.8rem;font-weight:500;color:#4b5563;margin-bottom:.15rem;display:block}
   .form-input, .form-select, .form-textarea{
     width:100%;
@@ -28,13 +25,13 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto px-6 py-8">
-  <a href="{{ route('admin.products.index') }}" class="text-sm text-gray-600">&larr; Kembali ke daftar produk</a>
+  <a href="{{ route('admin.stores.index') }}" class="text-sm text-gray-600">&larr; Kembali ke daftar toko</a>
 
   <h1 class="mt-4 text-2xl font-semibold text-[color:var(--cocoa)]">
-    Edit Produk
+    Edit Toko
   </h1>
   <p class="text-sm text-gray-600 mt-1">
-    Ubah detail produk <span class="font-semibold">{{ $product->name }}</span>.
+    Ubah detail toko <span class="font-semibold">{{ $store->name }}</span>.
   </p>
 
   @if ($errors->any())
@@ -48,58 +45,56 @@
     </div>
   @endif
 
-  <form action="{{ route('admin.products.update', $product) }}" method="POST" class="mt-6 space-y-4">
+  <form action="{{ route('admin.stores.update', $store) }}" method="POST" class="mt-6 space-y-4">
     @csrf
     @method('PUT')
 
     <div>
-      <label class="form-label">Toko</label>
-      <select name="store_id" class="form-select" required>
-        <option value="">Pilih toko pemilik produk</option>
-        @foreach(\App\Models\Store::orderBy('name')->get() as $store)
-          <option value="{{ $store->id }}"
-            {{ old('store_id', $product->store_id) == $store->id ? 'selected' : '' }}>
-            {{ $store->name }}
+      <label class="form-label">Pemilik Toko (User)</label>
+      <select name="user_id" class="form-select" required>
+        <option value="">Pilih akun pemilik toko</option>
+        @foreach(\App\Models\User::orderBy('name')->get() as $user)
+          <option value="{{ $user->id }}"
+            {{ old('user_id', $store->user_id) == $user->id ? 'selected' : '' }}>
+            {{ $user->name }} ({{ $user->email }})
           </option>
         @endforeach
       </select>
     </div>
 
     <div>
-      <label class="form-label">Nama Produk</label>
+      <label class="form-label">Nama Toko</label>
       <input type="text" name="name" class="form-input"
-             value="{{ old('name', $product->name) }}" required>
+             value="{{ old('name', $store->name) }}" required>
+    </div>
+
+    <div>
+      <label class="form-label">Slug (opsional)</label>
+      <input type="text" name="slug" class="form-input"
+             value="{{ old('slug', $store->slug) }}"
+             placeholder="boleh dikosongkan, akan dibuat otomatis">
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
-        <label class="form-label">Harga</label>
-        <input type="number" name="price" class="form-input"
-               value="{{ old('price', $product->price) }}" min="0" required>
+        <label class="form-label">Kota</label>
+        <input type="text" name="city" class="form-input"
+               value="{{ old('city', $store->city) }}">
       </div>
       <div>
-        <label class="form-label">Stok</label>
-        <input type="number" name="stock" class="form-input"
-               value="{{ old('stock', $product->stock) }}" min="0">
+        <label class="form-label">Alamat</label>
+        <input type="text" name="address" class="form-input"
+               value="{{ old('address', $store->address) }}">
       </div>
-    </div>
-
-    <div>
-      <label class="form-label">Status</label>
-      <select name="status" class="form-select">
-        @php $status = old('status', $product->status ?? 'active'); @endphp
-        <option value="active" {{ $status === 'active' ? 'selected' : '' }}>Aktif</option>
-        <option value="inactive" {{ $status === 'inactive' ? 'selected' : '' }}>Nonaktif</option>
-      </select>
     </div>
 
     <div>
       <label class="form-label">Deskripsi</label>
-      <textarea name="description" rows="4" class="form-textarea">{{ old('description', $product->description) }}</textarea>
+      <textarea name="description" rows="4" class="form-textarea">{{ old('description', $store->description) }}</textarea>
     </div>
 
     <div class="pt-3 flex items-center justify-end gap-3">
-      <a href="{{ route('admin.products.index') }}"
+      <a href="{{ route('admin.stores.index') }}"
          class="px-4 py-2 rounded-xl text-sm text-gray-700 bg-gray-100 hover:bg-gray-200">
         Batal
       </a>

@@ -19,6 +19,7 @@ use App\Http\Controllers\Seller\ProductController as SellerProductController;
 // Admin
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\StoreController as AdminStoreController; // ⇐ CRUD toko admin
 
 use App\Models\Product;
 use App\Models\User;
@@ -53,6 +54,7 @@ if (! function_exists('pickDashboardView')) {
 | PUBLIC PAGES
 |---------------------------------------- */
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
 // Produk publik
 Route::controller(ProductController::class)->group(function () {
     Route::get('/products', 'index')->name('products.index');
@@ -143,8 +145,14 @@ Route::prefix('admin')
             return view($view, compact('stats', 'users', 'products'));
         })->name('dashboard');
 
+        // CRUD User
         Route::resource('users', AdminUserController::class)->except(['show']);
+
+        // CRUD Produk
         Route::resource('products', AdminProductController::class)->except(['show']);
+
+        // CRUD Toko
+        Route::resource('stores', AdminStoreController::class)->except(['show']);
     });
 
 /* ----------------------------------------

@@ -35,9 +35,29 @@
   <div class="bg-white rounded-2xl border border-bcake-truffle/10 shadow-sm p-6">
     <h2 class="text-lg font-semibold mb-4 text-bcake-bitter">Aksi Cepat</h2>
     <div class="flex flex-wrap gap-3">
-      <a href="{{ route('admin.products.index') }}" class="px-4 py-2 rounded-xl bg-bcake-wine text-white hover:opacity-90">Kelola Produk</a>
-      <a href="{{ route('admin.users.index') }}" class="px-4 py-2 rounded-xl border border-bcake-wine text-bcake-wine hover:bg-rose-50">Kelola User</a>
-      <a href="{{ route('home') }}" class="px-4 py-2 rounded-xl border hover:bg-rose-50">Lihat Landing</a>
+      {{-- primary: produk --}}
+      <a href="{{ route('admin.products.index') }}"
+         class="px-4 py-2 rounded-xl bg-bcake-wine text-white hover:opacity-90">
+        Kelola Produk
+      </a>
+
+      {{-- baru: toko --}}
+      <a href="{{ route('admin.stores.index') }}"
+         class="px-4 py-2 rounded-xl border border-bcake-wine text-bcake-wine hover:bg-rose-50">
+        Kelola Toko
+      </a>
+
+      {{-- user --}}
+      <a href="{{ route('admin.users.index') }}"
+         class="px-4 py-2 rounded-xl border border-bcake-wine text-bcake-wine hover:bg-rose-50">
+        Kelola User
+      </a>
+
+      {{-- landing --}}
+      <a href="{{ route('home') }}"
+         class="px-4 py-2 rounded-xl border hover:bg-rose-50">
+        Lihat Landing
+      </a>
     </div>
   </div>
 
@@ -64,7 +84,9 @@
                 <td class="px-4 py-2">{{ $user->name }}</td>
                 <td class="px-4 py-2">{{ $user->email }}</td>
                 <td class="px-4 py-2">
-                  <span class="px-2 py-1 rounded text-xs bg-rose-100 text-bcake-wine">{{ $user->role ?? 'buyer' }}</span>
+                  <span class="px-2 py-1 rounded text-xs bg-rose-100 text-bcake-wine">
+                    {{ $user->role ?? 'buyer' }}
+                  </span>
                 </td>
               </tr>
             @empty

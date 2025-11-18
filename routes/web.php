@@ -11,7 +11,6 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Buyer\StoreController;
 use App\Http\Controllers\Buyer\HomeController;
 
-
 // Seller
 use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
 use App\Http\Controllers\Seller\StoreController as SellerStore;
@@ -20,7 +19,10 @@ use App\Http\Controllers\Seller\ProductController as SellerProductController;
 // Admin
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\Admin\StoreController as AdminStoreController; // ⇐ CRUD toko admin
+use App\Http\Controllers\Admin\StoreController as AdminStoreController; // CRUD toko admin
+
+// Order / transaksi (form → WhatsApp)
+use App\Http\Controllers\OrderController;
 
 use App\Models\Product;
 use App\Models\User;
@@ -66,22 +68,37 @@ Route::controller(ProductController::class)->group(function () {
 Route::get('/kategori/{slug}', [ProductController::class, 'byCategory'])
     ->name('categories.show');
 
-// Keranjang
+/* ----------------------------------------
+| CART / KERANJANG
+|---------------------------------------- */
 Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/add/{product:slug}', [CartController::class, 'add'])->name('add');
-    Route::post('/update', [CartController::class, 'update'])->name('update');
-    Route::delete('/remove/{product:slug}', [CartController::class, 'remove'])->name('remove');
+
+    // TERIMA POST & DELETE (buat jaga-jaga kalau ada _method=DELETE nyasar)
+    Route::match(['post', 'delete'], '/update', [CartController::class, 'update'])
+        ->name('update');
+
+    Route::delete('/remove/{product:slug}', [CartController::class, 'remove'])
+        ->name('remove');
 });
 
-// Halaman statis
+/* ----------------------------------------
+| HALAMAN STATIS
+|---------------------------------------- */
 Route::view('/tentang-kami', 'static.about')->name('about');
 Route::view('/bantuan', 'static.help')->name('help');
 Route::redirect('/help', '/bantuan');
 
-// TOKO (PUBLIK / BUYER)
+/* ----------------------------------------
+| TOKO (PUBLIK / BUYER)
+|---------------------------------------- */
 Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
 Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
+
+// FORM PEMESANAN → WHATSAPP PENJUAL
+Route::middleware('auth')->post('/store/{store:slug}/order', [OrderController::class, 'store'])
+    ->name('stores.order');
 
 /* ----------------------------------------
 | AUTH (LOGIN / REGISTER / LOGOUT)

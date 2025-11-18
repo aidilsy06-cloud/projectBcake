@@ -4,71 +4,50 @@
 
 @section('content')
 
-@php
-    $user = auth()->user();
-
-    // true kalau:
-    // - sudah login
-    // - rolenya seller
-    // - dan store ini dimiliki user tsb (kolom user_id harus ada di tabel stores)
-    $isOwner = $user
-        && ($user->role ?? 'buyer') === 'seller'
-        && isset($store->user_id)
-        && (int) $store->user_id === (int) $user->id;
-@endphp
-
 {{-- ===================== HEADER TOKO ===================== --}}
 <section class="mb-8">
     <div class="relative h-56 rounded-2xl overflow-hidden shadow-soft">
         <img src="{{ $store->banner_url ?? 'https://via.placeholder.com/1200x400?text=Banner+Toko' }}"
-             class="w-full h-full object-cover" alt="{{ $store->name }}">
+             class="w-full h-full object-cover">
     </div>
 
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4">
-        <div class="flex items-center gap-4">
-            <img src="{{ $store->logo_url ?? 'https://via.placeholder.com/120.png?text=Logo' }}"
-                 class="h-20 w-20 rounded-xl object-cover border border-rose-200 shadow-soft"
-                 alt="Logo {{ $store->name }}">
+    <div class="flex items-center gap-4 mt-4">
+        <img src="{{ $store->logo_url ?? 'https://via.placeholder.com/120.png?text=Logo' }}"
+             class="h-20 w-20 rounded-xl object-cover border border-rose-200 shadow-soft">
 
-            <div>
-                <h1 class="text-3xl font-display text-bcake-wine">{{ $store->name }}</h1>
-                <p class="text-gray-600 text-sm mt-1">
-                    {{ $store->description ?? 'Toko ini belum menambahkan deskripsi.' }}
-                </p>
+        <div>
+            <h1 class="text-3xl font-display text-bcake-wine">{{ $store->name }}</h1>
+            <p class="text-gray-600 text-sm">{{ $store->description ?? 'Toko ini belum menambahkan deskripsi.' }}</p>
 
-                <div class="mt-2 flex flex-wrap items-center gap-3 text-sm text-rose-600">
-                    <span>📍 {{ $store->address ?? 'Alamat belum tersedia' }}</span>
-                </div>
+            <div class="mt-2 flex items-center gap-3 text-sm text-rose-600">
+                <span>📍 {{ $store->address ?? 'Alamat belum tersedia' }}</span>
             </div>
-        </div>
 
-        {{-- Tombol aksi di sisi kanan --}}
-        <div class="flex flex-wrap items-center gap-3">
-            {{-- Tombol chat WA (selalu muncul, publik) --}}
-            <a href="https://wa.me/6282391413565"
-               target="_blank"
-               class="inline-flex items-center gap-2 px-4 py-1.5 text-sm bg-emerald-600 text-white rounded-full hover:bg-emerald-700">
-                <span>Chat Penjual</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 12h6m-3-3v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </a>
+            {{-- Tentukan nomor WhatsApp toko --}}
+            @php
+                // ambil dari kolom whatsapp, kalau kosong pakai default
+                $waRaw    = $store->whatsapp ?? '082391413565';
+                // ubah 08xxxx jadi 628xxxx
+                $waNumber = preg_replace('/^0/', '62', $waRaw);
+            @endphp
 
-            {{-- Tombol khusus pemilik toko --}}
-            @if($isOwner)
-                <a href="{{ route('seller.store.edit') }}"
-                   class="inline-flex items-center px-4 py-1.5 text-sm rounded-full border border-rose-200 text-rose-700 hover:bg-rose-50">
-                    Edit profil toko
+            {{-- Tombol WhatsApp --}}
+            <div class="mt-3">
+                <a href="https://wa.me/{{ $waNumber }}"
+                   target="_blank"
+                   class="inline-flex items-center gap-2 px-4 py-1.5 text-sm bg-emerald-600 text-white rounded-full hover:bg-emerald-700">
+                    <span>Chat Penjual</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 12h6m-3-3v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                 </a>
-                <a href="{{ route('seller.products.create') }}"
-                   class="inline-flex items-center px-4 py-1.5 text-sm rounded-full bg-bcake-wine text-white hover:bg-bcake-deep">
-                    + Tambah produk
-                </a>
-            @endif
+            </div>
         </div>
     </div>
 </section>
+
+
 
 {{-- ===================== FORM PEMESANAN ===================== --}}
 <section class="bg-white border border-rose-200/40 rounded-2xl p-6 mb-12 shadow-soft">
@@ -107,7 +86,7 @@
                       placeholder="Tulis alamat lengkap jika perlu pengantaran">{{ old('customer_address') }}</textarea>
         </div>
 
-        {{-- Ringkasan pesanan --}}
+        {{-- Ringkasan Pesanan --}}
         <div>
             <label class="block text-sm font-medium mb-1">Ringkasan Pesanan</label>
             <textarea name="order_summary" rows="2"
@@ -135,33 +114,25 @@
     </form>
 </section>
 
+
+
 {{-- ===================== PRODUK TOKO ===================== --}}
 <section>
     <h2 class="text-xl font-semibold text-bcake-bitter mb-4">Produk dari {{ $store->name }}</h2>
 
     @if($products->count() == 0)
-        <p class="text-gray-500 text-sm">
-            Toko ini belum menambahkan produk.
-            @if($isOwner)
-                <br>
-                <a href="{{ route('seller.products.create') }}" class="text-bcake-wine font-medium hover:underline">
-                    Tambah produk pertama sekarang →
-                </a>
-            @endif
-        </p>
+        <p class="text-gray-500 text-sm">Toko ini belum menambahkan produk.</p>
     @else
         <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @foreach($products as $product)
                 <a href="{{ route('products.show', $product->slug) }}"
                    class="block bg-white rounded-2xl border border-rose-200 overflow-hidden shadow-soft hover:shadow-lg transition">
                     <img src="{{ $product->image_url ?? 'https://via.placeholder.com/400' }}"
-                         class="w-full h-52 object-cover" alt="{{ $product->name }}">
+                         class="w-full h-52 object-cover">
 
                     <div class="p-4">
                         <h3 class="font-medium text-bcake-bitter">{{ $product->name }}</h3>
-                        <p class="text-sm text-gray-500 mt-1">
-                            Rp {{ number_format($product->price, 0, ',', '.') }}
-                        </p>
+                        <p class="text-sm text-gray-500 mt-1">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
 
                         <span class="text-xs text-white bg-bcake-wine px-2 py-1 rounded-full mt-2 inline-block">
                             {{ $product->category->name ?? 'Kategori' }}

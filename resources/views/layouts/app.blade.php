@@ -123,7 +123,7 @@
 
             @auth
               <a href="{{ route('dashboard') }}" class="rounded-full bg-rose-600 text-white px-4 py-2 text-sm hover:bg-rose-700">Dashboard</a>
-              <form method="POST" action="{{ route('logout') }}"><!-- logout -->
+              <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">Logout</button>
               </form>
@@ -182,22 +182,6 @@
   {{-- MAIN --}}
   <main class="flex-1 w-full">
     <div class="max-w-7xl mx-auto px-6 lg:px-10 py-8">
-      {{-- flash --}}
-      @if(session('success') || session('error') || session('status'))
-        <div id="flashWrap" class="mb-6">
-          @if(session('success') || session('status'))
-            <div class="mb-3 rounded-xl border border-emerald-200/70 bg-emerald-50 text-emerald-900 px-4 py-3">
-              {{ session('success') ?? session('status') }}
-            </div>
-          @endif
-          @if(session('error'))
-            <div class="mb-3 rounded-xl border border-rose-200/70 bg-rose-50 text-rose-900 px-4 py-3">
-              {{ session('error') }}
-            </div>
-          @endif
-        </div>
-      @endif
-
       @yield('content')
     </div>
   </main>
@@ -210,6 +194,41 @@
     </div>
   </footer>
 
+  {{-- TOAST NOTIFIKASI GLOBAL --}}
+  @php
+    $flashSuccess = session('success') ?? session('login_success');
+    $flashError   = session('error');
+    // fallback: kalau pakai query ?login=success
+    if (!$flashSuccess && request()->query('login') === 'success') {
+        $flashSuccess = "Kamu berhasil login! Selamat datang kembali di B'cake 💗";
+    }
+  @endphp
+
+  @if($flashSuccess || $flashError)
+    <div id="toastContainer"
+         class="fixed bottom-6 right-6 z-50 max-w-xs space-y-3">
+
+      @if($flashSuccess)
+        <div class="mb-2 rounded-2xl border border-emerald-200 bg-white px-4 py-3 shadow-[0_18px_40px_rgba(16,185,129,.35)] flex items-start gap-3">
+          <div class="h-7 w-7 flex items-center justify-center rounded-full bg-emerald-500 text-white text-sm">✔</div>
+          <p class="text-sm text-emerald-900 font-medium">
+            {{ $flashSuccess }}
+          </p>
+        </div>
+      @endif
+
+      @if($flashError)
+        <div class="mb-2 rounded-2xl border border-rose-200 bg-white px-4 py-3 shadow-[0_18px_40px_rgba(244,63,94,.35)] flex items-start gap-3">
+          <div class="h-7 w-7 flex items-center justify-center rounded-full bg-rose-500 text-white text-sm">!</div>
+          <p class="text-sm text-rose-900 font-medium">
+            {{ $flashError }}
+          </p>
+        </div>
+      @endif
+
+    </div>
+  @endif
+
   {{-- SCRIPTS --}}
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -219,14 +238,16 @@
       const backdrop = document.getElementById('backdropMobile');
 
       function openSidebar(){
-        drawer?.setAttribute('data-open','true');
-        backdrop?.setAttribute('data-open','true');
-        btnOpen?.setAttribute('aria-expanded','true');
+        if (!drawer || !backdrop || !btnOpen) return;
+        drawer.setAttribute('data-open','true');
+        backdrop.setAttribute('data-open','true');
+        btnOpen.setAttribute('aria-expanded','true');
       }
       function closeSidebar(){
-        drawer?.removeAttribute('data-open');
-        backdrop?.removeAttribute('data-open');
-        btnOpen?.setAttribute('aria-expanded','false');
+        if (!drawer || !backdrop || !btnOpen) return;
+        drawer.removeAttribute('data-open');
+        backdrop.removeAttribute('data-open');
+        btnOpen.setAttribute('aria-expanded','false');
       }
 
       btnOpen?.addEventListener('click', openSidebar);
@@ -234,9 +255,15 @@
       backdrop?.addEventListener('click', closeSidebar);
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
 
-      // auto dismiss flash
-      const fw = document.getElementById('flashWrap');
-      if (fw) setTimeout(() => fw.remove(), 3500);
+      // auto dismiss toast
+      const toast = document.getElementById('toastContainer');
+      if (toast) {
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transition = 'opacity .4s ease';
+          setTimeout(() => toast.remove(), 400);
+        }, 3500);
+      }
     });
   </script>
 

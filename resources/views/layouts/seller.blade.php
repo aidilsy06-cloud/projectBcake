@@ -38,7 +38,7 @@
       </nav>
       <div class="flex items-center gap-3">
         <a href="{{ route('home') }}" class="text-sm hover:text-bcake-wine">View Store</a>
-        {{-- @auth ... tombol profile/logout --}}
+        {{-- @auth: di sini nanti bisa ditambah dropdown profile/logout --}}
       </div>
     </div>
   </header>
@@ -58,6 +58,96 @@
       </div>
     </div>
   </footer>
+
+  {{-- TOAST NOTIFIKASI UNTUK HALAMAN SELLER --}}
+  @if(session('success') || session('error') || session('status'))
+    <div style="
+      position:fixed;
+      right:1.5rem;
+      bottom:1.5rem;
+      z-index:9999;
+      max-width:320px;
+      display:flex;
+      flex-direction:column;
+      gap:0.5rem;
+    ">
+      @if(session('success') || session('status'))
+        <div style="
+          display:flex;
+          align-items:flex-start;
+          gap:0.6rem;
+          padding:0.75rem 1rem;
+          border-radius:1rem;
+          background:#ffffff;
+          border:1px solid #bbf7d0;
+          box-shadow:0 18px 40px rgba(16,185,129,.3);
+          font-size:0.875rem;
+        ">
+          <div style="
+            width:1.75rem;
+            height:1.75rem;
+            border-radius:999px;
+            background:#22c55e;
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:0.75rem;
+            flex-shrink:0;
+          ">
+            ✔
+          </div>
+          <div style="color:#14532d;font-weight:500;">
+            {{ session('success') ?? session('status') }}
+          </div>
+        </div>
+      @endif
+
+      @if(session('error'))
+        <div style="
+          display:flex;
+          align-items:flex-start;
+          gap:0.6rem;
+          padding:0.75rem 1rem;
+          border-radius:1rem;
+          background:#ffffff;
+          border:1px solid #fecaca;
+          box-shadow:0 18px 40px rgba(248,113,113,.3);
+          font-size:0.875rem;
+        ">
+          <div style="
+            width:1.75rem;
+            height:1.75rem;
+            border-radius:999px;
+            background:#ef4444;
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:0.75rem;
+            flex-shrink:0;
+          ">
+            !
+          </div>
+          <div style="color:#7f1d1d;font-weight:500;">
+            {{ session('error') }}
+          </div>
+        </div>
+      @endif
+    </div>
+
+    <script>
+      // auto hilang setelah 3.5 detik
+      setTimeout(function () {
+        const el = document.querySelector('[style*="z-index:9999"][style*="bottom:1.5rem"]');
+        if (el) {
+          el.style.transition = 'opacity .3s ease';
+          el.style.opacity = '0';
+          setTimeout(() => el.remove(), 300);
+        }
+      }, 3500);
+    </script>
+  @endif
 
   @stack('scripts')
 </body>

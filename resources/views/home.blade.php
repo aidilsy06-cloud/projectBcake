@@ -26,9 +26,6 @@
           x-transition:enter="transition ease-out duration-700"
           x-transition:enter-start="opacity-0 scale-[1.02]"
           x-transition:enter-end="opacity-100 scale-100"
-          x-transition:leave="transition ease-in duration-500"
-          x-transition:leave-start="opacity-100 scale-100"
-          x-transition:leave-end="opacity-0 scale-[1.02]"
           class="relative"
         >
           {{-- POTONG GAMBAR DENGAN BOOK-NOTCH --}}
@@ -53,6 +50,7 @@
 
           {{-- =============== OVERLAY TEKS + LOGO =============== --}}
           <div class="absolute inset-0 flex flex-col items-center justify-center text-center z-20 px-4">
+
             {{-- LOGO hanya untuk slide pertama --}}
             <template x-if="i === 0">
               <div class="mb-4 flex flex-col items-center">
@@ -96,12 +94,13 @@
                   :class="active===i ? 'bg-bcake-wine' : 'bg-white/80'"
                   class="h-2.5 w-2.5 rounded-full shadow"></button>
         </template>
+
       </div>
     </div>
   </div>
 </section>
 
-{{-- ========= WHY + FEATURED GRID ========= --}}
+{{-- ========= WHY + FEATURED GRID (pakai cake.jpg sementara) ========= --}}
 <section class="py-10 md:py-14">
   <div class="max-w-[90rem] mx-auto px-4">
 
@@ -197,7 +196,7 @@
         </div>
       </div>
 
-      {{-- Right promo --}}
+      {{-- Right promo (biarkan seperti sebelumnya) --}}
       <div class="md:col-span-3">
         <div class="card h-full p-6 flex flex-col justify-between">
           <div>
@@ -227,19 +226,20 @@
   </p>
 
   <div class="relative mt-8">
-    <!-- Tombol kiri (visual saja) -->
-    <button class="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 h-9 w-9
-                    items-center justify-center rounded-full ring-1 ring-rose-200
+    <!-- Tombol kiri (sedikit lebih jauh dari kartu) -->
+    <button class="hidden md:flex absolute -left-10 top-1/2 -translate-y-1/2 h-9 w-9
+                    items-center justify-center rounded-full ring-1 ring-rose-200 
                     bg-white shadow hover:bg-rose-50">
       ‹
     </button>
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
       @forelse ($bestSellers as $product)
-        <div class="rounded-lg shadow bg-white overflow-hidden">
-          <img
-            src="{{ asset('image/dessertbox.jpg') }}"
-            class="w-full h-56 object-cover"
+        <div class="rounded-2xl bg-white shadow hover:shadow-lg transition overflow-hidden">
+          {{-- Foto dibuat sedang --}}
+          <img 
+            src="{{ asset('image/dessertbox.jpg') }}" 
+            class="w-full h-52 object-cover"
           >
 
           <div class="p-4">
@@ -249,6 +249,13 @@
             <p class="text-sm text-gray-500 mt-1">
               Rekomendasi pilihan B’cake
             </p>
+
+            {{-- Harga produk --}}
+            @if(! is_null($product->price ?? null))
+              <p class="mt-2 text-base font-semibold text-rose-700">
+                Rp {{ number_format($product->price, 0, ',', '.') }}
+              </p>
+            @endif
           </div>
         </div>
       @empty
@@ -258,16 +265,16 @@
       @endforelse
     </div>
 
-    <!-- Tombol kanan (visual saja) -->
-    <button class="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 h-9 w-9
-                    items-center justify-center rounded-full ring-1 ring-rose-200
+    <!-- Tombol kanan (sedikit lebih jauh dari kartu) -->
+    <button class="hidden md:flex absolute -right-10 top-1/2 -translate-y-1/2 h-9 w-9
+                    items-center justify-center rounded-full ring-1 ring-rose-200 
                     bg-white shadow hover:bg-rose-50">
       ›
     </button>
   </div>
 </section>
 
-{{-- ============ BANNER PROMO (HARI BESAR — SLIDER RAPI) ============ --}}
+{{-- ============ BANNER PROMO (HARI BESAR — SLIDER) ============ --}}
 <section 
   class="max-w-7xl mx-auto px-6 pb-16"
   x-data="{
@@ -286,161 +293,103 @@
   }"
 >
   <div 
-    class="relative max-w-4xl mx-auto rounded-3xl overflow-hidden border border-rose-200 shadow-soft bg-white"
+    class="relative rounded-3xl overflow-hidden border border-rose-200 shadow-soft bg-white"
     @touchstart.passive="onTouchStart"
     @touchend.passive="onTouchEnd"
   >
 
     {{-- ===== Slide 1 – Valentine / Anniversary ===== --}}
-    <div
-      x-show="active === 0"
-      x-transition:enter="transition ease-out duration-500"
-      x-transition:enter-start="opacity-0 translate-x-4"
-      x-transition:enter-end="opacity-100 translate-x-0"
-      x-transition:leave="transition ease-in duration-400"
-      x-transition:leave-start="opacity-100 translate-x-0"
-      x-transition:leave-end="opacity-0 -translate-x-4"
-      class="grid md:grid-cols-2"
-    >
-      <div class="h-[260px] md:h-[320px] lg:h-[360px]">
-        <img src="{{ asset('image/Cake-Pink.jpg') }}" class="w-full h-full object-cover" alt="Valentine Cake">
-      </div>
-      <div class="p-8 md:p-9 bg-rose-50/80 backdrop-blur flex flex-col justify-center">
-        <p class="text-xs uppercase tracking-[.25em] text-rose-500 mb-2">Valentine &amp; Anniversary</p>
-        <h3 class="font-display text-2xl md:text-3xl text-bcake-cocoa">Valentine Collection</h3>
-        <p class="text-gray-700 mt-2 text-sm md:text-base max-w-md">
-          Rayakan momen spesial dengan kue pastel romantis dari berbagai toko pilihan di B’cake.
-        </p>
-        <div class="mt-5 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-4 py-2.5 text-xs md:text-sm">
-          <span class="text-rose-900 font-semibold">Sweet Deals</span>
-          <span class="text-gray-600">slot terbatas</span>
-        </div>
-        <div class="mt-5">
-          <a href="{{ route('products.index') }}"
-             class="inline-flex items-center rounded-full bg-rose-700 text-white px-6 py-2.5 text-sm hover:opacity-95">
-            Pesan Sekarang
-          </a>
+    <div x-show="active === 0" x-transition>
+      <div class="grid md:grid-cols-2">
+        <img src="{{ asset('image/Cake-Pink.jpg') }}" class="w-full h-[260px] md:h-full object-cover">
+        <div class="p-8 md:p-10 bg-rose-50/80 backdrop-blur">
+          <h3 class="font-display text-3xl">Valentine Collection</h3>
+          <p class="text-gray-700 mt-2 max-w-md">Rayakan momen spesial dengan kue pastel romantis pilihan para seller terbaik.</p>
+          <div class="mt-6 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-3">
+            <span class="text-rose-900 font-semibold text-xl">Sweet Deals</span>
+            <span class="text-gray-600 text-sm">slot terbatas!</span>
+          </div>
+          <div class="mt-6">
+            <a href="{{ route('products.index') }}" class="rounded-full bg-rose-700 text-white px-6 py-3 hover:opacity-90">
+              Pesan Sekarang
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
-    {{-- ===== Slide 2 – Holiday / Akhir Tahun ===== --}}
-    <div
-      x-show="active === 1"
-      x-transition:enter="transition ease-out duration-500"
-      x-transition:enter-start="opacity-0 translate-x-4"
-      x-transition:enter-end="opacity-100 translate-x-0"
-      x-transition:leave="transition ease-in duration-400"
-      x-transition:leave-start="opacity-100 translate-x-0"
-      x-transition:leave-end="opacity-0 -translate-x-4"
-      class="grid md:grid-cols-2"
-    >
-      <div class="h-[260px] md:h-[320px] lg:h-[360px]">
-        <img src="{{ asset('image/Cake-Pinky.jpg') }}" class="w-full h-full object-cover" alt="Holiday Cake">
-      </div>
-      <div class="p-8 md:p-9 bg-rose-50/80 backdrop-blur flex flex-col justify-center">
-        <p class="text-xs uppercase tracking-[.25em] text-rose-500 mb-2">Holiday Collection</p>
-        <h3 class="font-display text-2xl md:text-3xl text-bcake-cocoa">Holiday Collection</h3>
-        <p class="text-gray-700 mt-2 text-sm md:text-base max-w-md">
-          Kue elegan untuk merayakan liburan akhir tahun bersama orang-orang tersayang.
-        </p>
-        <div class="mt-5 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-4 py-2.5 text-xs md:text-sm">
-          <span class="text-rose-900 font-semibold text-base md:text-lg">20% OFF</span>
-          <span class="text-gray-600">untuk pembelian paket</span>
-        </div>
-        <div class="mt-5">
-          <a href="{{ route('products.index') }}"
-             class="inline-flex items-center rounded-full bg-rose-700 text-white px-6 py-2.5 text-sm hover:opacity-95">
-            Order Today
-          </a>
+    {{-- ===== Slide 2 – Holiday / Christmas / New Year ===== --}}
+    <div x-show="active === 1" x-transition>
+      <div class="grid md:grid-cols-2">
+        <img src="{{ asset('image/Cake-Pinky.jpg') }}" class="w-full h-[260px] md:h-full object-cover">
+        <div class="p-8 md:p-10 bg-rose-50/80 backdrop-blur">
+          <h3 class="font-display text-3xl">Holiday Collection</h3>
+          <p class="text-gray-700 mt-2 max-w-md">Kue elegan untuk merayakan liburan akhir tahun bersama keluarga.</p>
+          <div class="mt-6 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-3">
+            <span class="text-rose-900 font-semibold text-xl">20% OFF</span>
+            <span class="text-gray-600 text-sm">untuk pembelian paket</span>
+          </div>
+          <div class="mt-6">
+            <a href="{{ route('products.index') }}" class="rounded-full bg-rose-700 text-white px-6 py-3 hover:opacity-90">
+              Order Today
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
     {{-- ===== Slide 3 – Birthday Collection ===== --}}
-    <div
-      x-show="active === 2"
-      x-transition:enter="transition ease-out duration-500"
-      x-transition:enter-start="opacity-0 translate-x-4"
-      x-transition:enter-end="opacity-100 translate-x-0"
-      x-transition:leave="transition ease-in duration-400"
-      x-transition:leave-start="opacity-100 translate-x-0"
-      x-transition:leave-end="opacity-0 -translate-x-4"
-      class="grid md:grid-cols-2"
-    >
-      <div class="h-[260px] md:h-[320px] lg:h-[360px]">
-        <img src="{{ asset('image/Cake-Rainbow.jpg') }}" class="w-full h-full object-cover" alt="Birthday Cake">
-      </div>
-      <div class="p-8 md:p-9 bg-rose-50/80 backdrop-blur flex flex-col justify-center">
-        <p class="text-xs uppercase tracking-[.25em] text-rose-500 mb-2">Birthday Collection</p>
-        <h3 class="font-display text-2xl md:text-3xl text-bcake-cocoa">Birthday Collection</h3>
-        <p class="text-gray-700 mt-2 text-sm md:text-base max-w-md">
-          Kue warna-warni meriah untuk pesta ulang tahun yang penuh tawa dan cerita.
-        </p>
-        <div class="mt-5 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-4 py-2.5 text-xs md:text-sm">
-          <span class="text-rose-900 font-semibold">Best Seller</span>
-          <span class="text-gray-600">paling sering dipilih</span>
-        </div>
-        <div class="mt-5">
-          <a href="{{ route('products.index') }}"
-             class="inline-flex items-center rounded-full bg-rose-700 text-white px-6 py-2.5 text-sm hover:opacity-95">
-            Lihat Kue Ulang Tahun
-          </a>
+    <div x-show="active === 2" x-transition>
+      <div class="grid md:grid-cols-2">
+        <img src="{{ asset('image/Cake-Rainbow.jpg') }}" class="w-full h-[260px] md:h-full object-cover">
+        <div class="p-8 md:p-10 bg-rose-50/80 backdrop-blur">
+          <h3 class="font-display text-3xl">Birthday Collection</h3>
+          <p class="text-gray-700 mt-2 max-w-md">Kue warna-warni meriah untuk rayakan ulang tahun dengan cara paling manis.</p>
+          <div class="mt-6 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-3">
+            <span class="text-rose-900 font-semibold text-xl">Best Seller</span>
+            <span class="text-gray-600 text-sm">disukai banyak pembeli</span>
+          </div>
+          <div class="mt-6">
+            <a href="{{ route('products.index') }}" class="rounded-full bg-rose-700 text-white px-6 py-3 hover:opacity-90">
+              Lihat Kue Ulang Tahun
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
-    {{-- ===== Slide 4 – Mother’s Day ===== --}}
-    <div
-      x-show="active === 3"
-      x-transition:enter="transition ease-out duration-500"
-      x-transition:enter-start="opacity-0 translate-x-4"
-      x-transition:enter-end="opacity-100 translate-x-0"
-      x-transition:leave="transition ease-in duration-400"
-      x-transition:leave-start="opacity-100 translate-x-0"
-      x-transition:leave-end="opacity-0 -translate-x-4"
-      class="grid md:grid-cols-2"
-    >
-      <div class="h-[260px] md:h-[320px] lg:h-[360px]">
-        <img src="{{ asset('image/Cake-Softpink.jpg') }}" class="w-full h-full object-cover" alt="Mother's Day Cake">
-      </div>
-      <div class="p-8 md:p-9 bg-rose-50/80 backdrop-blur flex flex-col justify-center">
-        <p class="text-xs uppercase tracking-[.25em] text-rose-500 mb-2">Mother’s Day</p>
-        <h3 class="font-display text-2xl md:text-3xl text-bcake-cocoa">Mother’s Day Special</h3>
-        <p class="text-gray-700 mt-2 text-sm md:text-base max-w-md">
-          Kue lembut bernuansa pastel untuk hadiah penuh cinta buat ibu tersayang.
-        </p>
-        <div class="mt-5 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-4 py-2.5 text-xs md:text-sm">
-          <span class="text-rose-900 font-semibold">Special Gift</span>
-          <span class="text-gray-600">siap kirim lewat seller</span>
-        </div>
-        <div class="mt-5">
-          <a href="{{ route('products.index') }}"
-             class="inline-flex items-center rounded-full bg-rose-700 text-white px-6 py-2.5 text-sm hover:opacity-95">
-            Kirim ke Ibu
-          </a>
+    {{-- ===== Slide 4 – Mother’s Day / Hari Ibu ===== --}}
+    <div x-show="active === 3" x-transition>
+      <div class="grid md:grid-cols-2">
+        <img src="{{ asset('image/Cake-Softpink.jpg') }}" class="w-full h-[260px] md:h-full object-cover">
+        <div class="p-8 md:p-10 bg-rose-50/80 backdrop-blur">
+          <h3 class="font-display text-3xl">Mother’s Day</h3>
+          <p class="text-gray-700 mt-2 max-w-md">Kue lembut pastel untuk hadiah manis penuh cinta buat ibu tersayang.</p>
+          <div class="mt-6 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-3">
+            <span class="text-rose-900 font-semibold text-xl">Special Gift</span>
+            <span class="text-gray-600 text-sm">siap kirim</span>
+          </div>
+          <div class="mt-6">
+            <a href="{{ route('products.index') }}" class="rounded-full bg-rose-700 text-white px-6 py-3 hover:opacity-90">
+              Kirim ke Ibu
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
-    {{-- ===== PANAH KIRI / KANAN (rapi di luar kartu) ===== --}}
+    {{-- ===== TOMBOL KIRI / KANAN ===== --}}
     <button
       type="button"
-      class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2
-             h-9 w-9 rounded-full bg-white/95 hover:bg-white shadow-soft border border-rose-200 text-[#890524]"
+      class="hidden md:flex absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/90 hover:bg-white shadow-soft border border-rose-200 text-[#890524]"
       @click="prev()"
-    >
-      ‹
-    </button>
+    >‹</button>
 
     <button
       type="button"
-      class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2
-             h-9 w-9 rounded-full bg-white/95 hover:bg-white shadow-soft border border-rose-200 text-[#890524]"
+      class="hidden md:flex absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/90 hover:bg-white shadow-soft border border-rose-200 text-[#890524]"
       @click="next()"
-    >
-      ›
-    </button>
+    >›</button>
 
     {{-- ===== DOTS ===== --}}
     <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
@@ -448,7 +397,7 @@
         <button
           class="h-2.5 rounded-full transition-all"
           :class="active === (i-1) ? 'w-6 bg-[#890524]' : 'w-2.5 bg-rose-200 hover:bg-rose-300'"
-          @click="active = i-1"
+          @click="active=i-1"
         ></button>
       </template>
     </div>

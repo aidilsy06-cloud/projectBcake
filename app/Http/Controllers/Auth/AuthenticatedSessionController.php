@@ -40,10 +40,10 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // method authenticate() dari LoginRequest akan cek email + password
+        // Cek email + password
         $request->authenticate();
 
-        // regenerate session untuk keamanan
+        // Regenerate session untuk keamanan
         $request->session()->regenerate();
 
         $user = Auth::user();
@@ -55,8 +55,11 @@ class AuthenticatedSessionController extends Controller
             default  => route('buyer.dashboard'),
         };
 
-        // intended() = kalau sebelumnya ada URL yang mau diakses, pakai itu.
-        // Kalau tidak ada, fallback ke $target sesuai role.
+        // Set DUA flash sekalian, supaya semua layout bisa pakai
+        session()->flash('login_success', "Kamu berhasil login! Selamat datang kembali di B'cake 💗");
+        session()->flash('success', "Kamu berhasil login! Selamat datang kembali di B'cake 💗");
+
+        // redirect ke dashboard sesuai role
         return redirect()->intended($target);
     }
 
@@ -69,6 +72,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        // flash untuk logout
+        session()->flash('success', "Kamu berhasil logout dari B'cake 💗");
 
         return redirect('/');
     }

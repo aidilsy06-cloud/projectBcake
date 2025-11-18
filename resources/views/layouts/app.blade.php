@@ -38,6 +38,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 
+  {{-- Alpine.js untuk interaksi (slider, dsb) --}}
+  <script src="https://unpkg.com/alpinejs" defer></script>
+
   <style>
     :root{ --bcake-wine:#890524; --bcake-deep:#57091d; --bcake-cocoa:#362320; }
     body{ font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
@@ -52,6 +55,7 @@
   </style>
 
   @stack('head')
+
 </head>
 <body class="bg-rose-50 text-gray-800 antialiased min-h-screen flex flex-col">
 

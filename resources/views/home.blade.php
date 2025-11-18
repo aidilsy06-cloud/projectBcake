@@ -94,7 +94,6 @@
                   :class="active===i ? 'bg-bcake-wine' : 'bg-white/80'"
                   class="h-2.5 w-2.5 rounded-full shadow"></button>
         </template>
-
       </div>
     </div>
   </div>
@@ -107,9 +106,11 @@
     {{-- ROW 1 --}}
     <div class="grid md:grid-cols-12 gap-6 items-stretch">
 
-      {{-- Left category --}}
+      {{-- Left category: Custom Cake & Modern Cake --}}
       <div class="md:col-span-3">
-        <div class="rounded-3xl shadow-sm overflow-hidden" style="background-color:#6a4e4a4d;">
+        <a href="{{ route('categories.show','custom-cake-modern') }}"
+           class="block rounded-3xl shadow-sm overflow-hidden"
+           style="background-color:#6a4e4a4d;">
           <img src="{{ asset('image/cakemodern.jpg') }}"
                alt="Modern & Custom Cake"
                class="w-full aspect-[4/3] object-cover">
@@ -118,7 +119,7 @@
               Custom Cake & Modern Cake
             </h3>
           </div>
-        </div>
+        </a>
       </div>
 
       {{-- Center content --}}
@@ -135,9 +136,11 @@
         </div>
       </div>
 
-      {{-- Right category --}}
+      {{-- Right category: Cupcake & Brownies --}}
       <div class="md:col-span-3">
-        <div class="rounded-3xl shadow-sm overflow-hidden" style="background-color:#6a4e4a4d;">
+        <a href="{{ route('categories.show','cupcake-brownies') }}"
+           class="block rounded-3xl shadow-sm overflow-hidden"
+           style="background-color:#6a4e4a4d;">
           <img src="{{ asset('image/cupcake.jpg') }}"
                alt="Cupcake & Brownies"
                class="w-full aspect-[4/3] object-cover">
@@ -146,7 +149,7 @@
               Cupcake & Brownies
             </h3>
           </div>
-        </div>
+        </a>
       </div>
 
     </div>
@@ -154,9 +157,11 @@
     {{-- ROW 2 --}}
     <div class="grid md:grid-cols-12 gap-6 mt-6">
 
-      {{-- Product 1 --}}
+      {{-- Pastry & Roti --}}
       <div class="md:col-span-3">
-        <div class="rounded-3xl shadow-sm overflow-hidden group" style="background-color:#6a4e4a4d;">
+        <a href="{{ route('categories.show','pastry-roti') }}"
+           class="block rounded-3xl shadow-sm overflow-hidden group"
+           style="background-color:#6a4e4a4d;">
           <img src="{{ asset('image/Pastry.jpg') }}"
                alt="Pastry & Roti"
                class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
@@ -165,12 +170,14 @@
               Pastry & Roti
             </h3>
           </div>
-        </div>
+        </a>
       </div>
 
-      {{-- Product 2 --}}
+      {{-- Dessert Box --}}
       <div class="md:col-span-3">
-        <div class="rounded-3xl shadow-sm overflow-hidden group" style="background-color:#6a4e4a4d;">
+        <a href="{{ route('categories.show','dessert-box') }}"
+           class="block rounded-3xl shadow-sm overflow-hidden group"
+           style="background-color:#6a4e4a4d;">
           <img src="{{ asset('image/dessertbox.jpg') }}"
                alt="Dessertbox"
                class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
@@ -179,12 +186,14 @@
               Dessert Box
             </h3>
           </div>
-        </div>
+        </a>
       </div>
 
-      {{-- Product 3 --}}
+      {{-- Snack --}}
       <div class="md:col-span-3">
-        <div class="rounded-3xl shadow-sm overflow-hidden group" style="background-color:#6a4e4a4d;">
+        <a href="{{ route('categories.show','snack') }}"
+           class="block rounded-3xl shadow-sm overflow-hidden group"
+           style="background-color:#6a4e4a4d;">
           <img src="{{ asset('image/snack.jpg') }}"
                alt="Snack"
                class="w-full aspect-[4/3] object-cover transition duration-300 group-hover:scale-[1.02]">
@@ -193,7 +202,7 @@
               Snack
             </h3>
           </div>
-        </div>
+        </a>
       </div>
 
       {{-- Right promo (biarkan seperti sebelumnya) --}}
@@ -276,7 +285,7 @@
 
 {{-- ============ BANNER PROMO (HARI BESAR — SLIDER) ============ --}}
 <section 
-  class="max-w-7xl mx-auto px-6 pb-16"
+  class="max-w-7xl mx_auto px-6 pb-16"
   x-data="{
     active: 0,
     max: 3,

@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Buyer\StoreController;
 use App\Http\Controllers\Buyer\HomeController;
 
+
 // Seller
 use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
 use App\Http\Controllers\Seller\StoreController as SellerStore;
@@ -60,6 +61,10 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/products', 'index')->name('products.index');
     Route::get('/product/{product:slug}', 'show')->name('products.show');
 });
+
+// Halaman Kategori
+Route::get('/kategori/{slug}', [ProductController::class, 'byCategory'])
+    ->name('categories.show');
 
 // Keranjang
 Route::prefix('cart')->name('cart.')->group(function () {

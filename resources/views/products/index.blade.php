@@ -54,17 +54,21 @@
               {{ 'Rp '.number_format($p->price,0,',','.') }}
             </span>
 
-            {{-- Aksi (pilih salah satu sesuai routing yang kamu punya) --}}
+            {{-- Tombol detail --}}
             <a href="{{ route('products.show', $p->slug ?? $p->id) }}"
-               class="btn btn-ghost">Detail</a>
+               class="inline-flex items-center text-sm px-4 py-2 rounded-full border border-rose-200 text-bcake-wine hover:bg-rose-50">
+              Detail
+            </a>
 
-            {{-- contoh add to cart kalau sudah ada routenya --}}
-            @isset($cartAddRoute)
-              <form action="{{ route($cartAddRoute, $p->slug ?? $p->id) }}" method="POST">
-                @csrf
-                <button class="btn btn-primary">Add to Cart</button>
-              </form>
-            @endisset
+            {{-- Tombol Tambah ke Keranjang (qty default = 1) --}}
+            <form action="{{ route('cart.add', $p) }}" method="POST" class="inline-flex">
+              @csrf
+              <input type="hidden" name="qty" value="1">
+              <button type="submit"
+                      class="inline-flex items-center text-sm px-4 py-2 rounded-full bg-bcake-wine text-white hover:bg-bcake-cherry shadow-sm">
+                Tambah ke Keranjang
+              </button>
+            </form>
           </div>
         </div>
       </article>

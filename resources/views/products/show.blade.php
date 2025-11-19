@@ -10,16 +10,25 @@
 
     <div>
         <h1 class="font-display text-4xl">{{ $product->name }}</h1>
+
         <div class="text-bcake-wine font-semibold text-2xl mt-2">
             Rp {{ number_format($product->price,0,',','.') }}
         </div>
 
         <p class="mt-4 text-bcake-truffle">{{ $product->description }}</p>
 
-        {{-- ✅ Form tambah ke keranjang --}}
-        <form method="POST" action="{{ route('cart.add', $product->slug) }}" class="mt-6 flex items-center gap-3">
+        {{-- ============================
+            📌 FORM TAMBAH KE KERANJANG
+        ============================= --}}
+        <form method="POST" action="{{ route('cart.add', $product) }}" class="mt-6 flex items-center gap-3">
             @csrf
-            <input type="number" name="qty" value="1" min="1" class="w-20 rounded-xl2 border-bcake-truffle/30">
+
+            <input type="number" 
+                   name="qty" 
+                   value="1" 
+                   min="1"
+                   class="w-20 rounded-xl2 border-bcake-truffle/30 px-3 py-2">
+
             <button class="px-5 py-3 rounded-xl2 bg-bcake-cherry text-white hover:bg-bcake-wine shadow-soft">
                 Tambah ke Keranjang
             </button>

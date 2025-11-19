@@ -63,7 +63,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::controller(ProductController::class)->group(function () {
     Route::get('/products', 'index')->name('products.index');
 
-    // DETAIL PRODUK (pakai slug) → cocok dengan route('products.show', $product->slug)
+    // DETAIL PRODUK (pakai slug)
     Route::get('/product/{product:slug}', 'show')->name('products.show');
 });
 
@@ -72,19 +72,28 @@ Route::get('/kategori/{slug}', [ProductController::class, 'byCategory'])
     ->name('categories.show');
 
 /* ----------------------------------------
-| CART / KERANJANG
+| CART / KERANJANG  (WAJIB LOGIN)
 |---------------------------------------- */
-Route::prefix('cart')->name('cart.')->group(function () {
-    Route::get('/', [CartController::class, 'index'])->name('index');
-    Route::post('/add/{product:slug}', [CartController::class, 'add'])->name('add');
+Route::middleware('auth')
+    ->prefix('cart')
+    ->name('cart.')
+    ->group(function () {
 
-    // TERIMA POST & DELETE (buat jaga-jaga kalau ada _method=DELETE nyasar)
-    Route::match(['post', 'delete'], '/update', [CartController::class, 'update'])
-        ->name('update');
+        // Lihat keranjang
+        Route::get('/', [CartController::class, 'index'])->name('index');
 
-    Route::delete('/remove/{product:slug}', [CartController::class, 'remove'])
-        ->name('remove');
-});
+        // Tambah ke keranjang -> form: route('cart.add', $product)
+        Route::post('/add/{product}', [CartController::class, 'add'])->name('add');
+
+        // Update banyak item sekaligus
+        Route::post('/update', [CartController::class, 'update'])->name('update');
+
+        // Hapus satu item (binding ke CartItem di controller)
+        Route::delete('/item/{cartItem}', [CartController::class, 'remove'])->name('remove');
+
+        // Kosongkan seluruh keranjang
+        Route::delete('/', [CartController::class, 'clear'])->name('clear');
+    });
 
 /* ----------------------------------------
 | HALAMAN STATIS
@@ -150,7 +159,6 @@ Route::prefix('admin')
         Route::get('/', function () {
             $user = auth()->user();
 
-            // hanya boleh diakses role admin
             abort_unless(($user->role ?? null) === 'admin', 403);
 
             $stats = [
@@ -187,7 +195,6 @@ Route::middleware(['auth', 'verified'])
     ->prefix('seller')
     ->as('seller.')
     ->group(function () {
-        // Dashboard utama seller → route('seller.dashboard')
         Route::get('/', [SellerDashboard::class, 'index'])->name('dashboard');
 
         // Kelola toko
@@ -195,7 +202,7 @@ Route::middleware(['auth', 'verified'])
         Route::get('/store/edit', [SellerStore::class, 'edit'])->name('store.edit');
         Route::put('/store', [SellerStore::class, 'update'])->name('store.update');
 
-        // ==== PRODUK SELLER ==== (dipakai di katalog seller)
+        // Produk seller
         Route::get('/products', [SellerProductController::class, 'index'])
             ->name('products.index');
 
@@ -231,7 +238,6 @@ Route::prefix('buyer')
         Route::get('/dashboard', function () {
             $user = auth()->user();
 
-            // hanya boleh role buyer
             abort_unless(($user->role ?? 'buyer') === 'buyer', 403);
 
             $stats = ['wish' => 0];

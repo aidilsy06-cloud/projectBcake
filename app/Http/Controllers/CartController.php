@@ -2,71 +2,114 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\CartItem;
 use App\Models\Product;
+use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    private function getCart(): array
-    {
-        return session('cart', []);
-    }
-
-    private function saveCart(array $cart): void
-    {
-        session(['cart' => $cart]);
-        session(['cart_count' => array_sum(array_map(fn($r) => $r['qty'], $cart))]);
-    }
-
+    // Tampilkan keranjang
     public function index()
     {
-        $cart  = $this->getCart();
-        $total = collect($cart)->sum(fn($r) => $r['product']->price * $r['qty']);
+        $userId = auth()->id();
 
-        return view('cart.index', compact('cart', 'total'));
-    }
-
-    public function add(Request $request, Product $product)
-    {
-        $qty  = max(1, (int) $request->input('qty', 1));
-        $cart = $this->getCart();
-        $key  = $product->slug;
-
-        if (! isset($cart[$key])) {
-            $cart[$key] = ['product' => $product, 'qty' => 0];
+        if (! $userId) {
+            return redirect()->route('login');
         }
 
-        $cart[$key]['qty'] += $qty;
+        $items = CartItem::with('product')
+            ->where('user_id', $userId)
+            ->get();
 
-        $this->saveCart($cart);
+        $total = $items->sum(function ($item) {
+            return $item->product->price * $item->qty;
+        });
 
-        return back()->with('success', 'Produk ditambahkan ke keranjang 💗');
+        return view('cart.index', [
+            'items' => $items,
+            'total' => $total,
+        ]);
     }
 
+    // Tambah ke keranjang
+    public function add(Request $request, Product $product)
+    {
+        $userId = auth()->id();
+        if (! $userId) {
+            return redirect()->route('login');
+        }
+
+        $qty = max(1, (int) $request->input('qty', 1));
+
+        // cek kalau item sudah ada → tambahkan qty
+        $item = CartItem::where('user_id', $userId)
+            ->where('product_id', $product->id)
+            ->first();
+
+        if ($item) {
+            $item->qty += $qty;
+            $item->save();
+        } else {
+            CartItem::create([
+                'user_id'    => $userId,
+                'product_id' => $product->id,
+                'qty'        => $qty,
+            ]);
+        }
+
+        return redirect()
+            ->route('cart.index')
+            ->with('success', 'Produk ditambahkan ke keranjang.');
+    }
+
+    // Update beberapa item (opsional, kalau nanti pakai form update)
     public function update(Request $request)
     {
-        $cart = $this->getCart();
+        $userId = auth()->id();
+        if (! $userId) {
+            return redirect()->route('login');
+        }
 
-        foreach ((array) $request->input('qty', []) as $slug => $qty) {
-            if (isset($cart[$slug])) {
-                $cart[$slug]['qty'] = max(1, (int) $qty);
+        $items = $request->input('items', []); // ['cart_item_id' => qty]
+
+        foreach ($items as $itemId => $qty) {
+            $qty = max(0, (int) $qty);
+
+            $item = CartItem::where('user_id', $userId)
+                ->where('id', $itemId)
+                ->first();
+
+            if (! $item) {
+                continue;
+            }
+
+            if ($qty === 0) {
+                $item->delete();
+            } else {
+                $item->qty = $qty;
+                $item->save();
             }
         }
 
-        $this->saveCart($cart);
-
-        // PENTING: redirect KE HALAMAN /cart, BUKAN /cart/update
-        return redirect()->route('cart.index')
-            ->with('success', 'Keranjang berhasil diperbarui ✨');
+        return redirect()
+            ->route('cart.index')
+            ->with('success', 'Keranjang diperbarui.');
     }
 
+    // Hapus satu produk dari keranjang
     public function remove(Product $product)
     {
-        $cart = $this->getCart();
-        unset($cart[$product->slug]);
+        $userId = auth()->id();
+        if (! $userId) {
+            return redirect()->route('login');
+        }
 
-        $this->saveCart($cart);
+        CartItem::where('user_id', $userId)
+            ->where('product_id', $product->id)
+            ->delete();
 
-        return back()->with('success', 'Produk dihapus dari keranjang.');
+        return redirect()
+            ->route('cart.index')
+            ->with('success', 'Produk dihapus dari keranjang.');
     }
 }

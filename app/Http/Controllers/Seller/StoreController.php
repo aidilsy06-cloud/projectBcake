@@ -14,9 +14,6 @@ class StoreController extends Controller
 {
     /**
      * Ambil / buat Store milik seller login.
-     * - Kalau sudah ada store dengan user_id = seller → pakai itu
-     * - Kalau belum ada tapi ada store "kosong" (user_id NULL) dengan slug sama → klaim toko itu
-     * - Kalau belum ada sama sekali → buat baru
      */
     protected function myStore(): Store
     {
@@ -25,16 +22,15 @@ class StoreController extends Controller
 
         $baseSlug = Str::slug($user->name) ?: ('store-'.$user->id);
 
-        // Kalau tabel stores punya kolom user_id
         if (Schema::hasColumn('stores', 'user_id')) {
 
-            // 1) Sudah punya toko? → pakai
+            // 1) sudah punya toko?
             $existing = Store::where('user_id', $user->id)->first();
             if ($existing) {
                 return $existing;
             }
 
-            // 2) Belum punya, tapi ada toko seeder dengan slug sama & user_id NULL? → klaim
+            // 2) klaim toko seeder dengan slug sama & user_id NULL
             $claimable = Store::whereNull('user_id')
                 ->where('slug', $baseSlug)
                 ->first();
@@ -47,18 +43,18 @@ class StoreController extends Controller
                 return $claimable;
             }
 
-            // 3) Sama sekali belum ada → buat baru
+            // 3) buat baru
             return Store::create([
-                'user_id'    => $user->id,
-                'name'       => $user->name.' Store',
-                'slug'       => $baseSlug,
-                'tagline'    => 'Sweet & Elegant',
-                'whatsapp'   => null,
-                'description'=> null,
+                'user_id'     => $user->id,
+                'name'        => $user->name.' Store',
+                'slug'        => $baseSlug,
+                'tagline'     => 'Sweet & Elegant',
+                'whatsapp'    => null,
+                'description' => null,
             ]);
         }
 
-        // Fallback kalau (aneh banget sih) tidak ada kolom user_id
+        // fallback kalau ga ada kolom user_id
         return Store::firstOrCreate(
             ['slug' => $baseSlug],
             [
@@ -69,15 +65,15 @@ class StoreController extends Controller
     }
 
     /**
-     * Tampilkan toko + produk milik toko (pakai store_id / seller_id / user_id yang tersedia)
+     * Halaman "Toko Saya" di sisi seller.
      */
     public function show(Request $request)
     {
         $store = $this->myStore();
         $sort  = $request->input('sort', 'latest'); // latest|price_asc|price_desc
 
-        // Tentukan kolom relasi yang ada di tabel products
         $query = Product::query();
+
         if (Schema::hasColumn('products', 'store_id')) {
             $query->where('store_id', $store->id);
         } elseif (Schema::hasColumn('products', 'seller_id')) {
@@ -85,18 +81,16 @@ class StoreController extends Controller
         } elseif (Schema::hasColumn('products', 'user_id')) {
             $query->where('user_id', $store->user_id);
         } else {
-            // Tidak ada kolom owner yang cocok → kosongkan agar aman
-            $query->whereRaw('1=0');
+            $query->whereRaw('1=0'); // aman kalau belum ada kolom owner
         }
 
         $products = $query
-            ->when($sort === 'price_asc',  fn($q) => $q->orderBy('price', 'asc'))
-            ->when($sort === 'price_desc', fn($q) => $q->orderBy('price', 'desc'))
-            ->when($sort === 'latest',     fn($q) => $q->latest())
+            ->when($sort === 'price_asc',  fn ($q) => $q->orderBy('price', 'asc'))
+            ->when($sort === 'price_desc', fn ($q) => $q->orderBy('price', 'desc'))
+            ->when($sort === 'latest',     fn ($q) => $q->latest())
             ->paginate(12)
             ->withQueryString();
 
-        // Meta sederhana untuk head
         $meta = [
             'title'       => ($store->name ?? 'Toko').' — B’cake',
             'description' => $store->tagline ?? 'Toko manis & elegan di B’cake.',
@@ -106,7 +100,8 @@ class StoreController extends Controller
     }
 
     /**
-     * Form edit toko saya
+     * FORM edit toko saya.
+     * Route: GET /seller/store/edit  →  seller.store.edit
      */
     public function edit()
     {
@@ -115,44 +110,69 @@ class StoreController extends Controller
     }
 
     /**
-     * Update profil toko saya
+     * PROSES update profil toko saya.
+     * Route: PUT /seller/store  →  seller.store.update
      */
     public function update(Request $request)
     {
         $store = $this->myStore();
 
-        $data = $request->validate([
-            'name'        => ['required','string','max:100'],
-            'slug'        => ['required','alpha_dash','max:120','unique:stores,slug,'.$store->id],
-            'tagline'     => ['nullable','string','max:160'],
-            'description' => ['nullable','string','max:2000'],
-            'whatsapp'    => ['nullable','string','max:20'],
-            'logo'        => ['nullable','image','mimes:jpg,jpeg,png,webp','max:2048'],
-            'banner'      => ['nullable','image','mimes:jpg,jpeg,png,webp','max:4096'],
+        // 1. Validasi input
+        $validated = $request->validate([
+            'name'        => ['required', 'string', 'max:100'],
+            'slug'        => ['required', 'alpha_dash', 'max:120', 'unique:stores,slug,'.$store->id],
+            'tagline'     => ['nullable', 'string', 'max:160'],
+            'description' => ['nullable', 'string', 'max:2000'],
+            'whatsapp'    => ['nullable', 'string', 'max:20'],
+            'logo'        => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'banner'      => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
         ]);
 
-        // Normalisasi slug
-        if (!empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['slug']);
+        // 2. Normalisasi slug
+        $slug = Str::slug($validated['slug']);
+
+        // 3. Normalisasi nomor WhatsApp → 62xxxxxxxxxx
+        $wa = $validated['whatsapp'] ?? null;
+
+        if ($wa !== null && $wa !== '') {
+            $wa = preg_replace('/\D+/', '', $wa); // hanya angka
+
+            if (Str::startsWith($wa, '0')) {
+                $wa = '62'.substr($wa, 1);   // 08xxx → 628xxx
+            } elseif (!Str::startsWith($wa, '62')) {
+                $wa = '62'.$wa;              // kalau belum ada 62 di depan
+            }
+        } else {
+            $wa = null;
         }
 
-        // Upload logo
+        // 4. Isi field satu-satu
+        $store->name        = $validated['name'];
+        $store->slug        = $slug;
+        $store->tagline     = $validated['tagline'] ?? null;
+        $store->description = $validated['description'] ?? null;
+        $store->whatsapp    = $wa;
+
+        // 5. Upload logo (kalau ada)
         if ($request->hasFile('logo')) {
-            if ($store->logo) {
+            if ($store->logo && Storage::disk('public')->exists($store->logo)) {
                 Storage::disk('public')->delete($store->logo);
             }
-            $data['logo'] = $request->file('logo')->store('stores/logo', 'public');
+
+            $store->logo = $request->file('logo')->store('stores/logo', 'public');
         }
 
-        // Upload banner
+        // 6. Upload banner (kalau ada)
         if ($request->hasFile('banner')) {
-            if ($store->banner) {
+            if ($store->banner && Storage::disk('public')->exists($store->banner)) {
                 Storage::disk('public')->delete($store->banner);
             }
-            $data['banner'] = $request->file('banner')->store('stores/banner', 'public');
+
+            $store->banner = $request->file('banner')->store('stores/banner', 'public');
         }
 
-        $store->update($data);
+        // 7. Simpan perubahan
+        $store->save();
 
         return redirect()
             ->route('seller.store.show')

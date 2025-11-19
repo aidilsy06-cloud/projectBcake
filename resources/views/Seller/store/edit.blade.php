@@ -51,8 +51,11 @@
                 Nama Toko
               </label>
               <input type="text" name="name"
-                     value="{{ old('name', optional($store)->name) }}"
-                     class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400">
+                     value="{{ old('name', $store->name) }}"
+                     class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400 @error('name') border-rose-400 ring-1 ring-rose-300 @enderror">
+              @error('name')
+                <p class="mt-1 text-[11px] text-rose-500">{{ $message }}</p>
+              @enderror
             </div>
 
             {{-- Tagline --}}
@@ -61,8 +64,11 @@
                 Tagline
               </label>
               <input type="text" name="tagline"
-                     value="{{ old('tagline', optional($store)->tagline ?? 'Sweet & Elegant') }}"
-                     class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400">
+                     value="{{ old('tagline', $store->tagline ?? 'Sweet & Elegant') }}"
+                     class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400 @error('tagline') border-rose-400 ring-1 ring-rose-300 @enderror">
+              @error('tagline')
+                <p class="mt-1 text-[11px] text-rose-500">{{ $message }}</p>
+              @enderror
             </div>
 
             {{-- Deskripsi --}}
@@ -72,7 +78,10 @@
               </label>
               <textarea name="description" rows="4"
                         placeholder="Ceritakan singkat tentang toko dan produk unggulan..."
-                        class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400">{{ old('description', optional($store)->description) }}</textarea>
+                        class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400 @error('description') border-rose-400 ring-1 ring-rose-300 @enderror">{{ old('description', $store->description) }}</textarea>
+              @error('description')
+                <p class="mt-1 text-[11px] text-rose-500">{{ $message }}</p>
+              @enderror
             </div>
           </div>
 
@@ -84,12 +93,15 @@
                 Slug (URL)
               </label>
               <input type="text" name="slug"
-                     value="{{ old('slug', optional($store)->slug) }}"
-                     class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400">
+                     value="{{ old('slug', $store->slug) }}"
+                     class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400 @error('slug') border-rose-400 ring-1 ring-rose-300 @enderror">
               <p class="mt-1 text-[11px] text-rose-500/80">
                 Tampil di URL publik sebagai:
                 <span class="font-mono text-[11px] text-rose-700">/store/&lt;slug&gt;</span>
               </p>
+              @error('slug')
+                <p class="mt-1 text-[11px] text-rose-500">{{ $message }}</p>
+              @enderror
             </div>
 
             {{-- WhatsApp --}}
@@ -99,11 +111,14 @@
               </label>
               <input type="text" name="whatsapp"
                      placeholder="Contoh: 0812xxxxxxx"
-                     value="{{ old('whatsapp', optional($store)->whatsapp) }}"
-                     class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400">
+                     value="{{ old('whatsapp', $store->whatsapp) }}"
+                     class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400 @error('whatsapp') border-rose-400 ring-1 ring-rose-300 @enderror">
               <p class="mt-1 text-[11px] text-rose-500/80">
                 Nomor ini digunakan untuk tombol pesan via WhatsApp di halaman toko.
               </p>
+              @error('whatsapp')
+                <p class="mt-1 text-[11px] text-rose-500">{{ $message }}</p>
+              @enderror
             </div>
 
             {{-- Tip kecil --}}
@@ -132,12 +147,15 @@
                 <p class="mt-1 text-[11px] text-rose-500/80">
                   JPG/PNG/WEBP • Maks 2 MB • Disarankan rasio persegi (1:1).
                 </p>
+                @error('logo')
+                  <p class="mt-1 text-[11px] text-rose-500">{{ $message }}</p>
+                @enderror
               </div>
 
               <div class="rounded-2xl border border-rose-100 bg-rose-50/60 px-3 py-3 flex items-center gap-3">
                 <div class="h-14 w-14 rounded-2xl bg-white overflow-hidden flex items-center justify-center">
-                  @if(optional($store)->logo)
-                    <img src="{{ asset('storage/'.optional($store)->logo) }}"
+                  @if($store->logo)
+                    <img src="{{ asset('storage/'.$store->logo) }}"
                          alt="Logo preview"
                          class="h-full w-full object-cover">
                   @else
@@ -164,12 +182,15 @@
                 <p class="mt-1 text-[11px] text-rose-500/80">
                   Disarankan rasio 16:9, lebar ≥ 1280px untuk tampilan yang tajam.
                 </p>
+                @error('banner')
+                  <p class="mt-1 text-[11px] text-rose-500">{{ $message }}</p>
+                @enderror
               </div>
 
               <div class="rounded-2xl border border-rose-100 bg-rose-50/60 px-3 py-3">
                 <div class="h-24 md:h-28 rounded-2xl bg-white overflow-hidden flex items-center justify-center">
-                  @if(optional($store)->banner)
-                    <img src="{{ asset('storage/'.optional($store)->banner) }}"
+                  @if($store->banner)
+                    <img src="{{ asset('storage/'.$store->banner) }}"
                          alt="Banner preview"
                          class="h-full w-full object-cover">
                   @else

@@ -11,15 +11,17 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        // HANYA role seller yang boleh masuk dashboard seller
+        // HANYA role seller yang boleh membuka dashboard seller
         abort_unless(($user->role ?? null) === 'seller', 403);
 
-        // Untuk sementara: hitung semua produk.
-        // Nanti kalau sudah ada kolom seller_id / store_id, bisa diganti:
+        // Hitung total produk (sementara semua produk)
+        // Jika nanti ada kolom seller_id, baru difilter
         // $myProducts = Product::where('seller_id', $user->id)->count();
         $myProducts = Product::count();
 
-        return view('dashboard.seller', [
+        // PENTING: gunakan view 'seller.dashboard'
+        return view('seller.dashboard', [
+            'user'        => $user,
             'my_products' => $myProducts,
         ]);
     }

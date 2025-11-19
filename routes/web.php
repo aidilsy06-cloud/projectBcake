@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -28,12 +29,12 @@ use App\Models\Product;
 use App\Models\User;
 
 /* ----------------------------------------
-| Healthcheck
+| HEALTHCHECK
 |---------------------------------------- */
 Route::get('/_health', fn () => 'ok');
 
 /* ----------------------------------------
-| Helpers (aman saat DB belum siap)
+| HELPERS (aman saat DB belum siap)
 |---------------------------------------- */
 if (! function_exists('safeCount')) {
     function safeCount(callable $cb): int {
@@ -61,6 +62,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // Produk publik
 Route::controller(ProductController::class)->group(function () {
     Route::get('/products', 'index')->name('products.index');
+
+    // DETAIL PRODUK (pakai slug) → cocok dengan route('products.show', $product->slug)
     Route::get('/product/{product:slug}', 'show')->name('products.show');
 });
 
@@ -184,7 +187,7 @@ Route::middleware(['auth', 'verified'])
     ->prefix('seller')
     ->as('seller.')
     ->group(function () {
-        // Dashboard utama seller
+        // Dashboard utama seller → route('seller.dashboard')
         Route::get('/', [SellerDashboard::class, 'index'])->name('dashboard');
 
         // Kelola toko
@@ -192,7 +195,7 @@ Route::middleware(['auth', 'verified'])
         Route::get('/store/edit', [SellerStore::class, 'edit'])->name('store.edit');
         Route::put('/store', [SellerStore::class, 'update'])->name('store.update');
 
-        // ==== PRODUK SELLER ====
+        // ==== PRODUK SELLER ==== (dipakai di katalog seller)
         Route::get('/products', [SellerProductController::class, 'index'])
             ->name('products.index');
 

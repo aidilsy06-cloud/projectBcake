@@ -5,17 +5,54 @@
 <style>
   :root{
     --wine:#890524;
-    --deep:#57091d;
+    --soft:#ffe7ef;
     --cocoa:#362320;
   }
-  .shadow-soft{box-shadow:0 26px 60px rgba(137,5,36,.13)}
 
-  .hero-seller{
+  .shadow-soft{box-shadow:0 26px 60px rgba(137,5,36,.14)}
+
+  /* ===== HEADER TOKO ===== */
+  .toko-shell{
+    border-radius:28px;
     background:
-      radial-gradient(900px 480px at 80% -10%,rgba(255,233,240,.95),transparent 60%),
-      linear-gradient(135deg,#fff7f8,#ffe8cf);
+      radial-gradient(900px 480px at 80% -10%, #fff7fb, transparent 60%),
+      linear-gradient(135deg,#fff7f8,#ffe0ed);
+    padding:1.8rem 2rem;
+    box-shadow:0 28px 70px rgba(137,5,36,.18);
+    position:relative;
+    overflow:hidden;
   }
-  .pill{
+  .toko-shell::before{
+    content:"";
+    position:absolute;
+    inset:-30%;
+    opacity:.25;
+    background:
+      radial-gradient(circle at 0 0,#fff 0,transparent 55%),
+      radial-gradient(circle at 100% 100%,#fff 0,transparent 55%);
+    pointer-events:none;
+  }
+  .toko-shell-inner{
+    position:relative;
+    z-index:1;
+    display:grid;
+    grid-template-columns:minmax(0,3fr) minmax(0,2fr);
+    gap:1.8rem;
+    align-items:center;
+  }
+
+  .toko-avatar{
+    width:86px;height:86px;
+    border-radius:999px;
+    border:4px solid #fff;
+    overflow:hidden;
+    box-shadow:0 18px 40px rgba(137,5,36,.25);
+  }
+  .toko-avatar img{
+    width:100%;height:100%;object-fit:cover;
+  }
+
+  .badge-pill{
     display:inline-flex;
     align-items:center;
     gap:.4rem;
@@ -25,261 +62,406 @@
     background:#fff;
     border:1px solid rgba(248,113,113,.25);
     color:#9f1239;
+    white-space:nowrap;
+    text-decoration:none;
+    transition:background .16s ease, box-shadow .16s ease, transform .16s ease;
   }
-  .btn-primary{
-    border-radius:999px;
-    padding:.55rem 1.2rem;
-    font-size:.85rem;
-    font-weight:600;
-    background:linear-gradient(135deg,#fb7185,#f97316);
-    color:#fff;
-    box-shadow:0 14px 30px rgba(249,113,113,.4);
-    transition:.2s;
-  }
-  .btn-primary:hover{
-    filter:brightness(.97);
+  .badge-pill:hover{
+    background:#ffe7ef;
+    box-shadow:0 10px 26px rgba(137,5,36,.18);
     transform:translateY(-1px);
   }
-  .btn-soft{
+
+  .btn-pink{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
     border-radius:999px;
-    padding:.45rem .95rem;
-    font-size:.8rem;
-    border:1px solid rgba(248,113,113,.25);
-    background:#fff;
-    color:#9f1239;
-    transition:.2s;
+    padding:.65rem 1.5rem;
+    background:#f97373;
+    color:#fff !important;
+    font-weight:600;
+    font-size:.9rem;
+    box-shadow:0 18px 35px rgba(248,113,113,.4);
+    border:none;
+    cursor:pointer;
+    text-decoration:none;
+    position:relative;
+    z-index:10;
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
   }
-  .btn-soft:hover{
-    background:#fff1f2;
+  .btn-pink:hover{
+    background:#ef4444;
+    transform:translateY(-1px);
+    box-shadow:0 24px 60px rgba(248,113,113,.55);
   }
 
-  /* BADGE MENU YANG BISA DIKLIK */
-  .stat-menu{
+  .stat-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.75rem;
+    margin-top:1.5rem;
+  }
+  .stat-chip{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    min-width:150px;
-    padding:.7rem 1rem;
+    gap:.8rem;
+    padding:.55rem 1.1rem;
     border-radius:999px;
     background:#fff;
-    border:1px solid rgba(248,113,113,.25);
-    box-shadow:0 16px 30px rgba(248,113,113,.08);
+    font-size:.78rem;
+    color:#4b1e25;
+    box-shadow:0 8px 22px rgba(137,5,36,.08);
+  }
+  .stat-label{opacity:.8;}
+  .stat-value{font-weight:600;}
+  .stat-chip--active{
+    background:#22c55e10;
+    color:#15803d;
+    border:1px solid #bbf7d0;
+  }
+  .stat-chip--tab.is-active{
+    background:#fb7185;
+    color:#fff;
+  }
+  .stat-chip--tab a{
+    text-decoration:none;
+    color:inherit;
+  }
+  .stat-chip-link{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    text-decoration:none;
+    color:inherit;
+  }
+
+  /* ===== GRINDIL / SCALLOP ===== */
+  .scallop-divider{
+    margin-top:1.8rem;
+    margin-bottom:2.3rem;
+    height:34px;
+    overflow:hidden;
+  }
+  .scallop-divider svg{
+    width:100%;
+    height:100%;
+    display:block;
+  }
+
+  /* ===== KATALOG / GRID PRODUK ===== */
+  .section-title{
+    font-size:1.3rem;
+    font-weight:600;
+    color:var(--cocoa);
+  }
+  .section-subtitle{
+    font-size:.9rem;
+    color:#a85574;
+  }
+
+  .product-grid{
+    margin-top:1.4rem;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+    gap:1.4rem;
+  }
+
+  .product-card{
+    background:#fff;
+    border-radius:22px;
+    overflow:hidden;
+    box-shadow:0 22px 50px rgba(137,5,36,.12);
+    display:flex;
+    flex-direction:column;
+    transition:transform .22s ease, box-shadow .22s ease, background .22s ease;
+  }
+  .product-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 28px 70px rgba(137,5,36,.20);
+    background:#fff7fb;
+  }
+
+  .product-media{
+    position:relative;
+    overflow:hidden;
+    border-radius:22px 22px 0 0;
+  }
+  .product-media img{
+    width:100%;
+    height:190px;
+    object-fit:cover;
+    transition:transform .35s ease;
+  }
+  .product-card:hover .product-media img{
+    transform:scale(1.05);
+  }
+  .product-tag{
+    position:absolute;
+    left:12px;
+    top:12px;
+    padding:.25rem .7rem;
+    border-radius:999px;
+    font-size:.7rem;
+    background:#fef2f2;
+    color:#b91c1c;
+    box-shadow:0 12px 30px rgba(248,113,113,.55);
+  }
+
+  .product-body{
+    padding:1rem 1.15rem 1.1rem;
+    display:flex;
+    flex-direction:column;
+    gap:.45rem;
+  }
+  .product-name{
+    font-size:.95rem;
+    font-weight:600;
+    color:var(--cocoa);
+  }
+  .product-desc{
     font-size:.8rem;
-    color:#9f1239;
-    transition:.2s;
+    color:#a1a1aa;
   }
-  .stat-menu:hover{
-    background:#fff1f2;
-    transform:translateY(-2px);
+  .product-bottom{
+    margin-top:.45rem;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:.8rem;
+    font-size:.82rem;
   }
-  .stat-menu:active{
-    background:#ffe4e6;
-    transform:scale(.98);
+  .product-price{
+    font-weight:700;
+    color:#b91c1c;
+  }
+  .product-actions{
+    display:flex;
+    gap:.35rem;
+  }
+  .btn-ghost{
+    border-radius:999px;
+    padding:.35rem .7rem;
+    font-size:.75rem;
+    background:#fff;
+    color:#b91c1c !important;
+    border:1px solid #fecaca;
+    text-decoration:none;
+    cursor:pointer;
+    transition:background .18s ease,color .18s ease,transform .18s ease;
+  }
+  .btn-ghost:hover{
+    background:#fecaca;
+    color:#7f1d1d !important;
+    transform:translateY(-1px);
+  }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-shell{
+    border-radius:26px;
+    background:#ffe7ef;
+    padding:2.1rem 1.6rem 2.3rem;
+    text-align:center;
+    box-shadow:0 22px 60px rgba(137,5,36,.16);
+  }
+  .empty-title{
+    font-size:1.1rem;
+    font-weight:600;
+    color:var(--cocoa);
+    margin-bottom:.4rem;
+  }
+  .empty-sub{
+    font-size:.88rem;
+    color:#a85574;
+    max-width:30rem;
+    margin:0 auto 1.2rem;
+  }
+
+  @media (max-width:900px){
+    .toko-shell-inner{
+      grid-template-columns:1fr;
+      text-align:left;
+    }
+  }
+  @media (max-width:640px){
+    .toko-shell{
+      padding:1.4rem 1.4rem;
+      border-radius:22px;
+    }
+    .stat-row{
+      flex-direction:column;
+      align-items:flex-start;
+    }
   }
 </style>
 @endpush
 
 @section('content')
-@php
-  $storeName   = $store->name ?? 'Toko B’cake';
-  $storeTag    = $store->tagline ?? 'Glam Sweet Boutique';
-  $description = $store->description
-      ?? 'Etalase glam untuk semua kreasi manismu. Biar pembeli langsung jatuh cinta di pandangan pertama. 🧁💖';
+<section class="bg-[#fff4f7] py-6 md:py-8">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
-  $logo = $store->logo_url
-      ?? ($store->logo ? asset('storage/'.$store->logo) : asset('image/logo_bcake.jpg'));
+    {{-- ===== HEADER TOKO ===== --}}
+    <div class="toko-shell">
+      <div class="toko-shell-inner">
 
-  $productsCount = isset($products)
-      ? (is_countable($products) ? count($products) : $products->count())
-      : 0;
-@endphp
-
-<div class="bg-rose-50/60">
-  <div class="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-10 space-y-8">
-
-    {{-- ================ HERO SELLER ================ --}}
-    <section class="hero-seller rounded-3xl shadow-soft border border-rose-100/70 px-6 md:px-9 py-7 md:py-9">
-      <div class="flex flex-col gap-6">
-
-        <div class="flex items-start gap-4">
-          {{-- Avatar toko --}}
-          <div class="relative shrink-0">
-            <div class="h-16 w-16 md:h-20 md:w-20 rounded-full bg-white border-2 border-rose-200 overflow-hidden">
-              <img src="{{ $logo }}" class="h-full w-full object-cover" alt="{{ $storeName }}">
-            </div>
-            <span class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-rose-600 text-[10px] text-white px-2 py-0.5 rounded-full shadow">
-              Seller
-            </span>
+        {{-- Info toko --}}
+        <div class="space-y-3">
+          <div class="inline-flex items-center mb-1">
+            <span class="badge-pill">Glam Sweet Boutique</span>
           </div>
 
-          {{-- Info toko --}}
-          <div class="flex-1 space-y-1">
-            <p class="text-[11px] uppercase tracking-[.25em] text-rose-500/90">
-              {{ $storeTag }}
-            </p>
-            <h1 class="text-2xl md:text-3xl font-semibold text-[color:var(--cocoa)]">
-              {{ $storeName }}
-            </h1>
-            <p class="text-sm md:text-[0.95rem] text-rose-900/80 max-w-2xl">
-              {{ $description }}
-            </p>
-            <div class="flex flex-wrap gap-2 mt-2">
-              <span class="pill">🎂 Premium Cakes</span>
-              <span class="pill">🎉 Birthday Glam</span>
-              <span class="pill">☕ Tea-time Desserts</span>
+          <div class="flex items-center gap-3">
+            <div class="toko-avatar">
+              <img src="{{ asset('image/cake.jpg') }}" alt="Avatar Toko">
+            </div>
+            <div>
+              <h1 class="text-[1.35rem] md:text-[1.55rem] font-semibold text-[var(--cocoa)] leading-snug">
+                Toko B’cake
+              </h1>
+              <p class="text-[0.86rem] text-rose-700 max-w-md">
+                Etalase glam untuk semua kreasi manismu. Biar pembeli langsung jatuh cinta dari pandangan pertama. ✨🍰
+              </p>
+              <div class="flex flex-wrap gap-1.5 mt-1.5">
+                {{-- badge kategori (filter via query ?category=...) --}}
+                <a href="{{ route('seller.products.index', ['category' => 'premium-cakes']) }}" class="badge-pill">
+                  Premium Cakes
+                </a>
+                <a href="{{ route('seller.products.index', ['category' => 'birthday-glam']) }}" class="badge-pill">
+                  Birthday Glam
+                </a>
+                <a href="{{ route('seller.products.index', ['category' => 'tea-time-desserts']) }}" class="badge-pill">
+                  Tea-time Desserts
+                </a>
+              </div>
             </div>
           </div>
 
-          {{-- Tombol kanan: Tambah Produk + Logout tulisan saja --}}
-          <div class="flex flex-col items-end gap-2">
-            @if(Route::has('seller.products.create'))
-              <a href="{{ route('seller.products.create') }}" class="btn-primary inline-flex items-center gap-2">
-                ✨ Tambah Produk
+          {{-- STAT CHIPS --}}
+          <div class="stat-row">
+            <div class="stat-chip">
+              <span class="stat-label">Total Produk</span>
+              <span class="stat-value">{{ isset($products) ? $products->count() : 0 }}</span>
+            </div>
+
+            <div class="stat-chip stat-chip--active">
+              <span class="stat-label">Status</span>
+              <span class="stat-value">Aktif</span>
+            </div>
+
+            {{-- mode katalog (halaman ini) --}}
+            <div class="stat-chip stat-chip--tab is-active">
+              <div class="stat-chip-link">
+                <span class="stat-label">Mode</span>
+                <span class="stat-value">Katalog</span>
+              </div>
+            </div>
+
+            {{-- link ke dashboard seller --}}
+            <div class="stat-chip stat-chip--tab">
+              <a href="{{ route('seller.dashboard') }}" class="stat-chip-link">
+                <span class="stat-label">B’cake Seller</span>
+                <span class="stat-value">Dashboard</span>
               </a>
-            @endif
-
-            @auth
-              <form action="{{ route('logout') }}" method="POST" class="mt-1">
-                @csrf
-                <button type="submit"
-                        class="px-4 py-2 rounded-full text-xs font-medium
-                               bg-white border border-rose-200/70 text-rose-700
-                               hover:bg-rose-50 transition">
-                  Logout
-                </button>
-              </form>
-            @endauth
+            </div>
           </div>
         </div>
 
-        {{-- ========== BARIS BADGE YANG BISA DIKLIK ========== --}}
-        <div class="flex flex-wrap gap-3 mt-3">
-          {{-- Total Produk --}}
-          <a href="{{ route('seller.products.index') }}" class="stat-menu">
-            <span class="text-[13px]">🧁 Total Produk</span>
-            <span class="font-semibold">{{ $productsCount }}</span>
+        {{-- Aksi cepat --}}
+        <div class="flex flex-col items-end justify-between gap-4">
+          <a href="{{ route('seller.products.create') }}" class="btn-pink">
+            ✨ Tambah Produk
           </a>
-
-          {{-- Status --}}
-          <a href="#" class="stat-menu">
-            <span class="text-[13px]">💡 Status</span>
-            <span class="text-emerald-600 font-semibold">Aktif</span>
-          </a>
-
-          {{-- Toko --}}
-          @if(Route::has('seller.store.show'))
-            <a href="{{ route('seller.store.show') }}" class="stat-menu">
-              <span class="text-[13px]">🏪 Toko</span>
-              <span class="font-semibold">{{ $storeName }}</span>
-            </a>
-          @else
-            <div class="stat-menu">
-              <span class="text-[13px]">🏪 Toko</span>
-              <span class="font-semibold">{{ $storeName }}</span>
-            </div>
-          @endif
-
-          {{-- Mode --}}
-          <a href="{{ route('seller.products.index') }}" class="stat-menu">
-            <span class="text-[13px]">📁 Mode</span>
-            <span class="font-semibold">Katalog</span>
-          </a>
-
-          {{-- Katalog --}}
-          <a href="{{ route('seller.products.index') }}" class="stat-menu">
-            <span class="text-[13px]">📚 Katalog</span>
-            <span class="font-semibold">Lihat</span>
-          </a>
+          <div class="text-right text-[0.8rem] text-rose-700/80 max-w-xs">
+            Rapikan katalogmu, atur urutan produk, dan buat etalase yang bikin pembeli betah scroll lama-lama.
+          </div>
         </div>
 
       </div>
-    </section>
+    </div>
 
-    {{-- ================ KATALOG PRODUK ================ --}}
-    <section class="space-y-4">
-      <div class="flex items-center justify-between gap-3">
-        <div>
-          <h2 class="text-lg md:text-xl font-semibold text-[color:var(--cocoa)]">
-            Katalog Manis Kamu 🧁
-          </h2>
-          <p class="text-sm text-rose-800/80">
-            Susun kue-kue terbaikmu dengan tampilan yang glam & tertata rapi.
-          </p>
-        </div>
+    {{-- ===== GRINDIL / SCALLOP ===== --}}
+    <div class="scallop-divider" aria-hidden="true">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+        <path fill="#ffe7ef"
+              d="M0,80 C60,40 180,0 300,0 C420,0 540,40 660,40 C780,40 900,0 1020,0 C1140,0 1260,40 1380,40 C1440,40 1440,80 1440,80 L0,80 Z"></path>
+      </svg>
+    </div>
 
-        @if(Route::has('seller.products.create'))
-          <a href="{{ route('seller.products.create') }}" class="btn-soft hidden sm:inline-flex items-center gap-1">
-            + Tambah Produk
-          </a>
-        @endif
+    {{-- ===== KATALOG ===== --}}
+    <section>
+      <div>
+        <h2 class="section-title">Katalog Manis Kamu 🍰</h2>
+        <p class="section-subtitle">
+          Susun kue-kue terbaikmu dalam tampilan grid yang rapi, lembut, dan glam.
+        </p>
       </div>
 
-      @if($productsCount === 0)
-        {{-- EMPTY STATE --}}
-        <div class="rounded-3xl bg-gradient-to-br from-rose-50 via-rose-100/80 to-amber-50/70 border border-rose-100 px-6 md:px-10 py-10 text-center shadow-soft">
-          <div class="text-4xl mb-2">🧁✨</div>
-          <h3 class="text-[1.05rem] md:text-lg font-semibold text-amber-800 mb-1">
-            Etalase-mu masih kosong, sayang~
-          </h3>
-          <p class="text-sm text-rose-700/90 max-w-xl mx-auto">
-            Belum ada produk di etalase kamu. Yuk tambahkan kue pertama kamu
-            dan buat etalase B’cake-mu bersinar. 💗
+      @if(!isset($products) || $products->count() === 0)
+        {{-- KOSONG --}}
+        <div class="mt-5 empty-shell">
+          <div class="text-3xl mb-2">🧁✨</div>
+          <p class="empty-title">Etalase-mu masih kosong, sayang~</p>
+          <p class="empty-sub">
+            Belum ada produk di etalase kamu. Yuk tambahkan kue pertama kamu dan buat katalog B’cake-mu bersinar manis.
           </p>
-
-          @if(Route::has('seller.products.create'))
-            <a href="{{ route('seller.products.create') }}"
-               class="mt-5 inline-flex btn-primary">
-              + Tambah Produk Pertama
-            </a>
-          @endif
+          <a href="{{ route('seller.products.create') }}" class="btn-pink">
+            + Tambah Produk Pertama
+          </a>
         </div>
       @else
         {{-- GRID PRODUK --}}
-        <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-3">
+        <div class="product-grid mt-5">
           @foreach($products as $product)
             @php
-              $img = $product->cover_url
-                    ?? ($product->image_url ?? null)
-                    ?? (isset($product->image) ? asset('storage/'.$product->image) : asset('image/Cake-Pinky.jpg'));
+              $photo = $product->image_url
+                ?? $product->image
+                ?? $product->photo
+                ?? $product->photo_url
+                ?? asset('image/cake.jpg');
             @endphp
+            <article class="product-card">
+              <div class="product-media">
+                <img src="{{ $photo }}" alt="{{ $product->name }}">
+                @if(isset($product->category_name) && $product->category_name)
+                  <span class="product-tag">{{ $product->category_name }}</span>
+                @endif
+              </div>
+              <div class="product-body">
+                <h3 class="product-name">{{ $product->name }}</h3>
+                @if(isset($product->short_description) && $product->short_description)
+                  <p class="product-desc">
+                    {{ \Illuminate\Support\Str::limit($product->short_description, 70) }}
+                  </p>
+                @endif
 
-            <article class="bg-white rounded-3xl shadow-soft border border-rose-100 p-4 flex flex-col">
-              <a href="{{ route('seller.products.edit', $product->id) }}"
-                 class="block rounded-2xl overflow-hidden mb-3">
-                <img src="{{ $img }}"
-                     alt="{{ $product->name }}"
-                     class="w-full h-40 md:h-44 object-cover transition duration-300 hover:scale-105">
-              </a>
-              <div class="flex-1 flex flex-col gap-2">
-                <h3 class="text-sm font-semibold text-[color:var(--cocoa)] line-clamp-2">
-                  {{ $product->name }}
-                </h3>
-                <p class="text-[11px] text-rose-600/80 line-clamp-2">
-                  {{ $product->short_description ?? 'Kue manis pilihan untuk momen spesial.' }}
-                </p>
-                <p class="text-sm font-semibold text-rose-700 mt-1">
-                  Rp {{ number_format($product->price ?? 0,0,',','.') }}
-                </p>
-
-                <div class="mt-2 flex items-center justify-between gap-2">
-                  <a href="{{ route('seller.products.edit', $product->id) }}"
-                     class="btn-soft text-[11px]">
-                    Edit
-                  </a>
-                  @if(Route::has('products.show'))
-                    <a href="{{ route('products.show', $product->slug ?? $product->id) }}"
-                       class="btn-soft text-[11px]">
-                      Lihat di publik
+                <div class="product-bottom">
+                  <div class="product-price">
+                    Rp {{ number_format($product->price,0,',','.') }}
+                  </div>
+                  <div class="product-actions">
+                    <a href="{{ route('seller.products.edit', $product->id) }}" class="btn-ghost">
+                      Edit
                     </a>
-                  @endif
+                    {{-- detail publik pakai slug --}}
+                    <a href="{{ route('products.show', $product->slug) }}" class="btn-ghost">
+                      Lihat
+                    </a>
+                  </div>
                 </div>
               </div>
             </article>
           @endforeach
         </div>
+
+        @if(method_exists($products, 'links'))
+          <div class="mt-6">
+            {{ $products->links() }}
+          </div>
+        @endif
       @endif
     </section>
-
   </div>
-</div>
+</section>
 @endsection

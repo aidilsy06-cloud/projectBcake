@@ -1,127 +1,101 @@
-<?php
+@extends('layouts.app')
 
-namespace App\Http\Controllers\Seller;
+@section('title','Tambah Produk — B’cake Seller')
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Product;
-use Illuminate\Support\Str;
-
-class ProductController extends Controller
-{
-    // =============== KATALOG PRODUK SELLER ===============
-    public function index()
-    {
-        $user  = auth()->user();
-        $store = $user->store ?? null;   // relasi user -> store
-
-        $products = $store
-            ? $store->products()->latest()->get()
-            : collect();
-
-        // tampilan katalog pink yang sudah kamu buat
-        return view('seller.placeholders.products', compact('store', 'products'));
+@push('head')
+<style>
+    .form-label{
+        @apply block text-sm font-medium text-rose-900 mb-1;
     }
-
-    // =============== FORM TAMBAH PRODUK ===============
-    public function create()
-    {
-        $user  = auth()->user();
-        $store = $user->store ?? null;
-
-        if (! $store) {
-            return redirect()
-                ->route('seller.dashboard')
-                ->with('error', 'Lengkapi data toko dulu sebelum menambah produk.');
-        }
-
-        return view('seller.products.create', compact('store'));
+    .form-input{
+        @apply w-full rounded-xl border border-rose-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 bg-white/90;
     }
-
-    // =============== SIMPAN PRODUK BARU ===============
-    public function store(Request $request)
-    {
-        $user  = auth()->user();
-        $store = $user->store ?? null;
-
-        if (! $store) {
-            return redirect()
-                ->route('seller.dashboard')
-                ->with('error', 'Lengkapi data toko dulu sebelum menambah produk.');
-        }
-
-        $data = $request->validate([
-            'name'              => 'required|string|max:255',
-            'price'             => 'required|numeric|min:0',
-            'short_description' => 'nullable|string|max:500',
-            'image_url'         => 'nullable|string|max:255',
-        ]);
-
-        // asumsi tabel products punya kolom: name, slug, price, short_description, image_url, store_id
-        $data['slug']     = Str::slug($data['name']).'-'.uniqid();
-        $data['store_id'] = $store->id;
-
-        $store->products()->create($data);
-
-        return redirect()
-            ->route('seller.products.index')
-            ->with('success', 'Produk berhasil ditambahkan.');
+    .preview-box{
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #f9c6d6;
+        background: #fff5fa;
+        height: 180px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
     }
+</style>
+@endpush
 
-    // =============== FORM EDIT PRODUK ===============
-    public function edit(Product $product)
-    {
-        $user  = auth()->user();
-        $store = $user->store ?? null;
+@section('content')
+<div class="page-bg min-h-screen py-10">
+  <div class="max-w-3xl mx-auto px-4 md:px-8">
 
-        // pastikan produk ini milik toko seller yang login
-        if (! $store || $product->store_id !== $store->id) {
-            abort(403, 'Kamu tidak boleh mengedit produk ini.');
-        }
+    {{-- FLASH WARNING --}}
+    @if(session('warning'))
+      <div class="mb-5 bg-amber-100 border border-amber-300 text-amber-900 px-4 py-3 rounded-xl text-sm">
+        {{ session('warning') }}
+      </div>
+    @endif
 
-        return view('seller.products.edit', compact('store', 'product'));
-    }
+    <h1 class="text-2xl md:text-3xl font-semibold text-rose-900 mb-2">
+      Tambah Produk Baru ✨
+    </h1>
+    <p class="text-sm text-rose-500 mb-6">
+      Lengkapi detail produk agar tampil manis di katalog tokomu 🍰
+    </p>
 
-    // =============== UPDATE PRODUK ===============
-    public function update(Request $request, Product $product)
-    {
-        $user  = auth()->user();
-        $store = $user->store ?? null;
+    <form action="{{ route('seller.products.store') }}" method="POST"
+          class="bg-white/80 rounded-2xl p-6 shadow-soft space-y-5">
+      @csrf
 
-        if (! $store || $product->store_id !== $store->id) {
-            abort(403, 'Kamu tidak boleh mengedit produk ini.');
-        }
+      {{-- NAMA PRODUK --}}
+      <div>
+        <label class="form-label">Nama Produk</label>
+        <input type="text" name="name" value="{{ old('name') }}" class="form-input">
+        @error('name')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+      </div>
 
-        $data = $request->validate([
-            'name'              => 'required|string|max:255',
-            'price'             => 'required|numeric|min:0',
-            'short_description' => 'nullable|string|max:500',
-            'image_url'         => 'nullable|string|max:255',
-        ]);
+      {{-- HARGA --}}
+      <div>
+        <label class="form-label">Harga (Rp)</label>
+        <input type="number" name="price" value="{{ old('price') }}" class="form-input">
+        @error('price')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+      </div>
 
-        $data['slug'] = Str::slug($data['name']).'-'.uniqid();
+      {{-- DESKRIPSI --}}
+      <div>
+        <label class="form-label">Deskripsi Singkat</label>
+        <textarea name="short_description" rows="3" class="form-input">{{ old('short_description') }}</textarea>
+        @error('short_description')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+      </div>
 
-        $product->update($data);
+      {{-- URL GAMBAR + PREVIEW --}}
+      <div>
+        <label class="form-label">URL Gambar (opsional)</label>
+        <input type="text" id="imgInput" name="image_url" value="{{ old('image_url') }}"
+               class="form-input" placeholder="https://…"
+               oninput="document.getElementById('previewImg').src=this.value">
 
-        return redirect()
-            ->route('seller.products.index')
-            ->with('success', 'Produk berhasil diperbarui.');
-    }
+        <div class="preview-box mt-3">
+          <img id="previewImg"
+               src="{{ old('image_url') ?: asset('image/cake.jpg') }}"
+               alt="Preview"
+               class="h-full object-cover rounded-lg">
+        </div>
 
-    // =============== HAPUS PRODUK ===============
-    public function destroy(Product $product)
-    {
-        $user  = auth()->user();
-        $store = $user->store ?? null;
+        @error('image_url')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+      </div>
 
-        if (! $store || $product->store_id !== $store->id) {
-            abort(403, 'Kamu tidak boleh menghapus produk ini.');
-        }
+      {{-- BUTTONS --}}
+      <div class="flex items-center justify-between pt-4">
+        <a href="{{ route('seller.products.index') }}"
+           class="text-sm text-rose-500 hover:text-rose-700">
+          ← Kembali ke katalog
+        </a>
 
-        $product->delete();
-
-        return redirect()
-            ->route('seller.products.index')
-            ->with('success', 'Produk berhasil dihapus.');
-    }
-}
+        <button type="submit"
+                class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-rose-600 to-amber-400 text-white text-sm font-medium px-6 py-2.5 shadow-lg hover:scale-[1.02] transition">
+          Simpan Produk
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+@endsection

@@ -9,7 +9,7 @@
         {{-- HEADER --}}
         <div class="text-center mb-4">
             <h1 class="text-2xl md:text-3xl font-semibold text-rose-900">
-                Jelajahi Toko di B’cake
+                Jelajahi Toko Favorit di B’cake
             </h1>
             <p class="text-sm text-rose-500 mt-1">
                 Pilih toko untuk melihat katalog kue, custom cake, dan dessert mereka.
@@ -28,6 +28,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 @foreach ($stores as $store)
                     <div class="bg-white rounded-2xl shadow-sm border border-rose-100/70 overflow-hidden flex flex-col">
+                        {{-- Banner sederhana --}}
                         <div class="h-20 bg-gradient-to-r from-rose-100 via-rose-50 to-amber-50"></div>
 
                         <div class="px-5 pb-4 pt-3 flex-1 flex flex-col">

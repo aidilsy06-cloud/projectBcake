@@ -14,28 +14,53 @@ class StoreController extends Controller
 {
     /**
      * Ambil / buat Store milik seller login.
-     * Aman walau kolom user_id belum ada di tabel stores.
+     * - Kalau sudah ada store dengan user_id = seller → pakai itu
+     * - Kalau belum ada tapi ada store "kosong" (user_id NULL) dengan slug sama → klaim toko itu
+     * - Kalau belum ada sama sekali → buat baru
      */
     protected function myStore(): Store
     {
         $user = auth()->user();
         abort_unless(($user->role ?? null) === 'seller', 403);
 
-        // Jika tabel stores punya kolom user_id → jadikan owner
+        $baseSlug = Str::slug($user->name) ?: ('store-'.$user->id);
+
+        // Kalau tabel stores punya kolom user_id
         if (Schema::hasColumn('stores', 'user_id')) {
-            return Store::firstOrCreate(
-                ['user_id' => $user->id],
-                [
-                    'name'    => $user->name.' Store',
-                    'slug'    => Str::slug($user->name) ?: ('store-'.$user->id),
-                    'tagline' => 'Sweet & Elegant',
-                ]
-            );
+
+            // 1) Sudah punya toko? → pakai
+            $existing = Store::where('user_id', $user->id)->first();
+            if ($existing) {
+                return $existing;
+            }
+
+            // 2) Belum punya, tapi ada toko seeder dengan slug sama & user_id NULL? → klaim
+            $claimable = Store::whereNull('user_id')
+                ->where('slug', $baseSlug)
+                ->first();
+
+            if ($claimable) {
+                $claimable->update([
+                    'user_id' => $user->id,
+                ]);
+
+                return $claimable;
+            }
+
+            // 3) Sama sekali belum ada → buat baru
+            return Store::create([
+                'user_id'    => $user->id,
+                'name'       => $user->name.' Store',
+                'slug'       => $baseSlug,
+                'tagline'    => 'Sweet & Elegant',
+                'whatsapp'   => null,
+                'description'=> null,
+            ]);
         }
 
-        // Fallback tanpa user_id (pakai slug unik)
+        // Fallback kalau (aneh banget sih) tidak ada kolom user_id
         return Store::firstOrCreate(
-            ['slug' => Str::slug($user->name) ?: ('store-'.$user->id)],
+            ['slug' => $baseSlug],
             [
                 'name'    => $user->name.' Store',
                 'tagline' => 'Sweet & Elegant',
@@ -101,6 +126,7 @@ class StoreController extends Controller
             'slug'        => ['required','alpha_dash','max:120','unique:stores,slug,'.$store->id],
             'tagline'     => ['nullable','string','max:160'],
             'description' => ['nullable','string','max:2000'],
+            'whatsapp'    => ['nullable','string','max:20'],
             'logo'        => ['nullable','image','mimes:jpg,jpeg,png,webp','max:2048'],
             'banner'      => ['nullable','image','mimes:jpg,jpeg,png,webp','max:4096'],
         ]);

@@ -6,14 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    // Kolom yang boleh di-mass assign
     protected $fillable = [
+        'user_id',
+        'store_id',
+        'category_slug',
         'name',
         'slug',
         'price',
         'stock',
         'image_url',
         'description',
-        'store_id', // tambahkan jika produk terhubung ke toko
     ];
 
     /**
@@ -22,5 +25,13 @@ class Product extends Model
     public function store()
     {
         return $this->belongsTo(\App\Models\Store::class);
+    }
+
+    /**
+     * Relasi ke User (seller pemilik produk)
+     */
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
     }
 }

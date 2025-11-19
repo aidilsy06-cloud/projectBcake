@@ -7,25 +7,25 @@ use App\Models\Store;
 
 class StoreController extends Controller
 {
-    // daftar semua toko
+    // Daftar semua toko
     public function index()
     {
-        $stores = Store::withCount('products')->latest()->paginate(12);
+        $stores = Store::withCount('products')
+            ->latest()
+            ->paginate(12);
 
-        return view('stores.index', [
-            'stores' => $stores,
-        ]);
+        // PAKAI 1 VIEW PASTI: resources/views/stores/index.blade.php
+        return view('stores.index', compact('stores'));
     }
 
-    // halaman detail toko publik: /store/{store:slug}
+    // Halaman detail toko publik: /store/{store:slug}
     public function show(Store $store)
     {
-        // ambil produk-produk toko ini
+        // Ambil produk-produk toko ini
         $products = $store->products()
             ->latest()
             ->get();
 
-        // PENTING: gunakan view publik "stores.show"
         return view('stores.show', [
             'store'    => $store,
             'products' => $products,

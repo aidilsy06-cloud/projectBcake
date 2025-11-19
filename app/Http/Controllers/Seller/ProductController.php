@@ -1,101 +1,140 @@
-@extends('layouts.app')
+<?php
 
-@section('title','Tambah Produk — B’cake Seller')
+namespace App\Http\Controllers\Seller;
 
-@push('head')
-<style>
-    .form-label{
-        @apply block text-sm font-medium text-rose-900 mb-1;
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\Store;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
+class ProductController extends Controller
+{
+    /**
+     * List produk milik seller yang sedang login
+     */
+    public function index()
+    {
+        $products = Product::where('user_id', auth()->id())
+            ->latest()
+            ->paginate(10);
+
+        // folder kamu pakai huruf besar "Seller"
+        return view('Seller.products.index', compact('products'));
     }
-    .form-input{
-        @apply w-full rounded-xl border border-rose-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 bg-white/90;
+
+    /**
+     * Form tambah produk
+     */
+    public function create()
+    {
+        return view('Seller.products.create');
     }
-    .preview-box{
-        border-radius: 16px;
-        overflow: hidden;
-        border: 1px solid #f9c6d6;
-        background: #fff5fa;
-        height: 180px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
+
+    /**
+     * Simpan produk baru
+     */
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'name'        => 'required|string|max:255',
+            'slug'        => 'nullable|string|max:255|unique:products,slug',
+            'price'       => 'required|integer|min:0',
+            'stock'       => 'nullable|integer|min:0',
+            'description' => 'nullable|string',
+            'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            // kalau mau pakai kategori nanti:
+            // 'category_slug' => 'nullable|string|max:255',
+        ]);
+
+        // slug otomatis kalau kosong
+        if (empty($data['slug'])) {
+            $data['slug'] = Str::slug($data['name']) . '-' . Str::random(4);
+        }
+
+        // set pemilik produk
+        $data['user_id'] = auth()->id();
+
+        // cari store milik user ini (1 seller 1 store)
+        $storeId = Store::where('user_id', auth()->id())->value('id');
+        $data['store_id'] = $storeId; // boleh NULL kalau belum punya toko
+
+        // simpan gambar kalau ada
+        if ($request->hasFile('image')) {
+            // kita pakai kolom image_url yang sudah ada di DB
+            $data['image_url'] = $request->file('image')->store('products', 'public');
+        }
+
+        Product::create($data);
+
+        return redirect()
+            ->route('seller.products.index')
+            ->with('success', 'Produk berhasil ditambahkan.');
     }
-</style>
-@endpush
 
-@section('content')
-<div class="page-bg min-h-screen py-10">
-  <div class="max-w-3xl mx-auto px-4 md:px-8">
+    /**
+     * Form edit produk
+     */
+    public function edit(Product $product)
+    {
+        abort_unless($product->user_id === auth()->id(), 403);
 
-    {{-- FLASH WARNING --}}
-    @if(session('warning'))
-      <div class="mb-5 bg-amber-100 border border-amber-300 text-amber-900 px-4 py-3 rounded-xl text-sm">
-        {{ session('warning') }}
-      </div>
-    @endif
+        return view('Seller.products.edit', compact('product'));
+    }
 
-    <h1 class="text-2xl md:text-3xl font-semibold text-rose-900 mb-2">
-      Tambah Produk Baru ✨
-    </h1>
-    <p class="text-sm text-rose-500 mb-6">
-      Lengkapi detail produk agar tampil manis di katalog tokomu 🍰
-    </p>
+    /**
+     * Update produk
+     */
+    public function update(Request $request, Product $product)
+    {
+        abort_unless($product->user_id === auth()->id(), 403);
 
-    <form action="{{ route('seller.products.store') }}" method="POST"
-          class="bg-white/80 rounded-2xl p-6 shadow-soft space-y-5">
-      @csrf
+        $data = $request->validate([
+            'name'        => 'required|string|max:255',
+            'slug'        => 'nullable|string|max:255|unique:products,slug,' . $product->id,
+            'price'       => 'required|integer|min:0',
+            'stock'       => 'nullable|integer|min:0',
+            'description' => 'nullable|string',
+            'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            // 'category_slug' => 'nullable|string|max:255',
+        ]);
 
-      {{-- NAMA PRODUK --}}
-      <div>
-        <label class="form-label">Nama Produk</label>
-        <input type="text" name="name" value="{{ old('name') }}" class="form-input">
-        @error('name')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
-      </div>
+        if (empty($data['slug'])) {
+            $data['slug'] = Str::slug($data['name']) . '-' . Str::random(4);
+        }
 
-      {{-- HARGA --}}
-      <div>
-        <label class="form-label">Harga (Rp)</label>
-        <input type="number" name="price" value="{{ old('price') }}" class="form-input">
-        @error('price')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
-      </div>
+        // kalau upload gambar baru → hapus lama
+        if ($request->hasFile('image')) {
+            if ($product->image_url && Storage::disk('public')->exists($product->image_url)) {
+                Storage::disk('public')->delete($product->image_url);
+            }
 
-      {{-- DESKRIPSI --}}
-      <div>
-        <label class="form-label">Deskripsi Singkat</label>
-        <textarea name="short_description" rows="3" class="form-input">{{ old('short_description') }}</textarea>
-        @error('short_description')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
-      </div>
+            $data['image_url'] = $request->file('image')->store('products', 'public');
+        }
 
-      {{-- URL GAMBAR + PREVIEW --}}
-      <div>
-        <label class="form-label">URL Gambar (opsional)</label>
-        <input type="text" id="imgInput" name="image_url" value="{{ old('image_url') }}"
-               class="form-input" placeholder="https://…"
-               oninput="document.getElementById('previewImg').src=this.value">
+        $product->update($data);
 
-        <div class="preview-box mt-3">
-          <img id="previewImg"
-               src="{{ old('image_url') ?: asset('image/cake.jpg') }}"
-               alt="Preview"
-               class="h-full object-cover rounded-lg">
-        </div>
+        return redirect()
+            ->route('seller.products.index')
+            ->with('success', 'Produk berhasil diperbarui.');
+    }
 
-        @error('image_url')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
-      </div>
+    /**
+     * Hapus produk
+     */
+    public function destroy(Product $product)
+    {
+        abort_unless($product->user_id === auth()->id(), 403);
 
-      {{-- BUTTONS --}}
-      <div class="flex items-center justify-between pt-4">
-        <a href="{{ route('seller.products.index') }}"
-           class="text-sm text-rose-500 hover:text-rose-700">
-          ← Kembali ke katalog
-        </a>
+        if ($product->image_url && Storage::disk('public')->exists($product->image_url)) {
+            Storage::disk('public')->delete($product->image_url);
+        }
 
-        <button type="submit"
-                class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-rose-600 to-amber-400 text-white text-sm font-medium px-6 py-2.5 shadow-lg hover:scale-[1.02] transition">
-          Simpan Produk
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-@endsection
+        $product->delete();
+
+        return redirect()
+            ->route('seller.products.index')
+            ->with('success', 'Produk berhasil dihapus.');
+    }
+}

@@ -19,15 +19,23 @@ class Order extends Model
         'note',
         'status',
         'wa_sent_at',
+        'total_price',  // <— penting untuk chart omzet!
     ];
 
+    protected $casts = [
+        'wa_sent_at' => 'datetime',
+        'total_price' => 'integer',
+    ];
+
+    // Relasi ke User (pembuat order / seller)
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(\App\Models\User::class);
     }
 
+    // Relasi ke Store (toko pemilik order)
     public function store()
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(\App\Models\Store::class);
     }
 }

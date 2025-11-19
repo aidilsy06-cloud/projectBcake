@@ -51,7 +51,7 @@
                 Nama Toko
               </label>
               <input type="text" name="name"
-                     value="{{ old('name', $store->name) }}"
+                     value="{{ old('name', optional($store)->name) }}"
                      class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400">
             </div>
 
@@ -61,7 +61,7 @@
                 Tagline
               </label>
               <input type="text" name="tagline"
-                     value="{{ old('tagline', $store->tagline ?? 'Sweet & Elegant') }}"
+                     value="{{ old('tagline', optional($store)->tagline ?? 'Sweet & Elegant') }}"
                      class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400">
             </div>
 
@@ -72,7 +72,7 @@
               </label>
               <textarea name="description" rows="4"
                         placeholder="Ceritakan singkat tentang toko dan produk unggulan..."
-                        class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400">{{ old('description', $store->description) }}</textarea>
+                        class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400">{{ old('description', optional($store)->description) }}</textarea>
             </div>
           </div>
 
@@ -84,11 +84,25 @@
                 Slug (URL)
               </label>
               <input type="text" name="slug"
-                     value="{{ old('slug', $store->slug) }}"
+                     value="{{ old('slug', optional($store)->slug) }}"
                      class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400">
               <p class="mt-1 text-[11px] text-rose-500/80">
                 Tampil di URL publik sebagai:
                 <span class="font-mono text-[11px] text-rose-700">/store/&lt;slug&gt;</span>
+              </p>
+            </div>
+
+            {{-- WhatsApp --}}
+            <div>
+              <label class="block text-sm font-medium text-rose-900 mb-1.5">
+                Nomor WhatsApp
+              </label>
+              <input type="text" name="whatsapp"
+                     placeholder="Contoh: 0812xxxxxxx"
+                     value="{{ old('whatsapp', optional($store)->whatsapp) }}"
+                     class="w-full rounded-2xl border border-rose-200/80 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-400">
+              <p class="mt-1 text-[11px] text-rose-500/80">
+                Nomor ini digunakan untuk tombol pesan via WhatsApp di halaman toko.
               </p>
             </div>
 
@@ -122,9 +136,15 @@
 
               <div class="rounded-2xl border border-rose-100 bg-rose-50/60 px-3 py-3 flex items-center gap-3">
                 <div class="h-14 w-14 rounded-2xl bg-white overflow-hidden flex items-center justify-center">
-                  <img src="{{ $store->logo_url ?? ($store->logo ? asset('storage/'.$store->logo) : asset('image/logo_bcake.jpg')) }}"
-                       alt="Logo preview"
-                       class="h-full w-full object-cover">
+                  @if(optional($store)->logo)
+                    <img src="{{ asset('storage/'.optional($store)->logo) }}"
+                         alt="Logo preview"
+                         class="h-full w-full object-cover">
+                  @else
+                    <img src="{{ asset('image/logo_bcake.jpg') }}"
+                         alt="Logo default"
+                         class="h-full w-full object-contain">
+                  @endif
                 </div>
                 <div class="text-[11px] text-rose-700/90 leading-snug">
                   <p class="font-semibold mb-0.5">Logo preview</p>
@@ -148,8 +168,8 @@
 
               <div class="rounded-2xl border border-rose-100 bg-rose-50/60 px-3 py-3">
                 <div class="h-24 md:h-28 rounded-2xl bg-white overflow-hidden flex items-center justify-center">
-                  @if($store->banner_url ?? $store->banner ?? false)
-                    <img src="{{ $store->banner_url ?? asset('storage/'.$store->banner) }}"
+                  @if(optional($store)->banner)
+                    <img src="{{ asset('storage/'.optional($store)->banner) }}"
                          alt="Banner preview"
                          class="h-full w-full object-cover">
                   @else

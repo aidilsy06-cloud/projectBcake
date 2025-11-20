@@ -4,52 +4,56 @@ namespace App\Http\Controllers;
 
 use App\Models\CartItem;
 use App\Models\Product;
+use App\Models\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    // Tampilkan keranjang
+    /**
+     * Tampilkan halaman keranjang.
+     */
     public function index()
     {
-        $userId = auth()->id();
+        $userId = Auth::id();
 
-        if (! $userId) {
-            return redirect()->route('login');
-        }
-
-        $items = CartItem::with('product')
+        // Ambil semua item keranjang milik user, include produk + toko
+        $items = CartItem::with(['product.store'])
             ->where('user_id', $userId)
             ->get();
 
-        $total = $items->sum(function ($item) {
-            return $item->product->price * $item->qty;
-        });
-
-        return view('cart.index', [
-            'items' => $items,
-            'total' => $total,
-        ]);
-    }
-
-    // Tambah ke keranjang
-    public function add(Request $request, Product $product)
-    {
-        $userId = auth()->id();
-        if (! $userId) {
-            return redirect()->route('login');
+        // Hitung total
+        $total = 0;
+        foreach ($items as $item) {
+            $total += $item->product->price * $item->qty;
         }
 
-        $qty = max(1, (int) $request->input('qty', 1));
+        return view('cart.index', compact('items', 'total'));
+    }
 
-        // cek kalau item sudah ada → tambahkan qty
+    /**
+     * Tambah produk ke keranjang.
+     * Route: POST /cart/add/{product}
+     */
+    public function add(Request $request, Product $product)
+    {
+        $userId = Auth::id();
+        $qty    = (int) $request->input('qty', 1);
+        if ($qty < 1) {
+            $qty = 1;
+        }
+
+        // Cek apakah item sudah ada di keranjang (user + product)
         $item = CartItem::where('user_id', $userId)
             ->where('product_id', $product->id)
             ->first();
 
         if ($item) {
+            // Kalau sudah ada, tambahkan qty
             $item->qty += $qty;
             $item->save();
         } else {
+            // Kalau belum ada, buat baru
             CartItem::create([
                 'user_id'    => $userId,
                 'product_id' => $product->id,
@@ -59,57 +63,123 @@ class CartController extends Controller
 
         return redirect()
             ->route('cart.index')
-            ->with('success', 'Produk ditambahkan ke keranjang.');
+            ->with('success', 'Produk berhasil ditambahkan ke keranjang 💗');
     }
 
-    // Update beberapa item (opsional, kalau nanti pakai form update)
+    /**
+     * Update banyak qty sekaligus.
+     * Expektasi request: items[cart_item_id] = qty
+     */
     public function update(Request $request)
     {
-        $userId = auth()->id();
-        if (! $userId) {
-            return redirect()->route('login');
-        }
+        $userId = Auth::id();
+        $items  = $request->input('items', []);
 
-        $items = $request->input('items', []); // ['cart_item_id' => qty]
+        foreach ($items as $cartItemId => $qty) {
+            $qty = (int) $qty;
 
-        foreach ($items as $itemId => $qty) {
-            $qty = max(0, (int) $qty);
-
-            $item = CartItem::where('user_id', $userId)
-                ->where('id', $itemId)
+            $cartItem = CartItem::where('id', $cartItemId)
+                ->where('user_id', $userId)
                 ->first();
 
-            if (! $item) {
+            if (! $cartItem) {
                 continue;
             }
 
-            if ($qty === 0) {
-                $item->delete();
+            // Jika qty <= 0, hapus; kalau > 0, update
+            if ($qty <= 0) {
+                $cartItem->delete();
             } else {
-                $item->qty = $qty;
-                $item->save();
+                $cartItem->qty = $qty;
+                $cartItem->save();
             }
         }
 
         return redirect()
             ->route('cart.index')
-            ->with('success', 'Keranjang diperbarui.');
+            ->with('success', 'Keranjang berhasil diperbarui ✨');
     }
 
-    // Hapus satu produk dari keranjang
-    public function remove(Product $product)
+    /**
+     * Hapus satu item dari keranjang.
+     * Route: DELETE /cart/item/{cartItem}
+     */
+    public function remove(CartItem $cartItem)
     {
-        $userId = auth()->id();
-        if (! $userId) {
-            return redirect()->route('login');
+        $userId = Auth::id();
+
+        // Pastikan item milik user yang login
+        if ($cartItem->user_id !== $userId) {
+            abort(403);
         }
 
-        CartItem::where('user_id', $userId)
-            ->where('product_id', $product->id)
-            ->delete();
+        $cartItem->delete();
 
         return redirect()
             ->route('cart.index')
-            ->with('success', 'Produk dihapus dari keranjang.');
+            ->with('success', 'Item dihapus dari keranjang 🧺');
+    }
+
+    /**
+     * Kosongkan seluruh keranjang user.
+     */
+    public function clear()
+    {
+        $userId = Auth::id();
+
+        CartItem::where('user_id', $userId)->delete();
+
+        return redirect()
+            ->route('cart.index')
+            ->with('success', 'Keranjang sudah dikosongkan.');
+    }
+
+    /**
+     * Halaman checkout: dari keranjang → form pemesanan → WhatsApp penjual.
+     * Route: GET /cart/checkout
+     */
+    public function checkout()
+    {
+        $userId = Auth::id();
+
+        // Ambil item keranjang
+        $items = CartItem::with(['product.store'])
+            ->where('user_id', $userId)
+            ->get();
+
+        if ($items->isEmpty()) {
+            return redirect()
+                ->route('cart.index')
+                ->with('error', 'Keranjangmu masih kosong 💗');
+        }
+
+        // Asumsi satu keranjang = satu toko (semua produk dari toko yang sama)
+        $firstItem = $items->first();
+        $store     = $firstItem->product->store;
+
+        // Susun ringkasan pesanan dan total
+        $lines = [];
+        $total = 0;
+
+        foreach ($items as $item) {
+            $product    = $item->product;
+            $lineTotal  = $product->price * $item->qty;
+            $total     += $lineTotal;
+
+            $lines[] = "- {$item->qty}x {$product->name} (Rp " . number_format($lineTotal, 0, ',', '.') . ")";
+        }
+
+        $lines[] = "";
+        $lines[] = "Total: Rp " . number_format($total, 0, ',', '.');
+
+        // Text ini nanti dikirim ke field hidden `order_summary` → OrderController
+        $orderSummaryText = implode("\n", $lines);
+
+        return view('cart.checkout', [
+            'items'            => $items,
+            'store'            => $store,
+            'total'            => $total,
+            'orderSummaryText' => $orderSummaryText,
+        ]);
     }
 }

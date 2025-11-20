@@ -49,21 +49,94 @@
             </div>
         </div>
 
-        {{-- CHART PENJUALAN --}}
-        <div class="bg-white rounded-3xl shadow-md px-6 py-6">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h2 class="text-base font-semibold text-rose-900">
-                        Ringkasan Penjualan 6 Bulan Terakhir
-                    </h2>
-                    <p class="text-xs text-rose-400">
-                        Total omzet per bulan untuk toko kamu.
-                    </p>
+        {{-- GRID: CHART + PESANAN TERBARU --}}
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+            {{-- CHART PENJUALAN --}}
+            <div class="bg-white rounded-3xl shadow-md px-6 py-6 lg:col-span-3">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-base font-semibold text-rose-900">
+                            Ringkasan Penjualan 6 Bulan Terakhir
+                        </h2>
+                        <p class="text-xs text-rose-400">
+                            Total omzet per bulan untuk toko kamu.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="h-64">
+                    <canvas id="salesChart"></canvas>
                 </div>
             </div>
 
-            <div class="h-64">
-                <canvas id="salesChart"></canvas>
+            {{-- PESANAN TERBARU --}}
+            <div class="bg-white rounded-3xl shadow-md px-5 py-6 lg:col-span-2">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-base font-semibold text-rose-900">
+                            Pesanan Terbaru
+                        </h2>
+                        <p class="text-xs text-rose-400">
+                            Pesanan yang masuk ke toko kamu.
+                        </p>
+                    </div>
+                    <a href="{{ route('buyer.orders.index') ?? '#' }}"
+                       class="text-[11px] text-rose-500 hover:text-rose-700">
+                        Lihat semua →
+                    </a>
+                </div>
+
+                @if($recentOrders->isEmpty())
+                    <p class="text-xs text-rose-400">
+                        Belum ada pesanan masuk. Link checkout dari pembeli akan muncul di sini ✨
+                    </p>
+                @else
+                    <div class="space-y-3 max-h-64 overflow-y-auto pr-1">
+                        @foreach($recentOrders as $order)
+                            @php
+                                $status = $order->status ?? 'draft';
+                                $badgeText = $status === 'draft'
+                                    ? 'Menunggu konfirmasi'
+                                    : ucfirst($status);
+                            @endphp
+
+                            <div class="border border-rose-100 rounded-2xl px-3 py-3 flex items-start gap-3">
+                                <div class="mt-1 text-xs text-rose-400">
+                                    #ORD{{ $order->id }}
+                                </div>
+
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-rose-900">
+                                        {{ $order->customer_name }}
+                                    </p>
+                                    <p class="text-[11px] text-rose-400">
+                                        {{ $order->created_at->format('d M Y, H:i') }}
+                                    </p>
+                                    <p class="text-[11px] text-rose-500 mt-1">
+                                        {{ \Illuminate\Support\Str::limit(str_replace(["\r", "\n"], ' ', $order->order_summary), 80) }}
+                                    </p>
+
+                                    <div class="mt-2 flex items-center gap-2">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px]
+                                            {{ $status === 'draft'
+                                                ? 'bg-amber-50 text-amber-700 border border-amber-100'
+                                                : 'bg-emerald-50 text-emerald-700 border border-emerald-100' }}">
+                                            {{ $badgeText }}
+                                        </span>
+
+                                        {{-- tombol cepat untuk buka WA pembeli (kalau mau) --}}
+                                        <a href="https://wa.me/{{ preg_replace('/\D+/', '', $order->customer_phone) }}"
+                                           target="_blank"
+                                           class="inline-flex items-center text-[10px] text-emerald-600 hover:text-emerald-700">
+                                            Chat Pembeli
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
 

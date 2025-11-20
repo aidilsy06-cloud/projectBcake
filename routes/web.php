@@ -82,14 +82,17 @@ Route::middleware('auth')
         // Lihat keranjang
         Route::get('/', [CartController::class, 'index'])->name('index');
 
+        // HALAMAN CHECKOUT (lanjut ke pemesanan)
+        Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
+
         // Tambah ke keranjang -> form: route('cart.add', $product)
         Route::post('/add/{product}', [CartController::class, 'add'])->name('add');
 
         // Update banyak item sekaligus
         Route::post('/update', [CartController::class, 'update'])->name('update');
 
-        // Hapus satu item (binding ke CartItem di controller)
-        Route::delete('/item/{cartItem}', [CartController::class, 'remove'])->name('remove');
+        // Hapus satu item (pakai parameter product, sesuai Blade: route('cart.remove', $item->product))
+        Route::delete('/item/{product}', [CartController::class, 'remove'])->name('remove');
 
         // Kosongkan seluruh keranjang
         Route::delete('/', [CartController::class, 'clear'])->name('clear');
@@ -108,9 +111,19 @@ Route::redirect('/help', '/bantuan');
 Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
 Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
 
-// FORM PEMESANAN → WHATSAPP PENJUAL
-Route::middleware('auth')->post('/store/{store:slug}/order', [OrderController::class, 'store'])
+/* ----------------------------------------
+| ORDER → WHATSAPP PENJUAL + HALAMAN SUKSES
+|---------------------------------------- */
+
+// FORM PEMESANAN → simpan order + siapkan URL WA
+Route::middleware('auth')
+    ->post('/store/{store:slug}/order', [OrderController::class, 'store'])
     ->name('stores.order');
+
+// HALAMAN SUKSES SETELAH PESANAN DIBUAT
+Route::middleware('auth')
+    ->get('/orders/{order}/success', [OrderController::class, 'success'])
+    ->name('orders.success');
 
 /* ----------------------------------------
 | AUTH (LOGIN / REGISTER / LOGOUT)
@@ -248,4 +261,7 @@ Route::prefix('buyer')
         Route::view('/help', 'static.help')->name('help');
         Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
         Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
+
+        // RIWAYAT PESANAN BUYER
+        Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     });

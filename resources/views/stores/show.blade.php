@@ -17,7 +17,9 @@
 
         <div>
             <h1 class="text-3xl font-display text-bcake-wine">{{ $store->name }}</h1>
-            <p class="text-gray-600 text-sm">{{ $store->description ?? 'Toko ini belum menambahkan deskripsi.' }}</p>
+            <p class="text-gray-600 text-sm">
+                {{ $store->description ?? 'Toko ini belum menambahkan deskripsi.' }}
+            </p>
 
             <div class="mt-2 flex items-center gap-3 text-sm text-rose-600">
                 <span>📍 {{ $store->address ?? 'Alamat belum tersedia' }}</span>
@@ -25,23 +27,38 @@
 
             {{-- Tentukan nomor WhatsApp toko --}}
             @php
-                // ambil dari kolom whatsapp, kalau kosong pakai default
-                $waRaw    = $store->whatsapp ?? '082391413565';
-                // ubah 08xxxx jadi 628xxxx
-                $waNumber = preg_replace('/^0/', '62', $waRaw);
+                $waNumber = null;
+
+                if (!empty($store->whatsapp)) {
+                    // ambil dari kolom `whatsapp` di tabel stores
+                    $raw = preg_replace('/\D+/', '', $store->whatsapp); // hanya angka
+
+                    // kalau format 08xxxx → ubah ke 62xxxx
+                    if (substr($raw, 0, 1) === '0') {
+                        $raw = '62' . substr($raw, 1);
+                    }
+
+                    $waNumber = $raw;
+                }
             @endphp
 
-            {{-- Tombol WhatsApp --}}
+            {{-- Tombol WhatsApp / info jika belum diatur --}}
             <div class="mt-3">
-                <a href="https://wa.me/{{ $waNumber }}"
-                   target="_blank"
-                   class="inline-flex items-center gap-2 px-4 py-1.5 text-sm bg-emerald-600 text-white rounded-full hover:bg-emerald-700">
-                    <span>Chat Penjual</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 12h6m-3-3v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </a>
+                @if($waNumber)
+                    <a href="https://wa.me/{{ $waNumber }}"
+                       target="_blank"
+                       class="inline-flex items-center gap-2 px-4 py-1.5 text-sm bg-emerald-600 text-white rounded-full hover:bg-emerald-700">
+                        <span>Chat Penjual</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12h6m-3-3v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </a>
+                @else
+                    <p class="text-xs text-rose-500">
+                        Toko belum mengatur nomor WhatsApp.
+                    </p>
+                @endif
             </div>
         </div>
     </div>
@@ -56,7 +73,8 @@
         Isi data berikut untuk melakukan pemesanan. Setelah submit, kamu akan diarahkan ke WhatsApp penjual 💗
     </p>
 
-    <form action="{{ route('stores.order', $store->slug) }}" method="POST" class="space-y-4">
+    {{-- pakai route ke OrderController@store --}}
+    <form action="{{ route('stores.order', $store) }}" method="POST" class="space-y-4">
         @csrf
 
         {{-- Nama --}}
@@ -132,7 +150,9 @@
 
                     <div class="p-4">
                         <h3 class="font-medium text-bcake-bitter">{{ $product->name }}</h3>
-                        <p class="text-sm text-gray-500 mt-1">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                        <p class="text-sm text-gray-500 mt-1">
+                            Rp {{ number_format($product->price, 0, ',', '.') }}
+                        </p>
 
                         <span class="text-xs text-white bg-bcake-wine px-2 py-1 rounded-full mt-2 inline-block">
                             {{ $product->category->name ?? 'Kategori' }}

@@ -73,9 +73,16 @@
                         Rp {{ number_format($total, 0, ',', '.') }}
                     </p>
                 </div>
-                <button class="px-6 py-3 rounded-full bg-bcake-cherry text-white text-sm font-semibold hover:bg-bcake-wine">
-                    Lanjut ke Pemesanan
-                </button>
+
+                {{-- TOMBOL LANJUT KE PEMESANAN --}}
+                <a href="{{ route('cart.checkout') }}"
+                   class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-bcake-cherry text-white text-sm font-semibold hover:bg-bcake-wine transition">
+                    <span>Lanjut ke Pemesanan</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M5 12h14m-7-7l7 7-7 7"/>
+                    </svg>
+                </a>
             </div>
         @endif
 

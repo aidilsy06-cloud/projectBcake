@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
     use HasFactory;
 
+    /**
+     * Kolom yang boleh di-isi mass assignment (Order::create).
+     */
     protected $fillable = [
-        'user_id',
-        'store_id',
+        'user_id',          // buyer yang membuat pesanan
+        'store_id',         // toko pemilik pesanan
         'customer_name',
         'customer_phone',
         'customer_address',
@@ -19,23 +22,30 @@ class Order extends Model
         'note',
         'status',
         'wa_sent_at',
-        'total_price',  // <— penting untuk chart omzet!
+        'total_price',      // dipakai untuk omzet / chart
     ];
 
+    /**
+     * Casting tipe data.
+     */
     protected $casts = [
-        'wa_sent_at' => 'datetime',
-        'total_price' => 'integer',
+        'wa_sent_at'   => 'datetime',
+        'total_price'  => 'integer',
     ];
 
-    // Relasi ke User (pembuat order / seller)
+    /**
+     * Relasi ke user (pembeli).
+     */
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class);
+        return $this->belongsTo(User::class);
     }
 
-    // Relasi ke Store (toko pemilik order)
+    /**
+     * Relasi ke store (toko pemilik pesanan).
+     */
     public function store()
     {
-        return $this->belongsTo(\App\Models\Store::class);
+        return $this->belongsTo(Store::class);
     }
 }

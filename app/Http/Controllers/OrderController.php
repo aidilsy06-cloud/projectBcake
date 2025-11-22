@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,38 +47,76 @@ class OrderController extends Controller
             'total_price'      => ['nullable', 'numeric', 'min:0'],
         ]);
 
+        $userId = Auth::id();
+
         // 1.1 Hitung total_price kalau tidak dikirim dari form
         $totalPrice = $data['total_price'] ?? null;
 
         if ($totalPrice === null) {
-            // coba hitung dari tabel cart_items (user yang sama)
             $totalPrice = DB::table('cart_items')
                 ->join('products', 'cart_items.product_id', '=', 'products.id')
-                ->where('cart_items.user_id', Auth::id())
+                ->where('cart_items.user_id', $userId)
                 ->sum(DB::raw('cart_items.qty * products.price'));
         }
 
         // fallback kalau tetap null
         $totalPrice = $totalPrice ?? 0;
 
-        // 2. Simpan ke database (riwayat order)
-        $order = Order::create([
-            'user_id'          => Auth::id(),
-            'store_id'         => $store->id,
-            'customer_name'    => $data['customer_name'],
-            'customer_phone'   => $data['customer_phone'],
-            'customer_address' => $data['customer_address'] ?? null,
-            'order_summary'    => $data['order_summary'],
-            'note'             => $data['note'] ?? null,
-            'status'           => 'draft',
-            'wa_sent_at'       => now(),
-            'total_price'      => $totalPrice,
-        ]);
+        DB::beginTransaction();
 
-        // 2.5 Kosongkan keranjang user setelah order dibuat
-        DB::table('cart_items')
-            ->where('user_id', Auth::id())
-            ->delete();
+        try {
+            // 2. Simpan ke database (riwayat order utama)
+            $order = Order::create([
+                'user_id'          => $userId,
+                'store_id'         => $store->id,
+                'customer_name'    => $data['customer_name'],
+                'customer_phone'   => $data['customer_phone'],
+                'customer_address' => $data['customer_address'] ?? null,
+                'order_summary'    => $data['order_summary'],
+                'note'             => $data['note'] ?? null,
+                // status awal untuk tracking
+                // nanti bisa diubah jadi: pending → diproses → dikirim → selesai / dibatalkan
+                'status'           => 'pending',
+                'wa_sent_at'       => now(),
+                'total_price'      => $totalPrice,
+            ]);
+
+            // 2.1 Ambil detail item dari cart untuk disimpan ke order_items
+            $cartItems = DB::table('cart_items')
+                ->join('products', 'cart_items.product_id', '=', 'products.id')
+                ->select(
+                    'cart_items.product_id',
+                    'cart_items.qty',
+                    'products.name as product_name',
+                    'products.price'
+                )
+                ->where('cart_items.user_id', $userId)
+                ->get();
+
+            foreach ($cartItems as $item) {
+                OrderItem::create([
+                    'order_id'     => $order->id,
+                    'product_id'   => $item->product_id,
+                    'product_name' => $item->product_name,
+                    'price'        => $item->price,
+                    'qty'          => $item->qty,
+                    'subtotal'     => $item->price * $item->qty,
+                ]);
+            }
+
+            // 2.5 Kosongkan keranjang user setelah order dibuat
+            DB::table('cart_items')
+                ->where('user_id', $userId)
+                ->delete();
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            // kalau ada error pas simpan order / order_items
+            return back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat membuat pesanan. Silakan coba lagi.');
+        }
 
         // 3. Siapkan nomor WhatsApp penjual (dari kolom stores.whatsapp)
         $rawNumber = $store->whatsapp ?? '';
@@ -146,6 +185,11 @@ class OrderController extends Controller
      */
     public function success(Order $order)
     {
+        // optional: batasi supaya hanya buyer pemilik yang bisa lihat halaman ini
+        if (Auth::id() !== $order->user_id) {
+            abort(403);
+        }
+
         $store = $order->store;      // relasi store() di model Order
         $waUrl = session('wa_url');  // bisa null kalau tidak ada
 

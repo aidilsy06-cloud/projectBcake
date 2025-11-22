@@ -4,31 +4,40 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
 
-            // relasi ke user & store
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('store_id')->constrained()->cascadeOnDelete();
+            // Kode pesanan unik (misal: BC-20251121-001)
+            $table->string('order_code', 50)->unique();
 
-            // info customer
+            // Relasi
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');   // buyer
+            $table->foreignId('store_id')->constrained()->onDelete('cascade');  // toko
+
+            // Data customer (boleh sama dengan user, tapi disimpan biar aman)
             $table->string('customer_name', 100);
             $table->string('customer_phone', 30);
-            $table->string('customer_address', 255)->nullable();
+            $table->text('customer_address');
 
-            // ringkasan pesanan (misal dari keranjang)
-            $table->text('order_summary'); // contoh: "2x Red Velvet, 1x Brownies..."
+            // Total
+            $table->unsignedBigInteger('total_amount')->default(0);
 
-            $table->text('note')->nullable();
+            // Status tracking
+            $table->enum('status', [
+                'pending',    // baru checkout
+                'diproses',   // toko sedang buat
+                'dikirim',    // sedang dikirim
+                'selesai',    // sudah diterima
+                'dibatalkan', // batal
+            ])->default('pending');
 
-            // status sederhana, nanti bisa dikembangin
-            $table->string('status', 30)->default('draft'); // draft | sent | done | cancelled
-
-            $table->timestamp('wa_sent_at')->nullable();
+            // Opsi pembayaran / catatan
+            $table->string('payment_method', 50)->nullable(); // COD, Transfer, dll
+            $table->text('note')->nullable(); // catatan pembeli
+            $table->text('admin_note')->nullable(); // catatan admin / seller
 
             $table->timestamps();
         });

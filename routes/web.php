@@ -16,17 +16,20 @@ use App\Http\Controllers\Buyer\HomeController;
 use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
 use App\Http\Controllers\Seller\StoreController as SellerStore;
 use App\Http\Controllers\Seller\ProductController as SellerProductController;
+use App\Http\Controllers\Seller\OrderController as SellerOrderController;   // tracking pesanan seller
 
 // Admin
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\Admin\StoreController as AdminStoreController; // CRUD toko admin
+use App\Http\Controllers\Admin\StoreController as AdminStoreController;     // CRUD toko admin
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;     // tracking pesanan admin
 
 // Order / transaksi (form → WhatsApp)
 use App\Http\Controllers\OrderController;
 
 use App\Models\Product;
 use App\Models\User;
+use App\Models\Order;
 
 /* ----------------------------------------
 | HEALTHCHECK
@@ -177,6 +180,7 @@ Route::prefix('admin')
             $stats = [
                 'total_products' => safeCount(fn () => Product::count()),
                 'users'          => safeCount(fn () => User::count()),
+                'orders'         => safeCount(fn () => Order::count()), // total pesanan
             ];
 
             $users = $products = collect();
@@ -199,6 +203,11 @@ Route::prefix('admin')
 
         // CRUD Toko
         Route::resource('stores', AdminStoreController::class)->except(['show']);
+
+        // TRACKING PESANAN (ADMIN)
+        Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+        Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
     });
 
 /* ----------------------------------------
@@ -234,8 +243,12 @@ Route::middleware(['auth', 'verified'])
         Route::delete('/products/{product}', [SellerProductController::class, 'destroy'])
             ->name('products.destroy');
 
-        // Placeholder halaman lain
-        Route::get('/orders', fn () => view('seller.placeholders.orders'))->name('orders.index');
+        // TRACKING PESANAN (SELLER)
+        Route::get('/orders', [SellerOrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [SellerOrderController::class, 'show'])->name('orders.show');
+        Route::post('/orders/{order}/status', [SellerOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+
+        // Halaman lain
         Route::get('/promos', fn () => view('seller.placeholders.promos'))->name('promos.index');
         Route::get('/settings', fn () => view('seller.placeholders.settings'))->name('settings');
     });

@@ -1,142 +1,194 @@
 @extends('layouts.app')
-@section('title','Dashboard Admin — B’cake')
+
+@section('title', 'Dashboard Admin — B’cake')
+
+@push('head')
+<style>
+  :root{
+    --bcake-wine:#890524;
+    --bcake-deep:#57091d;
+    --bcake-cocoa:#362320;
+  }
+  .page-bg{
+    background:
+      radial-gradient(900px 500px at 5% -10%, #ffe6eb 0%, transparent 60%),
+      radial-gradient(900px 500px at 95% -10%, #ffeef2 0%, transparent 60%),
+      #fff7f8;
+  }
+  .card-soft{
+    background: linear-gradient(145deg,#ffffff,#fff6f7 55%,#ffecef 100%);
+    box-shadow:0 18px 40px rgba(137,5,36,.12);
+    border-radius:24px;
+  }
+  .btn-pill{
+    border-radius:999px;
+    padding:.55rem 1.3rem;
+    font-size:.85rem;
+    font-weight:600;
+  }
+</style>
+@endpush
 
 @section('content')
-<div class="space-y-8">
+<div class="page-bg min-h-screen pb-16">
+    <div class="max-w-6xl mx-auto pt-10 px-4 sm:px-6 lg:px-0">
 
-  {{-- === Judul Utama === --}}
-  <div>
-    <h1 class="text-3xl font-bold text-bcake-bitter">Dashboard Admin</h1>
-    <p class="text-gray-500 text-sm mt-1">Pantau aktivitas dan data sistem B’cake dengan cepat 🍰</p>
-  </div>
+        {{-- HEADER --}}
+        <div class="mb-8">
+            <h1 class="text-3xl font-extrabold text-rose-900 tracking-tight">
+                Dashboard Admin
+            </h1>
+            <p class="mt-1 text-sm text-rose-500">
+                Pantau aktivitas dan data sistem B’cake dengan cepat 🍰
+            </p>
+        </div>
 
-  {{-- === Statistik Card === --}}
-  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-    <div class="bg-white rounded-2xl border border-bcake-truffle/10 shadow-sm p-6">
-      <div class="text-sm text-gray-500">Total Produk</div>
-      <div class="text-3xl font-bold mt-1 text-bcake-wine">{{ $stats['total_products'] ?? 0 }}</div>
-      <p class="text-xs text-gray-400 mt-2">Jumlah seluruh produk aktif di sistem</p>
+        {{-- STAT CARDS --}}
+        <div class="grid gap-5 md:grid-cols-3 mb-10">
+            {{-- Total Produk --}}
+            <div class="card-soft px-8 py-6 flex flex-col justify-between">
+                <div class="text-sm text-rose-400 font-semibold mb-2">Total Produk</div>
+                <div class="text-4xl font-bold text-rose-900 mb-1">
+                    {{ $stats['total_products'] ?? 0 }}
+                </div>
+                <p class="text-sm text-rose-400">
+                    Jumlah seluruh produk aktif di sistem
+                </p>
+            </div>
+
+            {{-- Total Pengguna --}}
+            <div class="card-soft px-8 py-6 flex flex-col justify-between">
+                <div class="text-sm text-rose-400 font-semibold mb-2">Total Pengguna</div>
+                <div class="text-4xl font-bold text-rose-900 mb-1">
+                    {{ $stats['users'] ?? 0 }}
+                </div>
+                <p class="text-sm text-rose-400">
+                    Total akun terdaftar di B’cake
+                </p>
+            </div>
+
+            {{-- Pesanan --}}
+            <div class="card-soft px-8 py-6 flex flex-col justify-between">
+                <div class="text-sm text-rose-400 font-semibold mb-2">Pesanan</div>
+                <div class="text-4xl font-bold text-rose-900 mb-1">
+                    {{ $stats['orders'] ?? 0 }}
+                </div>
+                <p class="text-sm text-rose-400 mb-3">
+                    Total pesanan yang tercatat di B’cake
+                </p>
+                @if(Route::has('admin.orders.index'))
+                    <a href="{{ route('admin.orders.index') }}"
+                       class="inline-flex items-center text-sm font-semibold text-rose-600 hover:text-rose-700">
+                        Lihat Semua Pesanan
+                        <span class="ml-1">→</span>
+                    </a>
+                @endif
+            </div>
+        </div>
+
+        {{-- AKSI CEPAT --}}
+        <div class="card-soft px-8 py-6 mb-10">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h2 class="text-base font-semibold text-rose-900">Aksi Cepat</h2>
+                    <p class="text-xs text-rose-400 mt-1">
+                        Kelola data utama B’cake hanya dengan sekali klik.
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="{{ route('admin.products.index') }}"
+                       class="btn-pill bg-rose-700 text-white hover:bg-rose-800">
+                        Kelola Produk
+                    </a>
+                    <a href="{{ route('admin.stores.index') }}"
+                       class="btn-pill border border-rose-200 text-rose-700 bg-white hover:bg-rose-50">
+                        Kelola Toko
+                    </a>
+                    <a href="{{ route('admin.users.index') }}"
+                       class="btn-pill border border-rose-200 text-rose-700 bg-white hover:bg-rose-50">
+                        Kelola User
+                    </a>
+                    <a href="{{ route('home') }}"
+                       class="btn-pill border border-rose-100 text-rose-500 bg-white hover:bg-rose-50">
+                        Lihat Landing
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {{-- LIST TERBARU --}}
+        <div class="grid gap-6 md:grid-cols-2">
+            {{-- Pengguna Terbaru --}}
+            <div class="card-soft px-6 py-5">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-base font-semibold text-rose-900">Pengguna Terbaru</h2>
+                    <a href="{{ route('admin.users.index') }}"
+                       class="text-xs font-semibold text-rose-500 hover:text-rose-600">
+                        Lihat Semua
+                    </a>
+                </div>
+
+                @if($users->count())
+                    <div class="divide-y divide-rose-50">
+                        @foreach ($users as $user)
+                            <div class="py-3 flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-semibold text-rose-900">
+                                        {{ $user->name }}
+                                    </p>
+                                    <p class="text-xs text-rose-400">
+                                        {{ $user->email }}
+                                    </p>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-[11px] font-semibold
+                                             {{ $user->role === 'seller'
+                                                ? 'bg-amber-100 text-amber-800'
+                                                : ($user->role === 'admin'
+                                                    ? 'bg-rose-100 text-rose-800'
+                                                    : 'bg-emerald-100 text-emerald-800') }}">
+                                    {{ ucfirst($user->role ?? 'buyer') }}
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-xs text-rose-300">Belum ada data pengguna.</p>
+                @endif
+            </div>
+
+            {{-- Produk Terbaru --}}
+            <div class="card-soft px-6 py-5">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-base font-semibold text-rose-900">Produk Terbaru</h2>
+                    <a href="{{ route('admin.products.index') }}"
+                       class="text-xs font-semibold text-rose-500 hover:text-rose-600">
+                        Lihat Semua
+                    </a>
+                </div>
+
+                @if($products->count())
+                    <div class="divide-y divide-rose-50">
+                        @foreach ($products as $product)
+                            <div class="py-3 flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-semibold text-rose-900">
+                                        {{ $product->name }}
+                                    </p>
+                                    <p class="text-xs text-rose-400">
+                                        Rp {{ number_format($product->price, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                                <span class="text-[11px] text-rose-300">
+                                    {{ $product->created_at?->format('d M Y') }}
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-xs text-rose-300">Belum ada data produk.</p>
+                @endif
+            </div>
+        </div>
     </div>
-
-    <div class="bg-white rounded-2xl border border-bcake-truffle/10 shadow-sm p-6">
-      <div class="text-sm text-gray-500">Total Pengguna</div>
-      <div class="text-3xl font-bold mt-1 text-bcake-wine">{{ $stats['users'] ?? 0 }}</div>
-      <p class="text-xs text-gray-400 mt-2">Total akun terdaftar di B’cake</p>
-    </div>
-
-    <div class="bg-white rounded-2xl border border-bcake-truffle/10 shadow-sm p-6">
-      <div class="text-sm text-gray-500">Pesanan (Coming Soon)</div>
-      <div class="text-3xl font-bold mt-1 text-bcake-wine">0</div>
-      <p class="text-xs text-gray-400 mt-2">Fitur order tracking segera hadir</p>
-    </div>
-  </div>
-
-  {{-- === Aksi Cepat === --}}
-  <div class="bg-white rounded-2xl border border-bcake-truffle/10 shadow-sm p-6">
-    <h2 class="text-lg font-semibold mb-4 text-bcake-bitter">Aksi Cepat</h2>
-    <div class="flex flex-wrap gap-3">
-      {{-- primary: produk --}}
-      <a href="{{ route('admin.products.index') }}"
-         class="px-4 py-2 rounded-xl bg-bcake-wine text-white hover:opacity-90">
-        Kelola Produk
-      </a>
-
-      {{-- baru: toko --}}
-      <a href="{{ route('admin.stores.index') }}"
-         class="px-4 py-2 rounded-xl border border-bcake-wine text-bcake-wine hover:bg-rose-50">
-        Kelola Toko
-      </a>
-
-      {{-- user --}}
-      <a href="{{ route('admin.users.index') }}"
-         class="px-4 py-2 rounded-xl border border-bcake-wine text-bcake-wine hover:bg-rose-50">
-        Kelola User
-      </a>
-
-      {{-- landing --}}
-      <a href="{{ route('home') }}"
-         class="px-4 py-2 rounded-xl border hover:bg-rose-50">
-        Lihat Landing
-      </a>
-    </div>
-  </div>
-
-  {{-- === Data Ringkasan === --}}
-  <div class="grid lg:grid-cols-2 gap-6">
-    {{-- Tabel User --}}
-    <div class="bg-white rounded-2xl border border-bcake-truffle/10 shadow-sm overflow-hidden">
-      <div class="flex items-center justify-between px-5 py-4 border-b border-bcake-truffle/10">
-        <h3 class="font-semibold text-bcake-bitter">Pengguna Terbaru</h3>
-        <a href="{{ route('admin.users.index') }}" class="text-sm text-bcake-wine hover:underline">Lihat Semua</a>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
-          <thead class="bg-rose-50 text-gray-700">
-            <tr>
-              <th class="px-4 py-2 text-left">Nama</th>
-              <th class="px-4 py-2 text-left">Email</th>
-              <th class="px-4 py-2 text-left">Role</th>
-            </tr>
-          </thead>
-          <tbody>
-            @forelse($users ?? [] as $user)
-              <tr class="border-t">
-                <td class="px-4 py-2">{{ $user->name }}</td>
-                <td class="px-4 py-2">{{ $user->email }}</td>
-                <td class="px-4 py-2">
-                  <span class="px-2 py-1 rounded text-xs bg-rose-100 text-bcake-wine">
-                    {{ $user->role ?? 'buyer' }}
-                  </span>
-                </td>
-              </tr>
-            @empty
-              <tr>
-                <td colspan="3" class="px-4 py-6 text-center text-gray-500">Belum ada data pengguna</td>
-              </tr>
-            @endforelse
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    {{-- Tabel Produk --}}
-    <div class="bg-white rounded-2xl border border-bcake-truffle/10 shadow-sm overflow-hidden">
-      <div class="flex items-center justify-between px-5 py-4 border-b border-bcake-truffle/10">
-        <h3 class="font-semibold text-bcake-bitter">Produk Terbaru</h3>
-        <a href="{{ route('admin.products.index') }}" class="text-sm text-bcake-wine hover:underline">Lihat Semua</a>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
-          <thead class="bg-rose-50 text-gray-700">
-            <tr>
-              <th class="px-4 py-2 text-left">Nama</th>
-              <th class="px-4 py-2 text-left">Harga</th>
-              <th class="px-4 py-2 text-left">Gambar</th>
-            </tr>
-          </thead>
-          <tbody>
-            @forelse($products ?? [] as $product)
-              <tr class="border-t">
-                <td class="px-4 py-2">{{ $product->name }}</td>
-                <td class="px-4 py-2">Rp {{ number_format($product->price,0,',','.') }}</td>
-                <td class="px-4 py-2">
-                  @if($product->image_url)
-                    <img src="{{ $product->image_url }}" alt="gambar" class="h-8 w-8 rounded object-cover">
-                  @else
-                    <span class="text-xs text-gray-400">-</span>
-                  @endif
-                </td>
-              </tr>
-            @empty
-              <tr>
-                <td colspan="3" class="px-4 py-6 text-center text-gray-500">Belum ada produk</td>
-              </tr>
-            @endforelse
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
 </div>
 @endsection

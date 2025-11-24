@@ -5,14 +5,14 @@
 @section('content')
     {{-- ================== KATALOG (List ala brochure) ================== --}}
     <section class="max-w-6xl mx-auto px-6 py-10">
+        {{-- Kembali ke Home --}}
+        <div class="mb-4">
+            <a href="{{ route('home') }}"
+                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-100 text-bcake-wine text-sm hover:bg-rose-200 transition">
+                ← Kembali ke Home
+            </a>
+        </div>
 
-        {{-- Tombol Kembali --}}
-        <a href="{{ route('home') }}"
-            class="mb-6 inline-flex items-center gap-2 text-bcake-cherry hover:text-bcake-wine 
-          font-medium text-sm transition">
-            <span class="text-lg">←</span>
-            <span>Kembali ke Home</span>
-        </a>
 
 
         <h2 class="font-display text-3xl mb-6">Katalog Produk</h2>
@@ -28,8 +28,12 @@
                     {{-- Thumbnail kiri --}}
                     <div class="md:col-span-3">
                         <div class="relative p-4">
-                            <img src="{{ $img }}" alt="{{ $p->name }}"
-                                class="w-full aspect-[4/3] md:aspect-square object-cover rounded-2xl ring-1 ring-rose-100 shadow-md" />
+
+                            <a href="{{ route('products.show', $p->slug ?? $p->id) }}" class="block group">
+                                <img src="{{ $img }}" alt="{{ $p->name }}"
+                                    class="w-full aspect-[4/3] md:aspect-square object-cover rounded-2xl ring-1 ring-rose-100 shadow-md 
+                  transition duration-300 group-hover:scale-[1.03] group-hover:shadow-lg" />
+                            </a>
 
                             {{-- contoh badge diskon opsional --}}
                             @if (isset($p->discount) && $p->discount > 0)
@@ -38,8 +42,10 @@
                                     -{{ $p->discount }}%
                                 </div>
                             @endif
+
                         </div>
                     </div>
+
 
                     {{-- Konten kanan --}}
                     <div class="md:col-span-9 pr-4 md:pr-6 py-4">

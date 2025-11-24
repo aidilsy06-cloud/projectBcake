@@ -4,6 +4,13 @@
 
 @section('content')
 
+<div class="mb-4 inline-flex">
+    <a href="{{ route('buyer.stores.index') }}"
+       class="px-3 py-1.5 rounded-full bg-rose-100 text-bcake-wine text-xs hover:bg-rose-200 transition">
+        ← Kembali ke toko
+    </a>
+</div>
+
 {{-- ===================== HEADER TOKO ===================== --}}
 <section class="mb-8">
     <div class="relative h-56 rounded-2xl overflow-hidden shadow-soft">

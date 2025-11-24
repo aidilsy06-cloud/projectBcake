@@ -7,10 +7,13 @@
     <section class="max-w-6xl mx-auto px-6 py-10">
         {{-- Kembali ke Home --}}
         <div class="mb-4">
-            <a href="{{ route('home') }}"
-                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-100 text-bcake-wine text-sm hover:bg-rose-200 transition">
-                ← Kembali ke Home
+            <a href="javascript:history.back()"
+                class="inline-flex items-center gap-2 px-5 py-2 rounded-full 
+          bg-rose-200 text-bcake-wine font-medium 
+          shadow-md hover:bg-rose-300 hover:shadow-lg transition">
+                ← Kembali
             </a>
+
         </div>
 
 

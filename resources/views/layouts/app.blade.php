@@ -41,6 +41,9 @@
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap"
         rel="stylesheet">
 
+    {{-- AOS (Animate On Scroll) --}}
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+
     {{-- Alpine.js --}}
     <script src="https://unpkg.com/alpinejs" defer></script>
 
@@ -106,7 +109,6 @@
     </style>
 
     @stack('head')
-
 </head>
 
 <body class="bg-rose-50 text-gray-800 antialiased min-h-screen flex flex-col">
@@ -265,9 +267,11 @@
                 🆘 Bantuan
             </a>
             {{-- Link anchor ke section Tentang di home (kalau ada) --}}
-            <a href="{{ url('/#tentang') }}" class="block px-3 py-2 rounded-lg hover:bg-rose-50">
+            <a href="{{ route('about') }}"
+                class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('about') ? 'bg-rose-50 font-medium' : '' }}">
                 ℹ️ Tentang Kami
             </a>
+
         </nav>
 
         <div class="mt-6 border-t pt-4">
@@ -390,6 +394,14 @@
     </script>
 
     @stack('scripts')
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 700, // lama animasi (ms)
+            once: true, // animasi hanya sekali saat muncul
+        });
+    </script>
+
 </body>
 
 </html>

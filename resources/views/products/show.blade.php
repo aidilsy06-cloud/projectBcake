@@ -9,7 +9,7 @@
     <a href="{{ route('products.index') }}"
        class="inline-flex items-center gap-2 px-4 py-1.5 
               rounded-full bg-rose-100 text-bcake-wine text-sm 
-              hover:bg-rose-200 transition shadow-sm">
+              hover:bg-[3ff758f] transition shadow-sm">
         ← Kembali ke Katalog Produk
     </a>
 </div>

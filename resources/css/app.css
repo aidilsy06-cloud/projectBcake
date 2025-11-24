@@ -55,6 +55,65 @@ body {
 }
 
 /* -------------------------------------------------------
+   🍰 B’cake Category Cards Animation (Floating + Hover)
+--------------------------------------------------------*/
+
+/* Animasi goyang lembut */
+@keyframes bcake-float {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-4px); }
+  50% { transform: translateY(2px); }
+  75% { transform: translateY(-2px); }
+}
+
+/* Card utama */
+.category-card {
+  position: relative;
+  animation: bcake-float 5s ease-in-out infinite;
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease,
+    filter .35s ease;
+  overflow: hidden;
+  border-radius: 1.5rem; /* biar rata dengan tailwind rounded-3xl */
+}
+
+/* Saat hover — berhenti goyang + naik + sedikit zoom */
+.category-card:hover {
+  animation-play-state: paused;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+}
+
+/* Overlay gelap samar */
+.category-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.10),
+    rgba(0,0,0,0.18)
+  );
+  opacity: 0;
+  transition: opacity .35s ease;
+  pointer-events: none;
+}
+
+/* Gambar ikut smooth transition */
+.category-card img {
+  transition: transform .35s ease, filter .35s ease;
+}
+
+/* Hover gelap + zoom gambar */
+.category-card:hover::before {
+  opacity: 1;
+}
+.category-card:hover img {
+  filter: brightness(.9);
+}
+
+/* -------------------------------------------------------
    💫 Custom Utility Tambahan (mask lengkung hero)
 --------------------------------------------------------*/
 @layer utilities {

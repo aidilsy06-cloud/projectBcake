@@ -165,12 +165,6 @@
                                 </li>
                             @endif
                             <li>
-                                <a href="{{ route('cart.index') }}"
-                                   class="{{ request()->routeIs('cart.*') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">
-                                    Keranjang
-                                </a>
-                            </li>
-                            <li>
                                 <a href="{{ Route::has('buyer.help') && auth()->check() ? route('buyer.help') : route('help') }}"
                                    class="{{ request()->routeIs('help') || request()->routeIs('buyer.help') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">
                                     Bantuan

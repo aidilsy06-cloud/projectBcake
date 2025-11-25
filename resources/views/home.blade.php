@@ -2,10 +2,45 @@
 
 @section('title', 'B’cake — Elegant Bakery')
 
+@push('head')
+    <style>
+        /* 🎀 Background stripes pakai warna palette kamu */
+        .hero-cupcake-bg {
+            background:
+                repeating-linear-gradient(to bottom,
+                    #f6c2d0 0px,
+                    /* soft pink muda */
+                    #f6c2d0 14px,
+                    #f3a9c0 14px,
+                    /* soft pink dalam */
+                    #f3a9c0 28px);
+        }
+
+        /* 🎀 Scallop lace bawah */
+        .hero-scallop {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-scallop::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -18px;
+            height: 36px;
+            background:
+                radial-gradient(circle at 18px -6px, #ffffff 18px, transparent 19px) repeat-x;
+            background-size: 36px 36px;
+        }
+    </style>
+@endpush
+
 @section('content')
 
-    {{-- ================= HERO / SLIDER (book-notch pakai SVG mask) ================= --}}
-    <section class="bg-rose-50 pt-0 pb-10 -mt-[1px]">
+    {{-- ================= HERO CUPCAKE SIMPLE (MODEL BARU) ================= --}}
+    <section class="w-full overflow-hidden">
+
         <div x-data="{
             active: 0,
             slides: [
@@ -14,92 +49,88 @@
             ],
             next() { this.active = (this.active + 1) % this.slides.length },
             prev() { this.active = (this.active - 1 + this.slides.length) % this.slides.length },
-        }" x-init="setInterval(() => next(), 5000)"
-            class="relative max-w-6xl mx-auto -mt-4 md:-mt-6 lg:-mt-8 px-4 md:px-0">
-            <div class="relative rounded-[28px] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.08)]">
+        }" x-init="setInterval(() => next(), 5000)" class="relative w-full">
 
-                <template x-for="(s, i) in slides" :key="i">
-                    <div x-show="active === i" x-transition:enter="transition ease-out duration-700"
-                        x-transition:enter-start="opacity-0 scale-[1.02]" x-transition:enter-end="opacity-100 scale-100"
-                        class="relative">
-                        {{-- GAMBAR DENGAN BOOK-NOTCH --}}
-                        <svg viewBox="0 0 1920 680" class="w-full h-[420px] sm:h-[460px] md:h-[560px] lg:h-[680px] block">
-                            <defs>
-                                <mask :id="`bookNotch-${i}`">
-                                    <rect width="1920" height="680" fill="#fff" />
-                                    <path fill="#000" d="M720 0
-                                                           C 880 0, 940 60, 960 130
-                                                           C 980 60, 1040 0, 1200 0
-                                                           Z" />
-                                </mask>
-                            </defs>
+            <template x-for="(s, i) in slides" :key="i">
+                <div x-show="active === i" class="relative w-full hero-cupcake-bg">
 
-                            <image :href="s.image" width="1920" height="680" preserveAspectRatio="xMidYMid slice"
-                                class="scale-125 origin-center" :mask="`url(#bookNotch-${i})`" />
-                        </svg>
+                    <!-- GRID -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 md:items-center px-6 py-12 md:py-20 gap-6">
 
-                        {{-- OVERLAY TIPIS BIAR TEKS LEBIH KELUAR --}}
-                        <div
-                            class="absolute inset-0 bg-black/18 sm:bg-black/14 md:bg-black/10 lg:bg-black/5 pointer-events-none z-10">
+                        <!-- FOTO – mobile di atas -->
+                        <div class="order-1 md:order-2 flex justify-center">
+                            <img :src="s.image"
+                                class="w-full max-w-md md:max-w-xl rounded-3xl shadow-lg object-cover">
                         </div>
 
-                        {{-- OVERLAY TEKS + LOGO --}}
-                        <div
-                            class="absolute inset-0 flex flex-col items-center justify-center text-center z-20 px-4 space-y-5">
+                        <!-- TEKS – mobile di bawah -->
+                        <div class="order-2 md:order-1 text-center md:text-left space-y-4">
 
-                            {{-- LOGO (hanya slide pertama) --}}
+                            <!-- LOGO slide 1 -->
                             <template x-if="i === 0">
-                                <div class="flex flex-col items-center">
+                                <div class="flex justify-center md:justify-start">
                                     <div
-                                        class="rounded-3xl bg-white/20 border border-white/40 p-3 md:p-4 shadow-[0_18px_40px_rgba(0,0,0,0.45)] backdrop-blur-md">
+                                        class="rounded-3xl bg-white/70 p-3 shadow-lg backdrop-blur-md border border-white/60">
                                         <img src="{{ asset('image/logo_bcake.jpg') }}"
-                                            class="w-14 sm:w-16 md:w-20 rounded-2xl object-contain" alt="Bcake Logo">
+                                            class="w-16 md:w-20 rounded-xl object-contain">
                                     </div>
                                 </div>
                             </template>
 
-                            {{-- TEKS UTAMA --}}
+                            <!-- JUDUL -->
                             <h2
-                                class="font-display
-                                   text-2xl sm:text-3xl md:text-4xl lg:text-5xl
-                                   leading-tight max-w-3xl mx-auto
-                                   bg-gradient-to-r from-[#f0a84a] to-[#c74e51]
-                                   bg-clip-text text-transparent">
+                                class="font-display text-3xl sm:text-4xl md:text-5xl leading-tight
+                                   text-white drop-shadow-md">
                                 <span x-text="s.title"></span>
                             </h2>
 
-                            {{-- BUTTON --}}
-                            <a href="{{ route('products.index') }}"
-                                class="mt-1 inline-flex items-center justify-center
-                                   px-7 py-3 rounded-full
-                                   bg-bcake-cherry hover:bg-bcake-wine
-                                   text-white font-medium text-sm md:text-base shadow-soft">
-                                Order Now
-                            </a>
+                            <!-- SUBTEKS -->
+                            <p class="text-white/90 max-w-md mx-auto md:mx-0">
+                                Pilihan kue cantik dari baker lokal, siap manisin harimu.
+                            </p>
+
+                            <!-- BUTTON -->
+                            <div class="pt-2">
+                                <a href="{{ route('products.index') }}"
+                                    class="inline-flex items-center justify-center px-7 py-3 rounded-full
+                                      bg-bcake-cherry hover:bg-bcake-wine text-white font-medium
+                                      shadow-md transition">
+                                    Order Now
+                                </a>
+                            </div>
+
                         </div>
+
                     </div>
-                </template>
 
-                {{-- PANAH --}}
-                <button @click="prev()"
-                    class="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full
-                       bg-white/85 hover:bg-white shadow grid place-items-center z-30 text-lg">
-                    ‹
-                </button>
-                <button @click="next()"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full
-                       bg-white/85 hover:bg-white shadow grid place-items-center z-30 text-lg">
-                    ›
-                </button>
+                    <!-- SCALLOP -->
+                    <div class="hero-scallop h-10 bg-[#f3a9c0]"></div>
 
-                {{-- DOTS --}}
-                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-30">
-                    <template x-for="(s, i) in slides" :key="i">
-                        <button @click="active = i" class="h-2.5 w-2.5 rounded-full shadow transition"
-                            :class="active === i ? 'bg-bcake-wine' : 'bg-white/80'"></button>
-                    </template>
                 </div>
+            </template>
+
+            <!-- LEFT BUTTON -->
+            <button @click="prev()"
+                class="absolute left-4 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full
+                   bg-white/85 hover:bg-white shadow-md z-30">
+                ‹
+            </button>
+
+            <!-- RIGHT BUTTON -->
+            <button @click="next()"
+                class="absolute right-4 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full
+                   bg-white/85 hover:bg-white shadow-md z-30">
+                ›
+            </button>
+
+            <!-- DOTS -->
+            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+                <template x-for="(s, i) in slides" :key="i">
+                    <button @click="active = i" class="h-2.5 w-2.5 rounded-full shadow-md transition"
+                        :class="active === i ? 'bg-bcake-wine' : 'bg-white/70'"></button>
+                </template>
             </div>
+
         </div>
     </section>
 

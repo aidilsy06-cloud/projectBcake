@@ -3,46 +3,43 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
-    use HasFactory;
-
     // Kolom yang boleh di-mass assign
     protected $fillable = [
         'user_id',
         'store_id',
-        'category_id',   // <- relasi ke tabel categories
+        'category_id',
         'name',
         'slug',
         'price',
-        'stock',         // <- stok produk
-        'image_url',     // atau image_path kalau di DB kamu pakai itu
+        'stock',
+        'image_url',
         'description',
+        'status',       // ⬅️ tambahkan ini
     ];
 
     /**
-     * Relasi ke model Store (setiap produk dimiliki oleh satu toko)
+     * Produk hanya yang sudah disetujui admin
      */
+    public function scopeApproved($query)
+    {
+        return $query->where('status', 'approved');
+    }
+
     public function store()
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(\App\Models\Store::class);
     }
 
-    /**
-     * Relasi ke User (seller pemilik produk)
-     */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(\App\Models\User::class);
     }
 
-    /**
-     * Relasi ke Category (setiap produk punya satu kategori)
-     */
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(\App\Models\Category::class);
     }
 }

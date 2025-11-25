@@ -1,145 +1,133 @@
+{{-- resources/views/admin/products/index.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Kelola Produk — Admin')
 
-@push('head')
-<style>
-  :root{
-    --wine:#890524;
-    --rose:#ffe4e6;
-    --cocoa:#362320;
-  }
-  .badge{
-    display:inline-flex;
-    align-items:center;
-    padding:.15rem .55rem;
-    font-size:.75rem;
-    border-radius:999px;
-  }
-</style>
-@endpush
-
 @section('content')
-<div class="max-w-7xl mx-auto px-6 py-8">
-  <div class="flex items-center justify-between mb-6">
-    <div>
-      <h1 class="text-2xl font-semibold text-[color:var(--cocoa)]">Kelola Produk</h1>
-      <p class="text-sm text-gray-600 mt-1">
-        Daftar seluruh produk di B’cake. Admin bisa menambah, mengubah, dan menghapus produk.
-      </p>
-    </div>
-    <a href="{{ route('admin.products.create') }}"
-       class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium text-white"
-       style="background:var(--wine);box-shadow:0 12px 30px rgba(137,5,36,.25)">
-      + Tambah Produk
-    </a>
-  </div>
+<section class="bg-rose-50 py-8">
+    <div class="max-w-6xl mx-auto px-4 space-y-6">
 
-  @if (session('ok'))
-    <div class="mb-4 rounded-lg px-4 py-3 text-sm bg-emerald-50 text-emerald-800 border border-emerald-100">
-      {{ session('ok') }}
-    </div>
-  @endif
+        <h1 class="text-2xl font-semibold text-rose-900 mb-2">
+            Kelola Produk
+        </h1>
 
-  @if (session('error'))
-    <div class="mb-4 rounded-lg px-4 py-3 text-sm bg-rose-50 text-rose-800 border border-rose-100">
-      {{ session('error') }}
-    </div>
-  @endif
+        {{-- Statistik --}}
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white rounded-2xl px-4 py-3 shadow-sm">
+                <p class="text-xs text-rose-400">Total</p>
+                <p class="text-2xl font-bold">{{ $stats['total'] ?? 0 }}</p>
+            </div>
+            <div class="bg-white rounded-2xl px-4 py-3 shadow-sm">
+                <p class="text-xs text-amber-500">Pending</p>
+                <p class="text-2xl font-bold">{{ $stats['pending'] ?? 0 }}</p>
+            </div>
+            <div class="bg-white rounded-2xl px-4 py-3 shadow-sm">
+                <p class="text-xs text-emerald-500">Approved</p>
+                <p class="text-2xl font-bold">{{ $stats['approved'] ?? 0 }}</p>
+            </div>
+            <div class="bg-white rounded-2xl px-4 py-3 shadow-sm">
+                <p class="text-xs text-rose-500">Rejected</p>
+                <p class="text-2xl font-bold">{{ $stats['rejected'] ?? 0 }}</p>
+            </div>
+        </div>
 
-  @if($products->isEmpty())
-    <div class="rounded-2xl border border-dashed border-rose-200 bg-white px-6 py-10 text-center">
-      <p class="text-gray-600 mb-2">Belum ada produk yang terdaftar.</p>
-      <a href="{{ route('admin.products.create') }}"
-         class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium text-white"
-         style="background:var(--wine);">
-        + Tambah produk pertama
-      </a>
-    </div>
-  @else
-    <div class="overflow-x-auto bg-white rounded-2xl shadow-[0_18px_40px_rgba(54,35,32,.12)]">
-      <table class="min-w-full text-sm">
-        <thead class="bg-rose-50/70">
-          <tr class="text-left text-xs font-semibold text-gray-600">
-            <th class="px-5 py-3">#</th>
-            <th class="px-5 py-3">Produk</th>
-            <th class="px-5 py-3">Toko</th>
-            <th class="px-5 py-3">Harga</th>
-            <th class="px-5 py-3">Stok</th>
-            <th class="px-5 py-3">Status</th>
-            <th class="px-5 py-3 text-right">Aksi</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-rose-50">
-          @foreach($products as $product)
-            <tr class="hover:bg-rose-50/40">
-              <td class="px-5 py-3 align-top text-gray-500">
-                {{ $loop->iteration + ($products->currentPage()-1)*$products->perPage() }}
-              </td>
-              <td class="px-5 py-3 align-top">
-                <div class="font-medium text-[color:var(--cocoa)]">
-                  {{ $product->name }}
-                </div>
-                <div class="text-xs text-gray-500">
-                  {{ $product->slug ?? '—' }}
-                </div>
-              </td>
-              <td class="px-5 py-3 align-top">
-                <div class="text-sm text-gray-700">
-                  {{ optional($product->store)->name ?? '—' }}
-                </div>
-              </td>
-              <td class="px-5 py-3 align-top text-gray-700">
-                @if(isset($product->price))
-                  Rp {{ number_format($product->price,0,',','.') }}
-                @else
-                  —
-                @endif
-              </td>
-              <td class="px-5 py-3 align-top text-gray-700">
-                {{ $product->stock ?? '—' }}
-              </td>
-              <td class="px-5 py-3 align-top">
-                @php
-                  $status = $product->status ?? 'active';
-                @endphp
-                @if($status === 'active')
-                  <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-100">
-                    Aktif
-                  </span>
-                @else
-                  <span class="badge bg-rose-50 text-rose-700 border border-rose-100">
-                    Nonaktif
-                  </span>
-                @endif
-              </td>
-              <td class="px-5 py-3 align-top text-right space-x-2">
-                <a href="{{ route('admin.products.edit', $product) }}"
-                   class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-[color:var(--wine)] bg-rose-50 hover:bg-rose-100">
-                  Edit
-                </a>
+        {{-- Filter --}}
+        <form method="GET" class="flex flex-wrap gap-3 items-center bg-white rounded-2xl px-4 py-3 shadow-sm">
+            <input type="text" name="q" value="{{ request('q') }}"
+                   placeholder="Cari produk / toko..."
+                   class="border rounded-xl px-3 py-2 text-sm flex-1">
 
-                <form action="{{ route('admin.products.destroy', $product) }}"
-                      method="POST"
-                      class="inline-block"
-                      onsubmit="return confirm('Yakin ingin menghapus produk ini?')">
-                  @csrf
-                  @method('DELETE')
-                  <button type="submit"
-                          class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100">
-                    Hapus
-                  </button>
-                </form>
-              </td>
-            </tr>
-          @endforeach
-        </tbody>
-      </table>
-    </div>
+            <select name="status" class="border rounded-xl px-3 py-2 text-sm">
+                @php $s = request('status', 'all'); @endphp
+                <option value="all"      {{ $s === 'all' ? 'selected' : '' }}>Semua status</option>
+                <option value="pending"  {{ $s === 'pending' ? 'selected' : '' }}>Pending</option>
+                <option value="approved" {{ $s === 'approved' ? 'selected' : '' }}>Approved</option>
+                <option value="rejected" {{ $s === 'rejected' ? 'selected' : '' }}>Rejected</option>
+            </select>
 
-    <div class="mt-4">
-      {{ $products->links() }}
+            <button class="bg-rose-600 text-white px-4 py-2 rounded-xl text-sm">
+                Terapkan
+            </button>
+        </form>
+
+        {{-- Tabel produk --}}
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+            <table class="w-full text-sm">
+                <thead class="bg-rose-50 text-xs text-rose-500">
+                    <tr>
+                        <th class="px-3 py-2 text-left">Produk</th>
+                        <th class="px-3 py-2 text-left">Toko</th>
+                        <th class="px-3 py-2 text-left">Kategori</th>
+                        <th class="px-3 py-2 text-right">Harga</th>
+                        <th class="px-3 py-2 text-center">Status</th>
+                        <th class="px-3 py-2 text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($products as $p)
+                        <tr class="border-t">
+                            <td class="px-3 py-2">
+                                <div class="font-semibold">{{ $p->name }}</div>
+                                <div class="text-[11px] text-gray-400">#{{ $p->id }}</div>
+                            </td>
+                            <td class="px-3 py-2">
+                                {{ $p->store->name ?? '-' }}
+                            </td>
+                            <td class="px-3 py-2">
+                                {{ $p->category->name ?? '-' }}
+                            </td>
+                            <td class="px-3 py-2 text-right">
+                                Rp {{ number_format($p->price, 0, ',', '.') }}
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                @php
+                                    $color = match($p->status) {
+                                        'approved' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                                        'rejected' => 'bg-rose-50 text-rose-700 border-rose-100',
+                                        default    => 'bg-amber-50 text-amber-700 border-amber-100',
+                                    };
+                                @endphp
+                                <span class="inline-flex px-2 py-1 rounded-full border text-[11px] {{ $color }}">
+                                    {{ ucfirst($p->status) }}
+                                </span>
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                <div class="flex items-center justify-center gap-1">
+                                    {{-- tombol approve --}}
+                                    <form action="{{ route('admin.products.updateStatus', $p) }}" method="POST" class="inline">
+                                        @csrf
+                                        <input type="hidden" name="status" value="approved">
+                                        <button class="text-[11px] px-2 py-1 rounded-full bg-emerald-500 text-white">
+                                            Approve
+                                        </button>
+                                    </form>
+
+                                    {{-- tombol reject --}}
+                                    <form action="{{ route('admin.products.updateStatus', $p) }}" method="POST" class="inline">
+                                        @csrf
+                                        <input type="hidden" name="status" value="rejected">
+                                        <button class="text-[11px] px-2 py-1 rounded-full bg-rose-500 text-white">
+                                            Tolak
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-3 py-6 text-center text-gray-500">
+                                Belum ada produk.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            <div class="px-3 py-2">
+                {{ $products->withQueryString()->links() }}
+            </div>
+        </div>
+
     </div>
-  @endif
-</div>
+</section>
 @endsection

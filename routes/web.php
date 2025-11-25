@@ -98,7 +98,7 @@ Route::middleware('auth')
         // Update banyak item sekaligus
         Route::post('/update', [CartController::class, 'update'])->name('update');
 
-        // Hapus satu item (pakai parameter product, sesuai Blade: route('cart.remove', $item->product))
+        // Hapus satu item (pakai parameter product)
         Route::delete('/item/{product}', [CartController::class, 'remove'])->name('remove');
 
         // Kosongkan seluruh keranjang
@@ -184,10 +184,11 @@ Route::prefix('admin')
             $stats = [
                 'total_products' => safeCount(fn () => Product::count()),
                 'users'          => safeCount(fn () => User::count()),
-                'orders'         => safeCount(fn () => Order::count()), // total pesanan
+                'orders'         => safeCount(fn () => Order::count()),
             ];
 
-            $users = $products = collect();
+            $users    = collect();
+            $products = collect();
 
             try { $users = User::latest()->paginate(8); } catch (\Throwable $e) {}
             try { $products = Product::latest()->paginate(8); } catch (\Throwable $e) {}
@@ -204,6 +205,10 @@ Route::prefix('admin')
 
         // CRUD Produk
         Route::resource('products', AdminProductController::class)->except(['show']);
+
+        // ✅ route khusus update status produk
+        Route::post('/products/{product}/status', [AdminProductController::class, 'updateStatus'])
+            ->name('products.updateStatus');
 
         // CRUD Toko
         Route::resource('stores', AdminStoreController::class)->except(['show']);
@@ -265,14 +270,14 @@ Route::prefix('buyer')
     ->middleware('auth')
     ->group(function () {
 
-        // DASHBOARD PEMBELI → pakai Buyer\HomeController@index
+        // DASHBOARD PEMBELI
         Route::get('/dashboard', [BuyerHomeController::class, 'index'])
             ->name('dashboard');
 
         // Bantuan (versi buyer)
         Route::view('/help', 'static.help')->name('help');
 
-        // Toko untuk buyer (mirror dari publik, tapi dalam prefix buyer)
+        // Toko untuk buyer
         Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
         Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
 

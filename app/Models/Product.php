@@ -3,19 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
+    use HasFactory;
+
     // Kolom yang boleh di-mass assign
     protected $fillable = [
         'user_id',
         'store_id',
-        'category_slug',
+        'category_id',   // <- relasi ke tabel categories
         'name',
         'slug',
         'price',
-        'stock',
-        'image_url',
+        'stock',         // <- stok produk
+        'image_url',     // atau image_path kalau di DB kamu pakai itu
         'description',
     ];
 
@@ -24,7 +27,7 @@ class Product extends Model
      */
     public function store()
     {
-        return $this->belongsTo(\App\Models\Store::class);
+        return $this->belongsTo(Store::class);
     }
 
     /**
@@ -32,6 +35,14 @@ class Product extends Model
      */
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class);
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relasi ke Category (setiap produk punya satu kategori)
+     */
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

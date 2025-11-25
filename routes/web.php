@@ -8,9 +8,12 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
+// HOME publik
+use App\Http\Controllers\HomeController;
+
 // Buyer / publik
 use App\Http\Controllers\Buyer\StoreController;
-use App\Http\Controllers\Buyer\HomeController;
+use App\Http\Controllers\Buyer\HomeController as BuyerHomeController;
 
 // Seller
 use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
@@ -60,6 +63,7 @@ if (! function_exists('pickDashboardView')) {
 /* ----------------------------------------
 | PUBLIC PAGES
 |---------------------------------------- */
+// Halaman depan (landing page publik)
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Produk publik
@@ -70,8 +74,8 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/product/{product:slug}', 'show')->name('products.show');
 });
 
-// Halaman Kategori
-Route::get('/kategori/{slug}', [ProductController::class, 'byCategory'])
+// Halaman Kategori (pakai route model binding Category:slug)
+Route::get('/kategori/{category:slug}', [ProductController::class, 'byCategory'])
     ->name('categories.show');
 
 /* ----------------------------------------
@@ -248,7 +252,7 @@ Route::middleware(['auth', 'verified'])
         Route::get('/orders/{order}', [SellerOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{order}/status', [SellerOrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
-        // Halaman lain
+        // Halaman lain placeholder
         Route::get('/promos', fn () => view('seller.placeholders.promos'))->name('promos.index');
         Route::get('/settings', fn () => view('seller.placeholders.settings'))->name('settings');
     });
@@ -261,17 +265,14 @@ Route::prefix('buyer')
     ->middleware('auth')
     ->group(function () {
 
-        Route::get('/dashboard', function () {
-            $user = auth()->user();
+        // DASHBOARD PEMBELI → pakai Buyer\HomeController@index
+        Route::get('/dashboard', [BuyerHomeController::class, 'index'])
+            ->name('dashboard');
 
-            abort_unless(($user->role ?? 'buyer') === 'buyer', 403);
-
-            $stats = ['wish' => 0];
-
-            return view('buyer.index', compact('stats'));
-        })->name('dashboard');
-
+        // Bantuan (versi buyer)
         Route::view('/help', 'static.help')->name('help');
+
+        // Toko untuk buyer (mirror dari publik, tapi dalam prefix buyer)
         Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
         Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
 

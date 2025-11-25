@@ -3,44 +3,73 @@
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
+use App\Models\Store;
 use App\Models\Product;
+use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
+    /**
+     * Dashboard utama seller
+     *
+     * Route:
+     *   GET /seller        -> name: seller.dashboard
+     *   (lihat di routes/web.php, prefix seller)
+     */
     public function index()
     {
-        $user  = auth()->user();
-        $store = $user->store; // relasi user -> store (pastikan ada user_id di tabel stores)
+        $user = Auth::user();
 
-        // --- TOTAL PRODUK TOKO INI ---
-        $totalProducts = 0;
-
-        if ($store) {
-            // hitung produk berdasarkan store_id, bukan count semua product
-            $totalProducts = Product::where('store_id', $store->id)->count();
+        // Pastikan yang akses benar-benar seller
+        if (($user->role ?? null) !== 'seller') {
+            abort(403);
         }
 
-        // --- PESANAN TERBARU TOKO INI ---
-        $recentOrders = collect();
+        // Ambil toko milik seller ini
+        // (kalau di model User ada relasi store(), pakai itu;
+        //  kalau tidak, fallback cari store berdasarkan user_id)
+        $store = $user->store ?? Store::where('user_id', $user->id)->first();
 
-        if ($store) {
-            $recentOrders = Order::where('store_id', $store->id)
+        // Kalau belum punya toko, angka jadi 0 semua
+        if (! $store) {
+            $stats = [
+                'total_products' => 0,
+                'total_orders'   => 0,
+                'total_income'   => 0,
+            ];
+
+            $latestOrders = collect();
+        } else {
+            // Total produk di toko ini
+            $totalProducts = Product::where('store_id', $store->id)->count();
+
+            // Total pesanan (semua status) untuk toko ini
+            $totalOrders = Order::where('store_id', $store->id)->count();
+
+            // Total omzet (kalau kamu simpan total_price di tabel orders)
+            $totalIncome = Order::where('store_id', $store->id)->sum('total_price');
+
+            $stats = [
+                'total_products' => $totalProducts,
+                'total_orders'   => $totalOrders,
+                'total_income'   => $totalIncome,
+            ];
+
+            // Pesanan terbaru (misal 5 terakhir) untuk section "Pesanan Terbaru"
+            $latestOrders = Order::where('store_id', $store->id)
                 ->latest()
                 ->take(5)
                 ->get();
         }
 
-        // --- DATA CHART (boleh kosong dulu) ---
-        $salesLabels = [];
-        $salesValues = [];
-
+        // Kirim data ke view dashboard seller
+        // View: resources/views/seller/dashboard.blade.php
         return view('seller.dashboard', [
-            'user'          => $user,
-            'totalProducts' => $totalProducts,
-            'recentOrders'  => $recentOrders,
-            'salesLabels'   => $salesLabels,
-            'salesValues'   => $salesValues,
+            'user'         => $user,
+            'store'        => $store,
+            'stats'        => $stats,
+            'latestOrders' => $latestOrders,
         ]);
     }
 }

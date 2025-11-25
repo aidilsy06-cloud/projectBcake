@@ -22,7 +22,7 @@
             <div class="bg-white rounded-2xl px-5 py-4 shadow-md">
                 <p class="text-xs text-rose-400 mb-1">Total Produk</p>
                 <p class="text-3xl font-semibold text-rose-900">
-                    {{ $totalProducts }}
+                    {{ $stats['total_products'] ?? 0 }}
                 </p>
             </div>
 
@@ -81,19 +81,24 @@
                             Pesanan yang masuk ke toko kamu.
                         </p>
                     </div>
-                    <a href="{{ route('buyer.orders.index') ?? '#' }}"
+                    {{-- link ke daftar pesanan seller --}}
+                    <a href="{{ route('seller.orders.index') }}"
                        class="text-[11px] text-rose-500 hover:text-rose-700">
                         Lihat semua →
                     </a>
                 </div>
 
-                @if($recentOrders->isEmpty())
+                @php
+                    $ordersList = $latestOrders ?? collect();
+                @endphp
+
+                @if($ordersList->isEmpty())
                     <p class="text-xs text-rose-400">
                         Belum ada pesanan masuk. Link checkout dari pembeli akan muncul di sini ✨
                     </p>
                 @else
                     <div class="space-y-3 max-h-64 overflow-y-auto pr-1">
-                        @foreach($recentOrders as $order)
+                        @foreach($ordersList as $order)
                             @php
                                 $status = $order->status ?? 'draft';
                                 $badgeText = $status === 'draft'
@@ -111,7 +116,7 @@
                                         {{ $order->customer_name }}
                                     </p>
                                     <p class="text-[11px] text-rose-400">
-                                        {{ $order->created_at->format('d M Y, H:i') }}
+                                        {{ $order->created_at?->format('d M Y, H:i') }}
                                     </p>
                                     <p class="text-[11px] text-rose-500 mt-1">
                                         {{ \Illuminate\Support\Str::limit(str_replace(["\r", "\n"], ' ', $order->order_summary), 80) }}
@@ -125,7 +130,7 @@
                                             {{ $badgeText }}
                                         </span>
 
-                                        {{-- tombol cepat untuk buka WA pembeli (kalau mau) --}}
+                                        {{-- tombol cepat untuk buka WA pembeli --}}
                                         <a href="https://wa.me/{{ preg_replace('/\D+/', '', $order->customer_phone) }}"
                                            target="_blank"
                                            class="inline-flex items-center text-[10px] text-emerald-600 hover:text-emerald-700">
@@ -151,8 +156,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             const ctx = document.getElementById('salesChart').getContext('2d');
 
-            const labels = @json($salesLabels);
-            const data   = @json($salesValues);
+            // kalau controller belum kirim salesLabels / salesValues,
+            // pake array kosong biar tidak error
+            const labels = @json($salesLabels ?? []);
+            const data   = @json($salesValues ?? []);
 
             new Chart(ctx, {
                 type: 'line',

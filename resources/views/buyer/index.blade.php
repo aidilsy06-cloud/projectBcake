@@ -28,7 +28,9 @@
   .ring-soft{box-shadow:inset 0 0 0 1px rgba(244, 63, 94, .25)}
   .text-bcake-grad{
     background: linear-gradient(90deg, var(--bcake-cocoa), var(--bcake-wine));
-    -webkit-background-clip:text;background-clip:text;color:transparent;
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
   }
 
   /* ====== Layout fixed sidebar (desktop ≥1024px) ====== */
@@ -168,7 +170,7 @@
         </div>
       </div>
 
-      {{-- ============ TOKO POPULER (BARU DITAMBAH) ============ --}}
+      {{-- ============ TOKO POPULER ============ --}}
       <section class="bg-white rounded-2xl shadow-soft ring-soft p-6">
         <div class="flex items-center justify-between">
           <h3 class="font-semibold">Toko Populer</h3>
@@ -181,12 +183,7 @@
         </div>
 
         <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          @php
-            // aman walau controller belum kirim $stores
-            $storesSafe = collect($stores ?? [])->take(8);
-          @endphp
-
-          @forelse($storesSafe as $s)
+          @forelse($stores as $s)
             <article class="rounded-2xl p-4 card-soft shadow-soft ring-soft">
               <div class="flex items-center gap-3">
                 <img
@@ -199,11 +196,11 @@
               </div>
               <div class="mt-4 flex items-center justify-between">
                 <span class="text-xs text-gray-500">
-                  {{ $s->products_count ?? ($s->products_count ?? '-') }} produk
+                  {{ $s->products_count }} produk
                 </span>
                 @if (Route::has('stores.show'))
                   {{-- jika pakai slug binding {store:slug}, cukup kirim $s --}}
-                  <a href="{{ route('stores.show', $s->slug ?? $s) }}"
+                  <a href="{{ route('stores.show', $s) }}"
                      class="inline-flex items-center px-3 py-1.5 rounded-full bg-bcake-grad text-white text-sm hover:brightness-110">
                     Kunjungi
                   </a>
@@ -220,6 +217,7 @@
 
       {{-- ARTICLES + ORDERS --}}
       <div class="grid lg:grid-cols-3 gap-8">
+        {{-- ARTICLES --}}
         <section class="bg-white rounded-2xl shadow-soft ring-soft p-6 lg:col-span-2">
           <div class="flex items-center justify-between">
             <h3 class="font-semibold">Our Articles</h3>
@@ -233,12 +231,17 @@
             <img src="{{ asset('image/cake.jpg') }}" class="h-32 w-32 object-cover rounded-xl" alt="Artikel B’cake">
             <div>
               <div class="font-medium">The Best Fashion Instagrams of the Week (Dessert Edition)</div>
-              <p class="text-sm text-gray-600 mt-1 line-clamp-2">Tekstur lembut dan kombinasi rasa manis-elegan khas B’cake.</p>
-              <a href="#" class="text-sm text-[var(--bcake-wine)] mt-2 inline-flex items-center gap-1 hover:underline">Read more →</a>
+              <p class="text-sm text-gray-600 mt-1 line-clamp-2">
+                Tekstur lembut dan kombinasi rasa manis-elegan khas B’cake.
+              </p>
+              <a href="#" class="text-sm text-[var(--bcake-wine)] mt-2 inline-flex items-center gap-1 hover:underline">
+                Read more →
+              </a>
             </div>
           </div>
         </section>
 
+        {{-- LATEST ORDERS --}}
         <section class="bg-white rounded-2xl shadow-soft ring-soft p-6">
           <h3 class="font-semibold mb-3">Latest Orders</h3>
           <div class="overflow-hidden rounded-xl ring-1 ring-rose-200/60">
@@ -252,15 +255,25 @@
                 </tr>
               </thead>
               <tbody>
-                @forelse(($orders ?? []) as $o)
+                @forelse($orders as $o)
                   <tr class="border-t">
-                    <td class="px-3 py-2">{{ $o->code }}</td>
-                    <td class="px-3 py-2">{{ $o->items_count }} item</td>
-                    <td class="px-3 py-2">{{ $o->created_at->format('d/m/Y') }}</td>
-                    <td class="px-3 py-2 text-right">@money($o->total)</td>
+                    <td class="px-3 py-2 font-medium">#ORD{{ $o->id }}</td>
+                    <td class="px-3 py-2 text-xs">
+                      {{ $o->items_count }} item
+                    </td>
+                    <td class="px-3 py-2 text-xs">
+                      {{ $o->created_at?->format('d/m/Y') }}
+                    </td>
+                    <td class="px-3 py-2 text-right font-semibold text-bcake-grad">
+                      Rp {{ number_format($o->total_price, 0, ',', '.') }}
+                    </td>
                   </tr>
                 @empty
-                  <tr><td colspan="4" class="px-3 py-6 text-center text-gray-500">Belum ada pesanan.</td></tr>
+                  <tr>
+                    <td colspan="4" class="px-3 py-6 text-center text-gray-500">
+                      Belum ada pesanan.
+                    </td>
+                  </tr>
                 @endforelse
               </tbody>
             </table>

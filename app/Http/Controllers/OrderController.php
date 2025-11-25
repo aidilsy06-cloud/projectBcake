@@ -35,19 +35,25 @@ class OrderController extends Controller
      */
     public function store(Request $request, Store $store)
     {
+        // Pastikan user login
+        $userId = Auth::id();
+        if (!$userId) {
+            return redirect()
+                ->route('login')
+                ->with('error', 'Silakan login terlebih dahulu untuk melakukan pemesanan.');
+        }
+
         // 1. Validasi input dari form checkout
         $data = $request->validate([
             'customer_name'    => ['required', 'string', 'max:100'],
             'customer_phone'   => ['required', 'string', 'max:30'],
             'customer_address' => ['nullable', 'string', 'max:255'],
-            'order_summary'    => ['required', 'string'], // ringkasan pesanan (bisa dari keranjang)
+            'order_summary'    => ['required', 'string'], // ringkasan pesanan (dari keranjang)
             'note'             => ['nullable', 'string'],
             // kalau form checkout mengirim total harga:
             // <input type="hidden" name="total_price" value="{{ $total }}">
             'total_price'      => ['nullable', 'numeric', 'min:0'],
         ]);
-
-        $userId = Auth::id();
 
         // 1.1 Hitung total_price kalau tidak dikirim dari form
         $totalPrice = $data['total_price'] ?? null;
@@ -61,6 +67,24 @@ class OrderController extends Controller
 
         // fallback kalau tetap null
         $totalPrice = $totalPrice ?? 0;
+
+        // 1.2 Cek keranjang kosong
+        $cartItems = DB::table('cart_items')
+            ->join('products', 'cart_items.product_id', '=', 'products.id')
+            ->select(
+                'cart_items.product_id',
+                'cart_items.qty',
+                'products.name as product_name',
+                'products.price'
+            )
+            ->where('cart_items.user_id', $userId)
+            ->get();
+
+        if ($cartItems->isEmpty()) {
+            return redirect()
+                ->route('cart.index')
+                ->with('error', 'Keranjang kamu masih kosong. Tambahkan produk dulu ya 🍰');
+        }
 
         DB::beginTransaction();
 
@@ -81,18 +105,7 @@ class OrderController extends Controller
                 'total_price'      => $totalPrice,
             ]);
 
-            // 2.1 Ambil detail item dari cart untuk disimpan ke order_items
-            $cartItems = DB::table('cart_items')
-                ->join('products', 'cart_items.product_id', '=', 'products.id')
-                ->select(
-                    'cart_items.product_id',
-                    'cart_items.qty',
-                    'products.name as product_name',
-                    'products.price'
-                )
-                ->where('cart_items.user_id', $userId)
-                ->get();
-
+            // 2.1 Simpan item per-produk ke order_items
             foreach ($cartItems as $item) {
                 OrderItem::create([
                     'order_id'     => $order->id,
@@ -112,7 +125,21 @@ class OrderController extends Controller
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
-            // kalau ada error pas simpan order / order_items
+
+            // Catat error ke log biar gampang dicek di storage/logs/laravel.log
+            \Log::error('Gagal membuat pesanan B’cake', [
+                'user_id'  => $userId,
+                'store_id' => $store->id ?? null,
+                'error'    => $e->getMessage(),
+                'trace'    => $e->getTraceAsString(),
+            ]);
+
+            // Kalau di mode debug (APP_DEBUG=true), biar error asli kelihatan untuk developer
+            if (config('app.debug')) {
+                throw $e;
+            }
+
+            // Kalau di production, kasih pesan general
             return back()
                 ->withInput()
                 ->with('error', 'Terjadi kesalahan saat membuat pesanan. Silakan coba lagi.');

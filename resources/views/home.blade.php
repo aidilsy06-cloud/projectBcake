@@ -4,25 +4,46 @@
 
 @push('head')
     <style>
-        /* 🎀 Background stripes pakai warna palette kamu */
+        /* 🎀 Background stripes horizontal (garis ke samping)
+               – pakai palette B'cake, stripenya agak besar
+            */
         .hero-cupcake-bg {
             background:
                 repeating-linear-gradient(to bottom,
-                    #f6c2d0 0px,
-                    /* soft pink muda */
-                    #f6c2d0 14px,
-                    #f3a9c0 14px,
-                    /* soft pink dalam */
-                    #f3a9c0 28px);
+                    #f7d2da 0px,
+                    /* pink muda */
+                    #f7d2da 22px,
+                    /* tebal warna 1 */
+                    #b55c69 22px,
+                    /* wine/truffle */
+                    #b55c69 44px
+                    /* tebal warna 2 (total 44px per pola) */
+                );
         }
 
-        /* 🎀 Scallop lace bawah */
-        .hero-scallop {
+        /* 🎀 Bungkus hero + gerigi atas & bawah */
+        .hero-scallop-wrap {
             position: relative;
             overflow: hidden;
         }
 
-        .hero-scallop::after {
+        /* Gerigi atas */
+        .hero-scallop-wrap::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -18px;
+            height: 36px;
+            background:
+                radial-gradient(circle at 18px 18px, #ffffff 18px, transparent 19px) repeat-x;
+            background-size: 36px 36px;
+            transform: scaleY(-1);
+            /* dibalik biar gigi menghadap ke bawah */
+        }
+
+        /* Gerigi bawah */
+        .hero-scallop-wrap::after {
             content: '';
             position: absolute;
             left: 0;
@@ -30,7 +51,7 @@
             bottom: -18px;
             height: 36px;
             background:
-                radial-gradient(circle at 18px -6px, #ffffff 18px, transparent 19px) repeat-x;
+                radial-gradient(circle at 18px 18px, #ffffff 18px, transparent 19px) repeat-x;
             background-size: 36px 36px;
         }
     </style>
@@ -39,8 +60,7 @@
 @section('content')
 
     {{-- ================= HERO CUPCAKE SIMPLE (MODEL BARU) ================= --}}
-    <section class="w-full overflow-hidden">
-
+    <section class="w-full overflow-visible relative">
         <div x-data="{
             active: 0,
             slides: [
@@ -49,24 +69,25 @@
             ],
             next() { this.active = (this.active + 1) % this.slides.length },
             prev() { this.active = (this.active - 1 + this.slides.length) % this.slides.length },
-        }" x-init="setInterval(() => next(), 5000)" class="relative w-full">
+        }" x-init="setInterval(() => next(), 5000)" class="relative w-full overflow-visible">
 
+            {{-- SLIDES --}}
             <template x-for="(s, i) in slides" :key="i">
-                <div x-show="active === i" class="relative w-full hero-cupcake-bg">
+                <div x-show="active === i" x-transition.opacity.duration.600ms
+                    class="relative w-full hero-cupcake-bg hero-scallop-wrap">
 
-                    <!-- GRID -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 md:items-center px-6 py-12 md:py-20 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 md:items-center px-6 md:px-12 py-12 md:py-20 gap-6">
 
-                        <!-- FOTO – mobile di atas -->
+                        {{-- FOTO (kanan desktop) --}}
                         <div class="order-1 md:order-2 flex justify-center">
                             <img :src="s.image"
-                                class="w-full max-w-md md:max-w-xl rounded-3xl shadow-lg object-cover">
+                                class="w-full max-w-md md:max-w-xl rounded-3xl shadow-xl object-cover">
                         </div>
 
-                        <!-- TEKS – mobile di bawah -->
+                        {{-- TEKS (kiri desktop) --}}
                         <div class="order-2 md:order-1 text-center md:text-left space-y-4">
 
-                            <!-- LOGO slide 1 -->
+                            {{-- LOGO KHUSUS SLIDE 1 --}}
                             <template x-if="i === 0">
                                 <div class="flex justify-center md:justify-start">
                                     <div
@@ -77,62 +98,63 @@
                                 </div>
                             </template>
 
-                            <!-- JUDUL -->
+                            {{-- JUDUL --}}
                             <h2
                                 class="font-display text-3xl sm:text-4xl md:text-5xl leading-tight
-                                   text-white drop-shadow-md">
+                                       text-white drop-shadow-md">
                                 <span x-text="s.title"></span>
                             </h2>
 
-                            <!-- SUBTEKS -->
+                            {{-- SUBTEKS --}}
                             <p class="text-white/90 max-w-md mx-auto md:mx-0">
                                 Pilihan kue cantik dari baker lokal, siap manisin harimu.
                             </p>
 
-                            <!-- BUTTON -->
+                            {{-- BUTTON --}}
                             <div class="pt-2">
                                 <a href="{{ route('products.index') }}"
                                     class="inline-flex items-center justify-center px-7 py-3 rounded-full
-                                      bg-bcake-cherry hover:bg-bcake-wine text-white font-medium
-                                      shadow-md transition">
+                                          bg-bcake-cherry hover:bg-bcake-wine text-white font-medium
+                                          shadow-md transition">
                                     Order Now
                                 </a>
                             </div>
 
                         </div>
-
                     </div>
-
-                    <!-- SCALLOP -->
-                    <div class="hero-scallop h-10 bg-[#f3a9c0]"></div>
-
                 </div>
             </template>
 
-            <!-- LEFT BUTTON -->
+            {{-- PANAH KIRI --}}
             <button @click="prev()"
-                class="absolute left-4 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full
-                   bg-white/85 hover:bg-white shadow-md z-30">
+                class="absolute left-[-70px] top-1/2 -translate-y-1/2 
+                       h-12 w-12 rounded-full flex items-center justify-center
+                       bg-[#890524] text-white shadow-2xl border-2 border-[#57091d]
+                       hover:bg-[#57091d] hover:scale-[1.08] transition z-50">
                 ‹
             </button>
 
-            <!-- RIGHT BUTTON -->
+            {{-- PANAH KANAN --}}
             <button @click="next()"
-                class="absolute right-4 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full
-                   bg-white/85 hover:bg-white shadow-md z-30">
+                class="absolute right-[-70px] top-1/2 -translate-y-1/2 
+                       h-12 w-12 rounded-full flex items-center justify-center
+                       bg-[#890524] text-white shadow-2xl border-2 border-[#57091d]
+                       hover:bg-[#57091d] hover:scale-[1.08] transition z-50">
                 ›
             </button>
 
-            <!-- DOTS -->
-            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+            {{-- DOTS --}}
+            <div class="absolute bottom-7 left-1/2 -translate-x-1/2 flex gap-2 z-30">
                 <template x-for="(s, i) in slides" :key="i">
                     <button @click="active = i" class="h-2.5 w-2.5 rounded-full shadow-md transition"
-                        :class="active === i ? 'bg-bcake-wine' : 'bg-white/70'"></button>
+                        :class="active === i ? 'bg-bcake-wine' : 'bg-white/70'">
+                    </button>
                 </template>
             </div>
 
         </div>
     </section>
+
 
     {{-- ========= WHY + FEATURED GRID (pakai cake.jpg sementara) ========= --}}
     <section class="py-10 md:py-14">
@@ -272,11 +294,11 @@
 
         <div class="relative mt-8">
 
-            {{-- Tombol kiri --}}
+            {{-- Tombol kiri (dummy, belum ada JS slider) --}}
             <button
                 class="hidden md:flex absolute -left-10 top-1/2 -translate-y-1/2 h-9 w-9
-                   items-center justify-center rounded-full ring-1 ring-rose-200 
-                   bg-white shadow hover:bg-rose-50">
+                       items-center justify-center rounded-full ring-1 ring-rose-200 
+                       bg-white shadow hover:bg-rose-50">
                 ‹
             </button>
 
@@ -284,7 +306,6 @@
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse ($bestSellers as $product)
                     <div class="category-card group rounded-2xl bg-white shadow transition overflow-hidden">
-
                         {{-- FOTO PRODUK --}}
                         <img src="{{ asset('image/dessertbox.jpg') }}"
                             class="w-full h-52 object-cover transition duration-300 group-hover:scale-[1.02]">
@@ -313,11 +334,11 @@
                 @endforelse
             </div>
 
-            {{-- Tombol kanan --}}
+            {{-- Tombol kanan (dummy) --}}
             <button
                 class="hidden md:flex absolute -right-10 top-1/2 -translate-y-1/2 h-9 w-9
-                   items-center justify-center rounded-full ring-1 ring-rose-200 
-                   bg-white shadow hover:bg-rose-50">
+                       items-center justify-center rounded-full ring-1 ring-rose-200 
+                       bg-white shadow hover:bg-rose-50">
                 ›
             </button>
         </div>
@@ -412,9 +433,9 @@
                             <div class="mt-5">
                                 <a href="{{ route('products.index') }}"
                                     class="inline-flex items-center justify-center rounded-full
-                                      bg-bcake-cherry hover:bg-bcake-wine
-                                      text-white px-7 py-3 text-sm md:text-base font-medium
-                                      shadow-soft transition">
+                                          bg-bcake-cherry hover:bg-bcake-wine
+                                          text-white px-7 py-3 text-sm md:text-base font-medium
+                                          shadow-soft transition">
                                     {{ $slide['btn'] }}
                                 </a>
                             </div>
@@ -427,9 +448,9 @@
             {{-- PANAH KIRI --}}
             <button type="button"
                 class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2
-                   h-9 w-9 rounded-full bg-white/95 border border-rose-200 shadow-sm
-                   flex items-center justify-center text-[#890524]
-                   hover:bg-rose-50 hover:scale-[1.04] transition z-20"
+                           h-9 w-9 rounded-full bg-white/95 border border-rose-200 shadow-sm
+                           flex items-center justify-center text-[#890524]
+                           hover:bg-rose-50 hover:scale-[1.04] transition z-20"
                 @click="prev()">
                 ‹
             </button>
@@ -437,9 +458,9 @@
             {{-- PANAH KANAN --}}
             <button type="button"
                 class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2
-                   h-9 w-9 rounded-full bg-white/95 border border-rose-200 shadow-sm
-                   flex items-center justify-center text-[#890524]
-                   hover:bg-rose-50 hover:scale-[1.04] transition z-20"
+                           h-9 w-9 rounded-full bg-white/95 border border-rose-200 shadow-sm
+                           flex items-center justify-center text-[#890524]
+                           hover:bg-rose-50 hover:scale-[1.04] transition z-20"
                 @click="next()">
                 ›
             </button>

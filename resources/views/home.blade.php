@@ -3,209 +3,316 @@
 @section('title', 'B’cake — Elegant Bakery')
 
 @push('head')
-    <style>
-        /* 🎀 Background stripes horizontal (garis ke samping)
-               – pakai palette B'cake, stripenya agak besar
-            */
-        .hero-cupcake-bg {
-            background:
-                repeating-linear-gradient(to bottom,
-                    #f7d2da 0px,
-                    /* pink muda */
-                    #f7d2da 22px,
-                    /* tebal warna 1 */
-                    #b55c69 22px,
-                    /* wine/truffle */
-                    #b55c69 44px
-                    /* tebal warna 2 (total 44px per pola) */
-                );
-        }
+<style>
+    /* 🎀 Background stripes horizontal (garis ke samping) */
+    .hero-cupcake-bg {
+        background:
+            repeating-linear-gradient(to bottom,
+                #f7d2da 0px,   /* pink muda */
+                #f7d2da 22px,  /* tebal warna 1 */
+                #b55c69 22px,  /* wine/truffle */
+                #b55c69 44px   /* tebal warna 2 (total 44px per pola) */
+            );
+    }
 
-        /* 🎀 Bungkus hero + gerigi atas & bawah */
-        .hero-scallop-wrap {
-            position: relative;
-            overflow: hidden;
-        }
+    /* 🎀 Bungkus hero + gerigi atas & bawah */
+    .hero-scallop-wrap {
+        position: relative;
+        overflow: hidden;
+    }
 
-        /* Gerigi atas */
-        .hero-scallop-wrap::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: -18px;
-            height: 36px;
-            background:
-                radial-gradient(circle at 18px 18px, #ffffff 18px, transparent 19px) repeat-x;
-            background-size: 36px 36px;
-            transform: scaleY(-1);
-            /* dibalik biar gigi menghadap ke bawah */
-        }
+    /* Gerigi atas */
+    .hero-scallop-wrap::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -18px;
+        height: 36px;
+        background:
+            radial-gradient(circle at 18px 18px, #ffffff 18px, transparent 19px) repeat-x;
+        background-size: 36px 36px;
+        transform: scaleY(-1);
+    }
 
-        /* Gerigi bawah */
-        .hero-scallop-wrap::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: -18px;
-            height: 36px;
-            background:
-                radial-gradient(circle at 18px 18px, #ffffff 18px, transparent 19px) repeat-x;
-            background-size: 36px 36px;
-        }
-    </style>
+    /* Gerigi bawah */
+    .hero-scallop-wrap::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -18px;
+        height: 36px;
+        background:
+            radial-gradient(circle at 18px 18px, #ffffff 18px, transparent 19px) repeat-x;
+        background-size: 36px 36px;
+    }
+
+    /* 🌟 KATEGORY FLOATING ANIMASI */
+    .category-float {
+        position: relative;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        background-color: #6a4e4a26;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+        animation: floatCard 4s ease-in-out infinite;
+        transform-origin: center;
+        transition: all .35s ease;
+    }
+    .category-float img {
+        transition: transform .5s ease;
+    }
+    .category-float::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0);
+        transition: .3s ease;
+        pointer-events: none;
+    }
+    .category-float:hover {
+        animation-play-state: paused;
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+    }
+    .category-float:hover img {
+        transform: scale(1.08);
+    }
+    .category-float:hover::after {
+        background: rgba(0,0,0,0.05);
+    }
+    @keyframes floatCard {
+        0%, 100% { transform: translateY(0); }
+        50%      { transform: translateY(-6px); }
+    }
+</style>
 @endpush
 
 @section('content')
 
-    {{-- ================= HERO CUPCAKE SIMPLE (MODEL BARU) ================= --}}
+    {{-- ================= HERO CUPCAKE SIMPLE (MODEL BARU, SMOOTH) ================= --}}
     <section class="w-full overflow-visible relative">
-        <div x-data="{
-            active: 0,
-            slides: [
-                { image: '{{ asset('image/slicecake.jpg') }}', title: 'Sweet. Stunning. So You.' },
-                { image: '{{ asset('image/longcake.jpg') }}', title: 'Cantik di mata, manis di rasa.' },
-            ],
-            next() { this.active = (this.active + 1) % this.slides.length },
-            prev() { this.active = (this.active - 1 + this.slides.length) % this.slides.length },
-        }" x-init="setInterval(() => next(), 5000)" class="relative w-full overflow-visible">
+        <div
+            x-data="{
+                active: 0,
+                slides: [
+                    { image: '{{ asset("image/slicecake.jpg") }}', title: 'Sweet. Stunning. So You.' },
+                    { image: '{{ asset("image/longcake.jpg") }}',   title: 'Cantik di mata, manis di rasa.' },
+                ],
+                next() { this.active = (this.active + 1) % this.slides.length },
+                prev() { this.active = (this.active - 1 + this.slides.length) % this.slides.length },
+            }"
+            x-init="setInterval(() => next(), 5000)"
+            class="relative w-full"
+        >
 
-            {{-- SLIDES --}}
-            <template x-for="(s, i) in slides" :key="i">
-                <div x-show="active === i" x-transition.opacity.duration.600ms
-                    class="relative w-full hero-cupcake-bg hero-scallop-wrap">
+            {{-- ============== MOBILE HERO (≤ md) – SIMPLE, NGGAK BERSERAK ============== --}}
+            <div class="md:hidden hero-cupcake-bg hero-scallop-wrap">
+                <div class="max-w-md mx-auto px-4 py-10 space-y-6">
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 md:items-center px-6 md:px-12 py-12 md:py-20 gap-6">
-
-                        {{-- FOTO (kanan desktop) --}}
-                        <div class="order-1 md:order-2 flex justify-center">
-                            <img :src="s.image"
-                                class="w-full max-w-md md:max-w-xl rounded-3xl shadow-xl object-cover">
-                        </div>
-
-                        {{-- TEKS (kiri desktop) --}}
-                        <div class="order-2 md:order-1 text-center md:text-left space-y-4">
+                    <template x-for="(s, i) in slides" :key="'m-' + i">
+                        <div x-show="active === i" x-transition.opacity.duration.400ms class="space-y-4">
+                            {{-- FOTO --}}
+                            <div class="flex justify-center">
+                                <img :src="s.image" class="w-full rounded-3xl shadow-xl object-cover">
+                            </div>
 
                             {{-- LOGO KHUSUS SLIDE 1 --}}
                             <template x-if="i === 0">
-                                <div class="flex justify-center md:justify-start">
+                                <div class="flex justify-center">
                                     <div
                                         class="rounded-3xl bg-white/70 p-3 shadow-lg backdrop-blur-md border border-white/60">
                                         <img src="{{ asset('image/logo_bcake.jpg') }}"
-                                            class="w-16 md:w-20 rounded-xl object-contain">
+                                             class="w-16 rounded-xl object-contain">
                                     </div>
                                 </div>
                             </template>
 
-                            {{-- JUDUL --}}
-                            <h2
-                                class="font-display text-3xl sm:text-4xl md:text-5xl leading-tight
-                                       text-white drop-shadow-md">
-                                <span x-text="s.title"></span>
-                            </h2>
+                            {{-- TEKS --}}
+                            <div class="text-center space-y-2">
+                                <h2 class="font-display text-3xl leading-tight text-white drop-shadow-md"
+                                    x-text="s.title">
+                                </h2>
 
-                            {{-- SUBTEKS --}}
-                            <p class="text-white/90 max-w-md mx-auto md:mx-0">
-                                Pilihan kue cantik dari baker lokal, siap manisin harimu.
-                            </p>
+                                <p class="text-white/90">
+                                    Pilihan kue cantik dari baker lokal, siap manisin harimu.
+                                </p>
 
-                            {{-- BUTTON --}}
-                            <div class="pt-2">
                                 <a href="{{ route('products.index') }}"
-                                    class="inline-flex items-center justify-center px-7 py-3 rounded-full
+                                   class="inline-flex items-center justify-center px-7 py-3 rounded-full
                                           bg-bcake-cherry hover:bg-bcake-wine text-white font-medium
                                           shadow-md transition">
                                     Order Now
                                 </a>
                             </div>
-
                         </div>
+                    </template>
+
+                    {{-- DOTS MOBILE --}}
+                    <div class="flex justify-center gap-2 pt-2">
+                        <template x-for="(s, i) in slides" :key="'mdot-' + i">
+                            <button
+                                @click="active = i"
+                                class="h-2.5 w-2.5 rounded-full shadow-md transition"
+                                :class="active === i ? 'bg-bcake-wine' : 'bg-white/70'">
+                            </button>
+                        </template>
                     </div>
                 </div>
-            </template>
+            </div>
 
-            {{-- PANAH KIRI --}}
-            <button @click="prev()"
-                class="absolute left-[-70px] top-1/2 -translate-y-1/2 
-                       h-12 w-12 rounded-full flex items-center justify-center
-                       bg-[#890524] text-white shadow-2xl border-2 border-[#57091d]
-                       hover:bg-[#57091d] hover:scale-[1.08] transition z-50">
-                ‹
-            </button>
+            {{-- ============== DESKTOP HERO (≥ md) – LAYERED SMOOTH ============== --}}
+            <div class="hidden md:block overflow-visible relative">
+                {{-- BACKGROUND + SCALLOP cuma satu, slide ditumpuk di atasnya --}}
+                <div class="hero-cupcake-bg hero-scallop-wrap">
+                    <div
+                        class="relative max-w-6xl mx-auto px-6 md:px-12 py-16
+                               min-h-[440px] lg:min-h-[500px]">
 
-            {{-- PANAH KANAN --}}
-            <button @click="next()"
-                class="absolute right-[-70px] top-1/2 -translate-y-1/2 
-                       h-12 w-12 rounded-full flex items-center justify-center
-                       bg-[#890524] text-white shadow-2xl border-2 border-[#57091d]
-                       hover:bg-[#57091d] hover:scale-[1.08] transition z-50">
-                ›
-            </button>
+                        {{-- SLIDES LAYERED (ANTI GLITCH) --}}
+                        <template x-for="(s, i) in slides" :key="'d-' + i">
+                            <div
+                                class="absolute inset-0 grid grid-cols-2 items-center gap-10
+                                       transition-opacity duration-700 ease-out"
+                                :class="active === i
+                                    ? 'opacity-100 z-20'
+                                    : 'opacity-0 z-10 pointer-events-none'">
 
-            {{-- DOTS --}}
-            <div class="absolute bottom-7 left-1/2 -translate-x-1/2 flex gap-2 z-30">
-                <template x-for="(s, i) in slides" :key="i">
-                    <button @click="active = i" class="h-2.5 w-2.5 rounded-full shadow-md transition"
-                        :class="active === i ? 'bg-bcake-wine' : 'bg-white/70'">
-                    </button>
-                </template>
+                                {{-- FOTO (kanan) --}}
+                                <div class="order-1 md:order-2 flex justify-center items-center">
+                                    <img :src="s.image"
+                                         class="w-full max-w-xl
+                                                h-[340px] lg:h-[380px]
+                                                rounded-3xl shadow-xl object-cover">
+                                </div>
+
+                                {{-- TEKS (kiri) --}}
+                                <div class="order-2 md:order-1 text-left space-y-4">
+
+                                    {{-- LOGO KHUSUS SLIDE 1 --}}
+                                    <template x-if="i === 0">
+                                        <div class="flex justify-start">
+                                            <div
+                                                class="rounded-3xl bg-white/70 p-3 shadow-lg backdrop-blur-md border border-white/60">
+                                                <img src="{{ asset('image/logo_bcake.jpg') }}"
+                                                     class="w-20 rounded-xl object-contain">
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <h2 class="font-display text-4xl lg:text-5xl leading-tight
+                                               text-white drop-shadow-md"
+                                        x-text="s.title">
+                                    </h2>
+
+                                    <p class="text-white/90 max-w-md">
+                                        Pilihan kue cantik dari baker lokal, siap manisin harimu.
+                                    </p>
+
+                                    <div class="pt-2">
+                                        <a href="{{ route('products.index') }}"
+                                           class="inline-flex items-center justify-center px-7 py-3 rounded-full
+                                                  bg-bcake-cherry hover:bg-bcake-wine text-white font-medium
+                                                  shadow-md transition">
+                                            Order Now
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                {{-- PANAH KIRI (DESKTOP ONLY) --}}
+                <button
+                    @click="prev()"
+                    class="hidden md:flex absolute left-[-70px] top-1/2 -translate-y-1/2 
+                           h-12 w-12 rounded-full items-center justify-center
+                           bg-[#890524] text-white shadow-2xl border-2 border-[#57091d]
+                           hover:bg-[#57091d] hover:scale-[1.08] transition z-50">
+                    ‹
+                </button>
+
+                {{-- PANAH KANAN (DESKTOP ONLY) --}}
+                <button
+                    @click="next()"
+                    class="hidden md:flex absolute right-[-70px] top-1/2 -translate-y-1/2 
+                           h-12 w-12 rounded-full items-center justify-center
+                           bg-[#890524] text-white shadow-2xl border-2 border-[#57091d]
+                           hover:bg-[#57091d] hover:scale-[1.08] transition z-50">
+                    ›
+                </button>
+
+                {{-- DOTS DESKTOP --}}
+                <div class="absolute bottom-7 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+                    <template x-for="(s, i) in slides" :key="'ddot-' + i">
+                        <button
+                            @click="active = i"
+                            class="h-2.5 w-2.5 rounded-full shadow-md transition"
+                            :class="active === i ? 'bg-bcake-wine' : 'bg-white/70'">
+                        </button>
+                    </template>
+                </div>
             </div>
 
         </div>
     </section>
 
-
-    {{-- ========= WHY + FEATURED GRID (pakai cake.jpg sementara) ========= --}}
+    {{-- ========= WHY + FEATURED GRID (KATEGORI FLOAT) ========= --}}
     <section class="py-10 md:py-14">
         <div class="max-w-[90rem] mx-auto px-4">
 
-            {{-- ROW 1 --}}
-            <div class="grid md:grid-cols-12 gap-6 items-stretch">
+            {{-- ======================== ROW 1 ======================== --}}
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
 
-                {{-- Left category: Custom Cake & Modern Cake --}}
+                {{-- LEFT CATEGORY --}}
                 <div class="md:col-span-3">
-                    <a href="{{ route('categories.show', 'custom-cake-modern') }}"
-                        class="category-card block rounded-3xl shadow-sm group" style="background-color:#6a4e4a4d;">
-                        <img src="{{ asset('image/cakemodern.jpg') }}" alt="Modern & Custom Cake"
-                            class="w-full aspect-[4/3] object-cover group-hover:scale-[1.02]">
-                        <div class="py-4 text-center relative z-[1]">
-                            <h3 class="text-sm font-medium tracking-wide text-[#362320]">
+                    <a href="{{ route('categories.show','custom-cake-modern') }}"
+                       class="category-float block w-full">
+                        <img src="{{ asset('image/cakemodern.jpg') }}"
+                             class="w-full aspect-[4/3] object-cover rounded-t-3xl">
+                        <div class="py-3 text-center">
+                            <h3 class="text-sm md:text-base font-medium text-[#362320]">
                                 Custom Cake & Modern Cake
                             </h3>
                         </div>
                     </a>
                 </div>
 
-                {{-- Center content --}}
+                {{-- CENTER CARD --}}
                 <div class="md:col-span-6">
-                    <div class="card h-full flex flex-col items-center justify-center text-center p-8">
+                    <div
+                        class="card h-full flex flex-col items-center justify-center text-center
+                               px-8 py-10 rounded-3xl bg-white/70 backdrop-blur-sm
+                               shadow-[0_15px_35px_rgba(137,5,36,0.08)]
+                               transition-all duration-300 hover:shadow-[0_25px_45px_rgba(137,5,36,0.12)]">
                         <p class="uppercase tracking-widest text-bcake-truffle/60 text-xs">
                             Since 2025
                         </p>
                         <h2 class="font-display text-3xl md:text-4xl mt-2">
                             Kenapa Harus B'cake?
                         </h2>
-                        <p class="mt-3 text-bcake-truffle/80 max-w-xl">
+                        <p class="mt-3 text-bcake-truffle/80 max-w-xl leading-relaxed">
                             B'cake menghadirkan ruang istemewa bagi para pembuat kue untuk menampilkan
-                            kreasi terbaik mereka. Kami menghubungkan para pembuat kue dengan menampilkan
-                            kreasi terbaik mereka dan pecinta kue dalam satu tempat yang hangat, dan penuh
-                            cita rasa.
+                            kreasi terbaik mereka. Kami menghubungkan para pembuat kue dengan pecinta kue
+                            dalam satu tempat yang hangat, elegan, dan penuh cita rasa.
                         </p>
-                        <a href="{{ route('products.index') }}" class="btn btn-ghost mt-6">
+                        <a href="{{ route('products.index') }}"
+                           class="btn btn-ghost mt-6 hover:scale-105 transition">
                             Lihat Menu Kami
                         </a>
                     </div>
                 </div>
 
-                {{-- Right category: Cupcake & Brownies --}}
+                {{-- RIGHT CATEGORY --}}
                 <div class="md:col-span-3">
-                    <a href="{{ route('categories.show', 'cupcake-brownies') }}"
-                        class="category-card block rounded-3xl shadow-sm group" style="background-color:#6a4e4a4d;">
-                        <img src="{{ asset('image/cupcake.jpg') }}" alt="Cupcake & Brownies"
-                            class="w-full aspect-[4/3] object-cover group-hover:scale-[1.02]">
-                        <div class="py-4 text-center relative z-[1]">
-                            <h3 class="text-sm font-medium tracking-wide text-[#362320]">
+                    <a href="{{ route('categories.show','cupcake-brownies') }}"
+                       class="category-float block w-full">
+                        <img src="{{ asset('image/cupcake.jpg') }}"
+                             class="w-full aspect-[4/3] object-cover rounded-t-3xl">
+                        <div class="py-3 text-center">
+                            <h3 class="text-sm md:text-base font-medium text-[#362320]">
                                 Cupcake & Brownies
                             </h3>
                         </div>
@@ -214,54 +321,57 @@
 
             </div>
 
-            {{-- ROW 2 --}}
-            <div class="grid md:grid-cols-12 gap-6 mt-6">
+            {{-- ======================== ROW 2 ======================== --}}
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mt-6">
 
-                {{-- Pastry & Roti --}}
+                {{-- PASTRY --}}
                 <div class="md:col-span-3">
-                    <a href="{{ route('categories.show', 'pastry-roti') }}"
-                        class="category-card block rounded-3xl shadow-sm group" style="background-color:#6a4e4a4d;">
-                        <img src="{{ asset('image/Pastry.jpg') }}" alt="Pastry & Roti"
-                            class="w-full aspect-[4/3] object-cover group-hover:scale-[1.02]">
-                        <div class="py-4 text-center relative z-[1]">
-                            <h3 class="text-sm font-medium tracking-wide text-[#362320]">
+                    <a href="{{ route('categories.show','pastry-roti') }}"
+                       class="category-float block w-full">
+                        <img src="{{ asset('image/Pastry.jpg') }}"
+                             class="w-full aspect-[4/3] object-cover rounded-t-3xl">
+                        <div class="py-3 text-center">
+                            <h3 class="text-sm md:text-base font-medium text-[#362320]">
                                 Pastry & Roti
                             </h3>
                         </div>
                     </a>
                 </div>
 
-                {{-- Dessert Box --}}
+                {{-- DESSERT BOX --}}
                 <div class="md:col-span-3">
-                    <a href="{{ route('categories.show', 'dessert-box') }}"
-                        class="category-card block rounded-3xl shadow-sm group" style="background-color:#6a4e4a4d;">
-                        <img src="{{ asset('image/dessertbox.jpg') }}" alt="Dessertbox"
-                            class="w-full aspect-[4/3] object-cover group-hover:scale-[1.02]">
-                        <div class="py-4 text-center relative z-[1]">
-                            <h3 class="text-sm font-medium tracking-wide text-[#362320]">
+                    <a href="{{ route('categories.show','dessert-box') }}"
+                       class="category-float block w-full">
+                        <img src="{{ asset('image/dessertbox.jpg') }}"
+                             class="w-full aspect-[4/3] object-cover rounded-t-3xl">
+                        <div class="py-3 text-center">
+                            <h3 class="text-sm md:text-base font-medium text-[#362320]">
                                 Dessert Box
                             </h3>
                         </div>
                     </a>
                 </div>
 
-                {{-- Snack --}}
+                {{-- SNACK --}}
                 <div class="md:col-span-3">
-                    <a href="{{ route('categories.show', 'snack') }}"
-                        class="category-card block rounded-3xl shadow-sm group" style="background-color:#6a4e4a4d;">
-                        <img src="{{ asset('image/snack.jpg') }}" alt="Snack"
-                            class="w-full aspect-[4/3] object-cover group-hover:scale-[1.02]">
-                        <div class="py-4 text-center relative z-[1]">
-                            <h3 class="text-sm font-medium tracking-wide text-[#362320]">
+                    <a href="{{ route('categories.show','snack') }}"
+                       class="category-float block w-full">
+                        <img src="{{ asset('image/snack.jpg') }}"
+                             class="w-full aspect-[4/3] object-cover rounded-t-3xl">
+                        <div class="py-3 text-center">
+                            <h3 class="text-sm md:text-base font-medium text-[#362320]">
                                 Snack
                             </h3>
                         </div>
                     </a>
                 </div>
 
-                {{-- Right promo --}}
+                {{-- RIGHT PROMO --}}
                 <div class="md:col-span-3">
-                    <div class="card h-full p-6 flex flex-col justify-between">
+                    <div
+                        class="card h-full p-6 flex flex-col justify-between rounded-3xl bg-white
+                               shadow-[0_15px_35px_rgba(0,0,0,0.06)]
+                               transition-all duration-300 hover:shadow-[0_25px_45px_rgba(0,0,0,0.1)]">
                         <div>
                             <p class="uppercase tracking-widest text-bcake-truffle/60 text-xs">
                                 Daily Fresh
@@ -274,7 +384,8 @@
                                 Semudah itu di B'cake 💗
                             </p>
                         </div>
-                        <a href="{{ route('products.index') }}" class="btn btn-primary mt-6 self-start">
+                        <a href="{{ route('products.index') }}"
+                           class="btn btn-primary mt-6 self-start hover:scale-105 transition">
                             Order Now
                         </a>
                     </div>
@@ -308,7 +419,7 @@
                     <div class="category-card group rounded-2xl bg-white shadow transition overflow-hidden">
                         {{-- FOTO PRODUK --}}
                         <img src="{{ asset('image/dessertbox.jpg') }}"
-                            class="w-full h-52 object-cover transition duration-300 group-hover:scale-[1.02]">
+                             class="w-full h-52 object-cover transition duration-300 group-hover:scale-[1.02]">
 
                         <div class="p-4 relative z-[1]">
                             <h3 class="font-semibold text-lg text-bcake-cocoa">
@@ -344,7 +455,7 @@
         </div>
     </section>
 
-    {{-- ============ BANNER PROMO (HARI BESAR — SLIDER) ============ --}}
+    {{-- ============ BANNER PROMO (HARI BESAR — SLIDER SMOOTH) ============ --}}
     <section class="max-w-6xl mx-auto px-6 pb-14" x-data="{
         active: 0,
         max: 3,
@@ -359,9 +470,8 @@
             if (Math.abs(diff) > 50) diff < 0 ? this.next() : this.prev();
         }
     }">
-
         <div class="relative rounded-3xl overflow-hidden border border-rose-200 shadow-soft bg-white"
-            @touchstart.passive="onTouchStart" @touchend.passive="onTouchEnd">
+             @touchstart.passive="onTouchStart" @touchend.passive="onTouchEnd">
 
             @php
                 $slides = [
@@ -400,57 +510,64 @@
                 ];
             @endphp
 
-            @foreach ($slides as $i => $slide)
-                <div x-show="active === {{ $i }}" x-transition>
-                    <div class="grid md:grid-cols-2">
+            {{-- CONTAINER SLIDE LAYERED --}}
+            <div class="relative min-h-[260px] sm:min-h-[320px] md:min-h-[360px] lg:min-h-[400px]">
+                @foreach ($slides as $i => $slide)
+                    <div
+                        class="absolute inset-0 transition-opacity duration-600 ease-out"
+                        :class="active === {{ $i }}
+                            ? 'opacity-100 z-20'
+                            : 'opacity-0 z-10 pointer-events-none'">
+                        <div class="grid md:grid-cols-2 h-full">
 
-                        {{-- GAMBAR --}}
-                        <img src="{{ asset('image/' . $slide['img']) }}"
-                            class="w-full h-[240px] sm:h-[300px] md:h-[350px] lg:h-[380px] object-cover">
+                            {{-- GAMBAR --}}
+                            <img src="{{ asset('image/' . $slide['img']) }}"
+                                 class="w-full h-[240px] sm:h-[300px] md:h-[350px] lg:h-[380px] object-cover">
 
-                        {{-- TEKS --}}
-                        <div class="p-8 md:p-10 lg:p-12 bg-rose-50/80 backdrop-blur flex flex-col justify-center">
-                            <h3 class="font-display text-3xl md:text-4xl text-bcake-cocoa">
-                                {{ $slide['title'] }}
-                            </h3>
+                            {{-- TEKS --}}
+                            <div class="p-8 md:p-10 lg:p-12 bg-rose-50/80 backdrop-blur flex flex-col justify-center">
+                                <h3 class="font-display text-3xl md:text-4xl text-bcake-cocoa">
+                                    {{ $slide['title'] }}
+                                </h3>
 
-                            <p class="text-gray-700 mt-3 text-base max-w-md leading-relaxed">
-                                {{ $slide['text'] }}
-                            </p>
+                                <p class="text-gray-700 mt-3 text-base max-w-md leading-relaxed">
+                                    {{ $slide['text'] }}
+                                </p>
 
-                            {{-- BADGE --}}
-                            <div
-                                class="mt-5 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-2.5 shadow-sm">
-                                <span class="text-rose-900 font-semibold text-base md:text-lg">
-                                    {{ $slide['badge_main'] }}
-                                </span>
-                                <span class="text-gray-600 text-xs md:text-sm">
-                                    {{ $slide['badge_sub'] }}
-                                </span>
+                                {{-- BADGE --}}
+                                <div
+                                    class="mt-5 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-2.5 shadow-sm">
+                                    <span class="text-rose-900 font-semibold text-base md:text-lg">
+                                        {{ $slide['badge_main'] }}
+                                    </span>
+                                    <span class="text-gray-600 text-xs md:text-sm">
+                                        {{ $slide['badge_sub'] }}
+                                    </span>
+                                </div>
+
+                                {{-- BUTTON --}}
+                                <div class="mt-5">
+                                    <a href="{{ route('products.index') }}"
+                                       class="inline-flex items-center justify-center rounded-full
+                                              bg-bcake-cherry hover:bg-bcake-wine
+                                              text-white px-7 py-3 text-sm md:text-base font-medium
+                                              shadow-soft transition">
+                                        {{ $slide['btn'] }}
+                                    </a>
+                                </div>
                             </div>
 
-                            {{-- BUTTON --}}
-                            <div class="mt-5">
-                                <a href="{{ route('products.index') }}"
-                                    class="inline-flex items-center justify-center rounded-full
-                                          bg-bcake-cherry hover:bg-bcake-wine
-                                          text-white px-7 py-3 text-sm md:text-base font-medium
-                                          shadow-soft transition">
-                                    {{ $slide['btn'] }}
-                                </a>
-                            </div>
                         </div>
-
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
 
             {{-- PANAH KIRI --}}
             <button type="button"
                 class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2
-                           h-9 w-9 rounded-full bg-white/95 border border-rose-200 shadow-sm
-                           flex items-center justify-center text-[#890524]
-                           hover:bg-rose-50 hover:scale-[1.04] transition z-20"
+                       h-9 w-9 rounded-full bg-white/95 border border-rose-200 shadow-sm
+                       items-center justify-center text-[#890524]
+                       hover:bg-rose-50 hover:scale-[1.04] transition z-20"
                 @click="prev()">
                 ‹
             </button>
@@ -458,9 +575,9 @@
             {{-- PANAH KANAN --}}
             <button type="button"
                 class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2
-                           h-9 w-9 rounded-full bg-white/95 border border-rose-200 shadow-sm
-                           flex items-center justify-center text-[#890524]
-                           hover:bg-rose-50 hover:scale-[1.04] transition z-20"
+                       h-9 w-9 rounded-full bg-white/95 border border-rose-200 shadow-sm
+                       items-center justify-center text-[#890524]
+                       hover:bg-rose-50 hover:scale-[1.04] transition z-20"
                 @click="next()">
                 ›
             </button>
@@ -468,10 +585,11 @@
             {{-- DOTS --}}
             <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
                 <template x-for="i in 4">
-                    <button class="h-2.5 w-2.5 rounded-full border border-rose-300 transition-all"
-                        :class="active === (i - 1) ?
-                            'bg-[#890524] border-[#890524] scale-110' :
-                            'bg-rose-100 hover:bg-rose-200'"
+                    <button
+                        class="h-2.5 w-2.5 rounded-full border border-rose-300 transition-all"
+                        :class="active === (i - 1)
+                            ? 'bg-[#890524] border-[#890524] scale-110'
+                            : 'bg-rose-100 hover:bg-rose-200'"
                         @click="active = i - 1">
                     </button>
                 </template>
@@ -482,7 +600,7 @@
 
     <footer class="relative mt-16 w-full bg-[#f7e3e7] text-bcake-truffle pt-10 pb-6 overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-6 bg-repeat-x"
-            style="background-image: url('{{ asset('image/lace-border.png') }}'); background-size: auto 100%;">
+             style="background-image: url('{{ asset('image/lace-border.png') }}'); background-size: auto 100%;">
         </div>
 
         <div class="max-w-7xl mx-auto px-6">
@@ -498,19 +616,19 @@
                     </h3>
                     <div class="flex justify-center md:justify-start gap-4 mt-3">
                         <a href="#"
-                            class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
+                           class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
                             <i class="fa-brands fa-instagram text-lg"></i>
                         </a>
                         <a href="#"
-                            class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
+                           class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
                             <i class="fa-brands fa-whatsapp text-lg"></i>
                         </a>
                         <a href="#"
-                            class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
+                           class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
                             <i class="fa-brands fa-tiktok text-lg"></i>
                         </a>
                         <a href="mailto:hello@bcake.local"
-                            class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
+                           class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
                             <i class="fa-solid fa-envelope text-lg"></i>
                         </a>
                     </div>

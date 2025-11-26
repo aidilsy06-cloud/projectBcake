@@ -7,7 +7,8 @@
     /* 🎀 Background stripes horizontal (garis ke samping) */
     .hero-cupcake-bg {
         background:
-            repeating-linear-gradient(to bottom,
+            repeating-linear-gradient(
+                to bottom,
                 #f7d2da 0px,   /* pink muda */
                 #f7d2da 22px,  /* tebal warna 1 */
                 #b55c69 22px,  /* wine/truffle */
@@ -48,13 +49,105 @@
         background-size: 36px 36px;
     }
 
+    /* 🌸 PANEL TEKS HERO – versi clean & premium */
+    .hero-text-panel {
+        position: relative;
+        display: inline-block;
+        padding: 1.6rem 2.4rem;
+        border-radius: 2rem;
+        background: rgba(255, 248, 250, 0.92); /* krem soft */
+        border: 1px solid rgba(255, 255, 255, 0.85);
+        box-shadow: 0 16px 35px rgba(137, 5, 36, 0.15);
+        backdrop-filter: blur(6px);
+        overflow: hidden;
+    }
+
+    /* aksen strip gradien tipis di kiri card */
+    .hero-text-panel::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 6px;
+        background: linear-gradient(180deg, #fbb6ce, #890524);
+        opacity: 0.7;
+    }
+
+    /* judul utama hero */
+    .hero-title {
+        color: #5b1024;              /* wine deep */
+        letter-spacing: 0.02em;
+        line-height: 1.1;
+        text-shadow: none;
+        font-weight: 600;
+    }
+
+    /* tagline hero */
+    .hero-tagline {
+        margin-top: 0.85rem;
+        color: #8a4b58;              /* pink truffle */
+        font-size: 0.95rem;
+        line-height: 1.6;
+        text-shadow: none;
+    }
+
+    @media (max-width: 767px) {
+        .hero-text-panel {
+            padding: 1.2rem 1.7rem;
+            border-radius: 1.6rem;
+        }
+        .hero-title {
+            font-size: 1.6rem;
+        }
+        .hero-tagline {
+            font-size: 0.9rem;
+        }
+    }
+
+    /* 🎂 FRAME FOTO DENGAN GERIGI ATAS & BAWAH (FOTO HERO) */
+    .hero-photo-scallop {
+        position: relative;
+        border-radius: 1.75rem;
+        overflow: hidden;
+        background-color: #f7d2da; /* pink muda, nyatu sama background */
+    }
+    .hero-photo-scallop::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -18px;
+        height: 36px;
+        background:
+            radial-gradient(circle at 18px 18px, #f7d2da 18px, transparent 19px) repeat-x;
+        background-size: 36px 36px;
+        transform: scaleY(-1);
+    }
+    .hero-photo-scallop::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -18px;
+        height: 36px;
+        background:
+            radial-gradient(circle at 18px 18px, #f7d2da 18px, transparent 19px) repeat-x;
+        background-size: 36px 36px;
+    }
+    .hero-photo-scallop img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
     /* 🌟 KATEGORY FLOATING ANIMASI */
     .category-float {
         position: relative;
         border-radius: 1.5rem;
         overflow: hidden;
         background-color: #6a4e4a26;
-        box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
         animation: floatCard 4s ease-in-out infinite;
         transform-origin: center;
         transition: all .35s ease;
@@ -66,21 +159,22 @@
         content: '';
         position: absolute;
         inset: 0;
-        background: rgba(0,0,0,0);
+        background: rgba(0, 0, 0, 0);
         transition: .3s ease;
         pointer-events: none;
     }
     .category-float:hover {
         animation-play-state: paused;
         transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
     }
     .category-float:hover img {
         transform: scale(1.08);
     }
     .category-float:hover::after {
-        background: rgba(0,0,0,0.05);
+        background: rgba(0, 0, 0, 0.05);
     }
+
     @keyframes floatCard {
         0%, 100% { transform: translateY(0); }
         50%      { transform: translateY(-6px); }
@@ -96,8 +190,16 @@
             x-data="{
                 active: 0,
                 slides: [
-                    { image: '{{ asset("image/slicecake.jpg") }}', title: 'Sweet. Stunning. So You.' },
-                    { image: '{{ asset("image/longcake.jpg") }}',   title: 'Cantik di mata, manis di rasa.' },
+                    {
+                        image: '{{ asset("image/slicecake.jpg") }}',
+                        title: 'Sweetly Crafted, Stunningly Yours.',
+                        tagline: 'Kue cantik dengan rasa lembut dari baker lokal, siap manjain setiap momen spesialmu.'
+                    },
+                    {
+                        image: '{{ asset("image/longcake.jpg") }}',
+                        title: 'Delicate. Dreamy. Delightful.',
+                        tagline: 'Kue lembut berlapis krim manis dan buah segar, dibuat khusus untuk momen yang pengin terasa lebih istimewa.'
+                    }
                 ],
                 next() { this.active = (this.active + 1) % this.slides.length },
                 prev() { this.active = (this.active - 1 + this.slides.length) % this.slides.length },
@@ -106,7 +208,7 @@
             class="relative w-full"
         >
 
-            {{-- ============== MOBILE HERO (≤ md) – SIMPLE, NGGAK BERSERAK ============== --}}
+            {{-- ============== MOBILE HERO (≤ md) ============== --}}
             <div class="md:hidden hero-cupcake-bg hero-scallop-wrap">
                 <div class="max-w-md mx-auto px-4 py-10 space-y-6">
 
@@ -114,7 +216,9 @@
                         <div x-show="active === i" x-transition.opacity.duration.400ms class="space-y-4">
                             {{-- FOTO --}}
                             <div class="flex justify-center">
-                                <img :src="s.image" class="w-full rounded-3xl shadow-xl object-cover">
+                                <div class="hero-photo-scallop w-full shadow-xl">
+                                    <img :src="s.image">
+                                </div>
                             </div>
 
                             {{-- LOGO KHUSUS SLIDE 1 --}}
@@ -129,21 +233,20 @@
                             </template>
 
                             {{-- TEKS --}}
-                            <div class="text-center space-y-2">
-                                <h2 class="font-display text-3xl leading-tight text-white drop-shadow-md"
-                                    x-text="s.title">
-                                </h2>
+                            <div class="text-center space-y-3">
+                                <div class="hero-text-panel">
+                                    <h2 class="font-display text-3xl leading-tight hero-title" x-text="s.title"></h2>
+                                    <p class="hero-tagline leading-relaxed" x-text="s.tagline"></p>
+                                </div>
 
-                                <p class="text-white/90">
-                                    Pilihan kue cantik dari baker lokal, siap manisin harimu.
-                                </p>
-
-                                <a href="{{ route('products.index') }}"
-                                   class="inline-flex items-center justify-center px-7 py-3 rounded-full
-                                          bg-bcake-cherry hover:bg-bcake-wine text-white font-medium
-                                          shadow-md transition">
-                                    Order Now
-                                </a>
+                                <div class="pt-2">
+                                    <a href="{{ route('products.index') }}"
+                                       class="inline-flex items-center justify-center px-7 py-3 rounded-full
+                                              bg-bcake-cherry hover:bg-bcake-wine text-white font-medium
+                                              shadow-md transition">
+                                        Order Now
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </template>
@@ -161,15 +264,15 @@
                 </div>
             </div>
 
-            {{-- ============== DESKTOP HERO (≥ md) – LAYERED SMOOTH ============== --}}
+            {{-- ============== DESKTOP HERO (≥ md) ============== --}}
             <div class="hidden md:block overflow-visible relative">
-                {{-- BACKGROUND + SCALLOP cuma satu, slide ditumpuk di atasnya --}}
+                {{-- BACKGROUND + SCALLOP --}}
                 <div class="hero-cupcake-bg hero-scallop-wrap">
                     <div
                         class="relative max-w-6xl mx-auto px-6 md:px-12 py-16
                                min-h-[440px] lg:min-h-[500px]">
 
-                        {{-- SLIDES LAYERED (ANTI GLITCH) --}}
+                        {{-- SLIDES LAYERED --}}
                         <template x-for="(s, i) in slides" :key="'d-' + i">
                             <div
                                 class="absolute inset-0 grid grid-cols-2 items-center gap-10
@@ -180,10 +283,9 @@
 
                                 {{-- FOTO (kanan) --}}
                                 <div class="order-1 md:order-2 flex justify-center items-center">
-                                    <img :src="s.image"
-                                         class="w-full max-w-xl
-                                                h-[340px] lg:h-[380px]
-                                                rounded-3xl shadow-xl object-cover">
+                                    <div class="hero-photo-scallop w-full max-w-xl h-[340px] lg:h-[380px] shadow-xl">
+                                        <img :src="s.image">
+                                    </div>
                                 </div>
 
                                 {{-- TEKS (kiri) --}}
@@ -191,7 +293,7 @@
 
                                     {{-- LOGO KHUSUS SLIDE 1 --}}
                                     <template x-if="i === 0">
-                                        <div class="flex justify-start">
+                                        <div class="flex justify-start mb-3">
                                             <div
                                                 class="rounded-3xl bg-white/70 p-3 shadow-lg backdrop-blur-md border border-white/60">
                                                 <img src="{{ asset('image/logo_bcake.jpg') }}"
@@ -200,16 +302,17 @@
                                         </div>
                                     </template>
 
-                                    <h2 class="font-display text-4xl lg:text-5xl leading-tight
-                                               text-white drop-shadow-md"
-                                        x-text="s.title">
-                                    </h2>
+                                    <div class="hero-text-panel">
+                                        <h2 class="font-display text-4xl lg:text-5xl leading-tight hero-title"
+                                            x-text="s.title">
+                                        </h2>
 
-                                    <p class="text-white/90 max-w-md">
-                                        Pilihan kue cantik dari baker lokal, siap manisin harimu.
-                                    </p>
+                                        <p class="hero-tagline max-w-md leading-relaxed text-sm lg:text-base"
+                                           x-text="s.tagline">
+                                        </p>
+                                    </div>
 
-                                    <div class="pt-2">
+                                    <div class="pt-3">
                                         <a href="{{ route('products.index') }}"
                                            class="inline-flex items-center justify-center px-7 py-3 rounded-full
                                                   bg-bcake-cherry hover:bg-bcake-wine text-white font-medium

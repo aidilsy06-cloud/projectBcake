@@ -91,7 +91,7 @@
 
 @section('content')
 <section class="space-y-14 md:space-y-16">
-  {{-- TOMBOL KEMBALI --}}
+   {{-- TOMBOL KEMBALI --}}
         <div>
             <a href="javascript:history.back()"
                 class="inline-flex items-center gap-2 px-5 py-2 rounded-full 
@@ -99,6 +99,7 @@
           shadow-md hover:bg-rose-300 hover:shadow-lg transition">
                 ← Kembali
             </a>
+
 
     {{-- HERO --}}
     <div class="page-bg-about rounded-3xl border border-rose-100/70 px-6 py-9 md:px-12 md:py-12 relative overflow-hidden"

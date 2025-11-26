@@ -74,23 +74,32 @@
         opacity: 0.7;
     }
 
-    /* judul utama hero */
-    .hero-title {
-        color: #5b1024;              /* wine deep */
-        letter-spacing: 0.02em;
-        line-height: 1.1;
-        text-shadow: none;
-        font-weight: 600;
-    }
+    /* ✨ JUDUL UTAMA HERO – slow motion float */
+.hero-title {
+    color: #6d0b26;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    font-weight: 700;
+    text-shadow: 0 4px 14px rgba(137, 5, 36, 0.25);
+    animation: floatY 6.5s ease-in-out infinite;
+}
 
-    /* tagline hero */
-    .hero-tagline {
-        margin-top: 0.85rem;
-        color: #8a4b58;              /* pink truffle */
-        font-size: 0.95rem;
-        line-height: 1.6;
-        text-shadow: none;
-    }
+/* ✨ TAGLINE – slow + sedikit delay */
+.hero-tagline {
+    margin-top: 0.85rem;
+    color: #8a4b58;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-shadow: 0 2px 10px rgba(137, 5, 36, 0.18);
+    animation: floatY 6.5s ease-in-out infinite;
+    animation-delay: .9s;
+}
+
+/* ✨ ANIMASI FLOAT VERSE SLOW-MOTION */
+@keyframes floatY {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-4px); } /* lebih kecil, lebih mewah */
+}
 
     @media (max-width: 767px) {
         .hero-text-panel {
@@ -192,8 +201,8 @@
                 slides: [
                     {
                         image: '{{ asset("image/slicecake.jpg") }}',
-                        title: 'Sweetly Crafted, Stunningly Yours.',
-                        tagline: 'Kue cantik dengan rasa lembut dari baker lokal, siap manjain setiap momen spesialmu.'
+                        title: 'Indulge in Every Sweet Creation.',
+                        tagline: 'Kelezatan yang dibuat penuh cinta oleh baker lokal — siap memanjakan setiap momen spesialmu.'
                     },
                     {
                         image: '{{ asset("image/longcake.jpg") }}',

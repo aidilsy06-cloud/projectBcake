@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\Store;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Product;
+use App\Models\Order;
 
 class DashboardController extends Controller
 {
@@ -15,50 +13,62 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // pastikan memang seller
-        if (($user->role ?? null) !== 'seller') {
-            abort(403);
-        }
+        // pastikan ini seller
+        abort_unless(($user->role ?? null) === 'seller', 403);
 
-        // ambil toko milik seller
-        $store = $user->store ?? Store::where('user_id', $user->id)->first();
+        // toko milik seller ini (kalau ada)
+        $store = $user->store;
 
         // ===============================
-        // TOTAL PRODUK (aktif di katalog)
+        // TOTAL PRODUK
         // ===============================
-        $totalProducts = 0;
+        // Hitung semua produk milik seller ini berdasarkan user_id
+        // (nggak pakai store_id lagi supaya produk lama juga ikut)
+        $totalProducts = Product::where('user_id', $user->id)->count();
+        // kalau kamu mau cuma yang sudah di-approve:
+        // $totalProducts = Product::where('user_id', $user->id)
+        //     ->where('status', 'approved')
+        //     ->count();
 
-        if ($store) {
-            $totalProducts = Product::where('store_id', $store->id)
-                ->where(function ($q) {
-                    $q->whereNull('status')          // data lama
-                      ->orWhere('status', 'approved'); // sudah disetujui admin
+        // ===============================
+        // DATA CHART PENJUALAN 6 BULAN
+        // ===============================
+        $salesLabels = [];
+        $salesValues = [];
+
+        $now = now();
+
+        for ($i = 5; $i >= 0; $i--) {
+            $month = $now->copy()->subMonths($i);
+            $salesLabels[] = $month->format('M');
+
+            $sales = Order::when($store, function ($q) use ($store) {
+                    $q->where('store_id', $store->id);
                 })
-                ->count();
+                ->whereYear('created_at', $month->year)
+                ->whereMonth('created_at', $month->month)
+                ->sum('total_price');
+
+            $salesValues[] = (int) $sales;
         }
 
         // ===============================
         // PESANAN TERBARU UNTUK TOKO INI
         // ===============================
-        $recentOrders = collect();
-        if ($store) {
-            $recentOrders = Order::where('store_id', $store->id)
-                ->latest()
-                ->take(5)
-                ->get();
-        }
-
-        // Dummy data chart penjualan (biar nggak error dulu)
-        $salesLabels = ['Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt'];
-        $salesValues = [0, 0, 0, 0, 0, 0];
+        $recentOrders = Order::when($store, function ($q) use ($store) {
+                $q->where('store_id', $store->id);
+            })
+            ->latest()
+            ->take(5)
+            ->get();
 
         return view('seller.dashboard', [
-            'user'         => $user,
-            'store'        => $store,
-            'totalProducts'=> $totalProducts,
-            'recentOrders' => $recentOrders,
-            'salesLabels'  => $salesLabels,
-            'salesValues'  => $salesValues,
+            'user'          => $user,
+            'store'         => $store,
+            'totalProducts' => $totalProducts,
+            'salesLabels'   => $salesLabels,
+            'salesValues'   => $salesValues,
+            'recentOrders'  => $recentOrders,
         ]);
     }
 }

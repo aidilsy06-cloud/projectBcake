@@ -21,8 +21,20 @@
             {{-- TOTAL PRODUK --}}
             <div class="bg-white rounded-2xl px-5 py-4 shadow-md">
                 <p class="text-xs text-rose-400 mb-1">Total Produk</p>
+
+                @php
+                    use App\Models\Product;
+
+                    $authUser = auth()->user();
+
+                    // Hitung semua produk milik seller ini berdasarkan user_id
+                    $totalProductsDisplay = $authUser
+                        ? Product::where('user_id', $authUser->id)->count()
+                        : 0;
+                @endphp
+
                 <p class="text-3xl font-semibold text-rose-900">
-                    {{ $stats['total_products'] ?? 0 }}
+                    {{ $totalProductsDisplay }}
                 </p>
             </div>
 
@@ -89,7 +101,7 @@
                 </div>
 
                 @php
-                    $ordersList = $latestOrders ?? collect();
+                    $ordersList = $recentOrders ?? collect();
                 @endphp
 
                 @if($ordersList->isEmpty())
@@ -100,7 +112,7 @@
                     <div class="space-y-3 max-h-64 overflow-y-auto pr-1">
                         @foreach($ordersList as $order)
                             @php
-                                $status = $order->status ?? 'draft';
+                                $status    = $order->status ?? 'draft';
                                 $badgeText = $status === 'draft'
                                     ? 'Menunggu konfirmasi'
                                     : ucfirst($status);
@@ -154,10 +166,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const ctx = document.getElementById('salesChart').getContext('2d');
+            const canvas = document.getElementById('salesChart');
+            if (!canvas) return;
 
-            // kalau controller belum kirim salesLabels / salesValues,
-            // pake array kosong biar tidak error
+            const ctx = canvas.getContext('2d');
+
             const labels = @json($salesLabels ?? []);
             const data   = @json($salesValues ?? []);
 
@@ -171,7 +184,7 @@
                         tension: 0.4,
                         fill: true,
                         borderWidth: 2,
-                        borderColor: 'rgba(244, 63, 94, 1)',      // rose-500
+                        borderColor: 'rgba(244, 63, 94, 1)',       // rose-500
                         backgroundColor: 'rgba(248, 113, 113, .18)' // rose-400 transparan
                     }]
                 },

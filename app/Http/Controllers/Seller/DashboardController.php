@@ -13,22 +13,19 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // pastikan ini seller
+        // pastikan role seller
         abort_unless(($user->role ?? null) === 'seller', 403);
 
-        // toko milik seller ini (kalau ada)
+        // relasi: User hasOne Store
         $store = $user->store;
 
         // ===============================
-        // TOTAL PRODUK
+        // TOTAL PRODUK — pakai store_id
         // ===============================
-        // Hitung semua produk milik seller ini berdasarkan user_id
-        // (nggak pakai store_id lagi supaya produk lama juga ikut)
-        $totalProducts = Product::where('user_id', $user->id)->count();
-        // kalau kamu mau cuma yang sudah di-approve:
-        // $totalProducts = Product::where('user_id', $user->id)
-        //     ->where('status', 'approved')
-        //     ->count();
+        $totalProducts = 0;
+        if ($store) {
+            $totalProducts = Product::where('store_id', $store->id)->count();
+        }
 
         // ===============================
         // DATA CHART PENJUALAN 6 BULAN
@@ -37,7 +34,6 @@ class DashboardController extends Controller
         $salesValues = [];
 
         $now = now();
-
         for ($i = 5; $i >= 0; $i--) {
             $month = $now->copy()->subMonths($i);
             $salesLabels[] = $month->format('M');
@@ -53,7 +49,7 @@ class DashboardController extends Controller
         }
 
         // ===============================
-        // PESANAN TERBARU UNTUK TOKO INI
+        // PESANAN TERBARU
         // ===============================
         $recentOrders = Order::when($store, function ($q) use ($store) {
                 $q->where('store_id', $store->id);

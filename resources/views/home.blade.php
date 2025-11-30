@@ -3,219 +3,245 @@
 @section('title', 'B’cake — Elegant Bakery')
 
 @push('head')
-<style>
-    /* 🎀 Background stripes horizontal (garis ke samping) */
-    .hero-cupcake-bg {
-        background:
-            repeating-linear-gradient(
-                to bottom,
-                #f7d2da 0px,   /* pink muda */
-                #f7d2da 22px,  /* tebal warna 1 */
-                #b55c69 22px,  /* wine/truffle */
-                #b55c69 44px   /* tebal warna 2 (total 44px per pola) */
-            );
-    }
+    <style>
+        /* 🎀 Background stripes horizontal (garis ke samping) */
+        .hero-cupcake-bg {
+            background:
+                repeating-linear-gradient(to bottom,
+                    #f7d2da 0px,
+                    /* pink muda */
+                    #f7d2da 22px,
+                    /* tebal warna 1 */
+                    #b55c69 22px,
+                    /* wine/truffle */
+                    #b55c69 44px
+                    /* tebal warna 2 (total 44px per pola) */
+                );
+        }
 
-    /* 🎀 Bungkus hero + gerigi atas & bawah */
-    .hero-scallop-wrap {
-        position: relative;
-        overflow: hidden;
-    }
+        /* 🎀 Bungkus hero + gerigi atas & bawah */
+        .hero-scallop-wrap {
+            position: relative;
+            overflow: hidden;
+        }
 
-    /* Gerigi atas */
-    .hero-scallop-wrap::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: -18px;
-        height: 36px;
-        background:
-            radial-gradient(circle at 18px 18px, #ffffff 18px, transparent 19px) repeat-x;
-        background-size: 36px 36px;
-        transform: scaleY(-1);
-    }
+        /* Gerigi atas */
+        .hero-scallop-wrap::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -18px;
+            height: 36px;
+            background:
+                radial-gradient(circle at 18px 18px, #ffffff 18px, transparent 19px) repeat-x;
+            background-size: 36px 36px;
+            transform: scaleY(-1);
+        }
 
-    /* Gerigi bawah */
-    .hero-scallop-wrap::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: -18px;
-        height: 36px;
-        background:
-            radial-gradient(circle at 18px 18px, #ffffff 18px, transparent 19px) repeat-x;
-        background-size: 36px 36px;
-    }
+        /* Gerigi bawah */
+        .hero-scallop-wrap::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -18px;
+            height: 36px;
+            background:
+                radial-gradient(circle at 18px 18px, #ffffff 18px, transparent 19px) repeat-x;
+            background-size: 36px 36px;
+        }
 
-    /* 🌸 PANEL TEKS HERO – versi clean & premium */
-    .hero-text-panel {
-        position: relative;
-        display: inline-block;
-        padding: 1.6rem 2.4rem;
-        border-radius: 2rem;
-        background: rgba(255, 248, 250, 0.92); /* krem soft */
-        border: 1px solid rgba(255, 255, 255, 0.85);
-        box-shadow: 0 16px 35px rgba(137, 5, 36, 0.15);
-        backdrop-filter: blur(6px);
-        overflow: hidden;
-    }
-
-    /* aksen strip gradien tipis di kiri card */
-    .hero-text-panel::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 6px;
-        background: linear-gradient(180deg, #fbb6ce, #890524);
-        opacity: 0.7;
-    }
-
-    /* ✨ JUDUL UTAMA HERO – slow motion float */
-.hero-title {
-    color: #6d0b26;
-    letter-spacing: 0.02em;
-    line-height: 1.1;
-    font-weight: 700;
-    text-shadow: 0 4px 14px rgba(137, 5, 36, 0.25);
-    animation: floatY 6.5s ease-in-out infinite;
-}
-
-/* ✨ TAGLINE – slow + sedikit delay */
-.hero-tagline {
-    margin-top: 0.85rem;
-    color: #8a4b58;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    text-shadow: 0 2px 10px rgba(137, 5, 36, 0.18);
-    animation: floatY 6.5s ease-in-out infinite;
-    animation-delay: .9s;
-}
-
-/* ✨ ANIMASI FLOAT VERSE SLOW-MOTION */
-@keyframes floatY {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-4px); } /* lebih kecil, lebih mewah */
-}
-
-    @media (max-width: 767px) {
+        /* 🌸 PANEL TEKS HERO – versi clean & premium */
         .hero-text-panel {
-            padding: 1.2rem 1.7rem;
-            border-radius: 1.6rem;
+            position: relative;
+            display: inline-block;
+            padding: 1.6rem 2.4rem;
+            border-radius: 2rem;
+            background: rgba(255, 248, 250, 0.92);
+            /* krem soft */
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 16px 35px rgba(137, 5, 36, 0.15);
+            backdrop-filter: blur(6px);
+            overflow: hidden;
         }
+
+        /* aksen strip gradien tipis di kiri card */
+        .hero-text-panel::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(180deg, #fbb6ce, #890524);
+            opacity: 0.7;
+        }
+
+        /* ✨ JUDUL UTAMA HERO – slow motion float */
         .hero-title {
-            font-size: 1.6rem;
+            color: #6d0b26;
+            letter-spacing: 0.02em;
+            line-height: 1.1;
+            font-weight: 700;
+            text-shadow: 0 4px 14px rgba(137, 5, 36, 0.25);
+            animation: floatY 6.5s ease-in-out infinite;
         }
+
+        /* ✨ TAGLINE – slow + sedikit delay */
         .hero-tagline {
-            font-size: 0.9rem;
+            margin-top: 0.85rem;
+            color: #8a4b58;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            text-shadow: 0 2px 10px rgba(137, 5, 36, 0.18);
+            animation: floatY 6.5s ease-in-out infinite;
+            animation-delay: .9s;
         }
-    }
 
-    /* 🎂 FRAME FOTO DENGAN GERIGI ATAS & BAWAH (FOTO HERO) */
-    .hero-photo-scallop {
-        position: relative;
-        border-radius: 1.75rem;
-        overflow: hidden;
-        background-color: #f7d2da; /* pink muda, nyatu sama background */
-    }
-    .hero-photo-scallop::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: -18px;
-        height: 36px;
-        background:
-            radial-gradient(circle at 18px 18px, #f7d2da 18px, transparent 19px) repeat-x;
-        background-size: 36px 36px;
-        transform: scaleY(-1);
-    }
-    .hero-photo-scallop::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: -18px;
-        height: 36px;
-        background:
-            radial-gradient(circle at 18px 18px, #f7d2da 18px, transparent 19px) repeat-x;
-        background-size: 36px 36px;
-    }
-    .hero-photo-scallop img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+        /* ✨ ANIMASI FLOAT VERSE SLOW-MOTION */
+        @keyframes floatY {
 
-    /* 🌟 KATEGORY FLOATING ANIMASI */
-    .category-float {
-        position: relative;
-        border-radius: 1.5rem;
-        overflow: hidden;
-        background-color: #6a4e4a26;
-        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
-        animation: floatCard 4s ease-in-out infinite;
-        transform-origin: center;
-        transition: all .35s ease;
-    }
-    .category-float img {
-        transition: transform .5s ease;
-    }
-    .category-float::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0);
-        transition: .3s ease;
-        pointer-events: none;
-    }
-    .category-float:hover {
-        animation-play-state: paused;
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
-    }
-    .category-float:hover img {
-        transform: scale(1.08);
-    }
-    .category-float:hover::after {
-        background: rgba(0, 0, 0, 0.05);
-    }
+            0%,
+            100% {
+                transform: translateY(0);
+            }
 
-    @keyframes floatCard {
-        0%, 100% { transform: translateY(0); }
-        50%      { transform: translateY(-6px); }
-    }
-</style>
+            50% {
+                transform: translateY(-4px);
+            }
+
+            /* lebih kecil, lebih mewah */
+        }
+
+        @media (max-width: 767px) {
+            .hero-text-panel {
+                padding: 1.2rem 1.7rem;
+                border-radius: 1.6rem;
+            }
+
+            .hero-title {
+                font-size: 1.6rem;
+            }
+
+            .hero-tagline {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* 🎂 FRAME FOTO DENGAN GERIGI ATAS & BAWAH (FOTO HERO) */
+        .hero-photo-scallop {
+            position: relative;
+            border-radius: 1.75rem;
+            overflow: hidden;
+            background-color: #f7d2da;
+            /* pink muda, nyatu sama background */
+        }
+
+        .hero-photo-scallop::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -18px;
+            height: 36px;
+            background:
+                radial-gradient(circle at 18px 18px, #f7d2da 18px, transparent 19px) repeat-x;
+            background-size: 36px 36px;
+            transform: scaleY(-1);
+        }
+
+        .hero-photo-scallop::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -18px;
+            height: 36px;
+            background:
+                radial-gradient(circle at 18px 18px, #f7d2da 18px, transparent 19px) repeat-x;
+            background-size: 36px 36px;
+        }
+
+        .hero-photo-scallop img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 🌟 KATEGORY FLOATING ANIMASI */
+        .category-float {
+            position: relative;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            background-color: #6a4e4a26;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
+            animation: floatCard 4s ease-in-out infinite;
+            transform-origin: center;
+            transition: all .35s ease;
+        }
+
+        .category-float img {
+            transition: transform .5s ease;
+        }
+
+        .category-float::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0);
+            transition: .3s ease;
+            pointer-events: none;
+        }
+
+        .category-float:hover {
+            animation-play-state: paused;
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .category-float:hover img {
+            transform: scale(1.08);
+        }
+
+        .category-float:hover::after {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        @keyframes floatCard {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+    </style>
 @endpush
 
 @section('content')
 
     {{-- ================= HERO CUPCAKE SIMPLE (MODEL BARU, SMOOTH) ================= --}}
     <section class="w-full overflow-visible relative">
-        <div
-            x-data="{
-                active: 0,
-                slides: [
-                    {
-                        image: '{{ asset("image/slicecake.jpg") }}',
-                        title: 'Indulge in Every Sweet Creation.',
-                        tagline: 'Kelezatan yang dibuat penuh cinta oleh baker lokal — siap memanjakan setiap momen spesialmu.'
-                    },
-                    {
-                        image: '{{ asset("image/longcake.jpg") }}',
-                        title: 'Delicate. Dreamy. Delightful.',
-                        tagline: 'Kue lembut berlapis krim manis dan buah segar, dibuat khusus untuk momen yang pengin terasa lebih istimewa.'
-                    }
-                ],
-                next() { this.active = (this.active + 1) % this.slides.length },
-                prev() { this.active = (this.active - 1 + this.slides.length) % this.slides.length },
-            }"
-            x-init="setInterval(() => next(), 5000)"
-            class="relative w-full"
-        >
+        <div x-data="{
+            active: 0,
+            slides: [{
+                    image: '{{ asset('image/slicecake.jpg') }}',
+                    title: 'Indulge in Every Sweet Creation.',
+                    tagline: 'Kelezatan yang dibuat penuh cinta oleh baker lokal — siap memanjakan setiap momen spesialmu.'
+                },
+                {
+                    image: '{{ asset('image/longcake.jpg') }}',
+                    title: 'Delicate. Dreamy. Delightful.',
+                    tagline: 'Kue lembut berlapis krim manis dan buah segar, dibuat khusus untuk momen yang pengin terasa lebih istimewa.'
+                }
+            ],
+            next() { this.active = (this.active + 1) % this.slides.length },
+            prev() { this.active = (this.active - 1 + this.slides.length) % this.slides.length },
+        }" x-init="setInterval(() => next(), 5000)" class="relative w-full">
 
             {{-- ============== MOBILE HERO (≤ md) ============== --}}
             <div class="md:hidden hero-cupcake-bg hero-scallop-wrap">
@@ -225,8 +251,8 @@
                         <div x-show="active === i" x-transition.opacity.duration.400ms class="space-y-4">
                             {{-- FOTO --}}
                             <div class="flex justify-center">
-                                <div class="hero-photo-scallop w-full shadow-xl">
-                                    <img :src="s.image">
+                                <div class="w-full shadow-xl rounded-3xl overflow-hidden">
+                                    <img :src="s.image" class="w-full h-full object-cover">
                                 </div>
                             </div>
 
@@ -236,7 +262,7 @@
                                     <div
                                         class="rounded-3xl bg-white/70 p-3 shadow-lg backdrop-blur-md border border-white/60">
                                         <img src="{{ asset('image/logo_bcake.jpg') }}"
-                                             class="w-16 rounded-xl object-contain">
+                                            class="w-16 rounded-xl object-contain">
                                     </div>
                                 </div>
                             </template>
@@ -250,9 +276,9 @@
 
                                 <div class="pt-2">
                                     <a href="{{ route('products.index') }}"
-                                       class="inline-flex items-center justify-center px-7 py-3 rounded-full
-                                              bg-bcake-cherry hover:bg-bcake-wine text-white font-medium
-                                              shadow-md transition">
+                                        class="inline-flex items-center justify-center px-7 py-3 rounded-full
+                                          bg-bcake-cherry hover:bg-bcake-wine text-white font-medium
+                                          shadow-md transition">
                                         Order Now
                                     </a>
                                 </div>
@@ -263,9 +289,7 @@
                     {{-- DOTS MOBILE --}}
                     <div class="flex justify-center gap-2 pt-2">
                         <template x-for="(s, i) in slides" :key="'mdot-' + i">
-                            <button
-                                @click="active = i"
-                                class="h-2.5 w-2.5 rounded-full shadow-md transition"
+                            <button @click="active = i" class="h-2.5 w-2.5 rounded-full shadow-md transition"
                                 :class="active === i ? 'bg-bcake-wine' : 'bg-white/70'">
                             </button>
                         </template>
@@ -279,21 +303,21 @@
                 <div class="hero-cupcake-bg hero-scallop-wrap">
                     <div
                         class="relative max-w-6xl mx-auto px-6 md:px-12 py-16
-                               min-h-[440px] lg:min-h-[500px]">
+                           min-h-[440px] lg:min-h-[500px]">
 
                         {{-- SLIDES LAYERED --}}
                         <template x-for="(s, i) in slides" :key="'d-' + i">
-                            <div
-                                class="absolute inset-0 grid grid-cols-2 items-center gap-10
-                                       transition-opacity duration-700 ease-out"
-                                :class="active === i
-                                    ? 'opacity-100 z-20'
-                                    : 'opacity-0 z-10 pointer-events-none'">
+                            <div class="absolute inset-0 grid grid-cols-2 items-center gap-10
+                                   transition-opacity duration-700 ease-out"
+                                :class="active === i ?
+                                    'opacity-100 z-20' :
+                                    'opacity-0 z-10 pointer-events-none'">
 
                                 {{-- FOTO (kanan) --}}
                                 <div class="order-1 md:order-2 flex justify-center items-center">
-                                    <div class="hero-photo-scallop w-full max-w-xl h-[340px] lg:h-[380px] shadow-xl">
-                                        <img :src="s.image">
+                                    <div
+                                        class="w-full max-w-xl h-[340px] lg:h-[380px] shadow-xl rounded-3xl overflow-hidden">
+                                        <img :src="s.image" class="w-full h-full object-cover">
                                     </div>
                                 </div>
 
@@ -306,7 +330,7 @@
                                             <div
                                                 class="rounded-3xl bg-white/70 p-3 shadow-lg backdrop-blur-md border border-white/60">
                                                 <img src="{{ asset('image/logo_bcake.jpg') }}"
-                                                     class="w-20 rounded-xl object-contain">
+                                                    class="w-20 rounded-xl object-contain">
                                             </div>
                                         </div>
                                     </template>
@@ -317,15 +341,15 @@
                                         </h2>
 
                                         <p class="hero-tagline max-w-md leading-relaxed text-sm lg:text-base"
-                                           x-text="s.tagline">
+                                            x-text="s.tagline">
                                         </p>
                                     </div>
 
                                     <div class="pt-3">
                                         <a href="{{ route('products.index') }}"
-                                           class="inline-flex items-center justify-center px-7 py-3 rounded-full
-                                                  bg-bcake-cherry hover:bg-bcake-wine text-white font-medium
-                                                  shadow-md transition">
+                                            class="inline-flex items-center justify-center px-7 py-3 rounded-full
+                                              bg-bcake-cherry hover:bg-bcake-wine text-white font-medium
+                                              shadow-md transition">
                                             Order Now
                                         </a>
                                     </div>
@@ -337,31 +361,27 @@
                 </div>
 
                 {{-- PANAH KIRI (DESKTOP ONLY) --}}
-                <button
-                    @click="prev()"
+                <button @click="prev()"
                     class="hidden md:flex absolute left-[-70px] top-1/2 -translate-y-1/2 
-                           h-12 w-12 rounded-full items-center justify-center
-                           bg-[#890524] text-white shadow-2xl border-2 border-[#57091d]
-                           hover:bg-[#57091d] hover:scale-[1.08] transition z-50">
+                       h-12 w-12 rounded-full items-center justify-center
+                       bg-[#890524] text-white shadow-2xl border-2 border-[#57091d]
+                       hover:bg-[#57091d] hover:scale-[1.08] transition z-50">
                     ‹
                 </button>
 
                 {{-- PANAH KANAN (DESKTOP ONLY) --}}
-                <button
-                    @click="next()"
+                <button @click="next()"
                     class="hidden md:flex absolute right-[-70px] top-1/2 -translate-y-1/2 
-                           h-12 w-12 rounded-full items-center justify-center
-                           bg-[#890524] text-white shadow-2xl border-2 border-[#57091d]
-                           hover:bg-[#57091d] hover:scale-[1.08] transition z-50">
+                       h-12 w-12 rounded-full items-center justify-center
+                       bg-[#890524] text-white shadow-2xl border-2 border-[#57091d]
+                       hover:bg-[#57091d] hover:scale-[1.08] transition z-50">
                     ›
                 </button>
 
                 {{-- DOTS DESKTOP --}}
                 <div class="absolute bottom-7 left-1/2 -translate-x-1/2 flex gap-2 z-30">
                     <template x-for="(s, i) in slides" :key="'ddot-' + i">
-                        <button
-                            @click="active = i"
-                            class="h-2.5 w-2.5 rounded-full shadow-md transition"
+                        <button @click="active = i" class="h-2.5 w-2.5 rounded-full shadow-md transition"
                             :class="active === i ? 'bg-bcake-wine' : 'bg-white/70'">
                         </button>
                     </template>
@@ -380,10 +400,9 @@
 
                 {{-- LEFT CATEGORY --}}
                 <div class="md:col-span-3">
-                    <a href="{{ route('categories.show','custom-cake-modern') }}"
-                       class="category-float block w-full">
+                    <a href="{{ route('categories.show', 'custom-cake-modern') }}" class="category-float block w-full">
                         <img src="{{ asset('image/cakemodern.jpg') }}"
-                             class="w-full aspect-[4/3] object-cover rounded-t-3xl">
+                            class="w-full aspect-[4/3] object-cover rounded-t-3xl">
                         <div class="py-3 text-center">
                             <h3 class="text-sm md:text-base font-medium text-[#362320]">
                                 Custom Cake & Modern Cake
@@ -410,8 +429,7 @@
                             kreasi terbaik mereka. Kami menghubungkan para pembuat kue dengan pecinta kue
                             dalam satu tempat yang hangat, elegan, dan penuh cita rasa.
                         </p>
-                        <a href="{{ route('products.index') }}"
-                           class="btn btn-ghost mt-6 hover:scale-105 transition">
+                        <a href="{{ route('products.index') }}" class="btn btn-ghost mt-6 hover:scale-105 transition">
                             Lihat Menu Kami
                         </a>
                     </div>
@@ -419,10 +437,8 @@
 
                 {{-- RIGHT CATEGORY --}}
                 <div class="md:col-span-3">
-                    <a href="{{ route('categories.show','cupcake-brownies') }}"
-                       class="category-float block w-full">
-                        <img src="{{ asset('image/cupcake.jpg') }}"
-                             class="w-full aspect-[4/3] object-cover rounded-t-3xl">
+                    <a href="{{ route('categories.show', 'cupcake-brownies') }}" class="category-float block w-full">
+                        <img src="{{ asset('image/cupcake.jpg') }}" class="w-full aspect-[4/3] object-cover rounded-t-3xl">
                         <div class="py-3 text-center">
                             <h3 class="text-sm md:text-base font-medium text-[#362320]">
                                 Cupcake & Brownies
@@ -438,10 +454,8 @@
 
                 {{-- PASTRY --}}
                 <div class="md:col-span-3">
-                    <a href="{{ route('categories.show','pastry-roti') }}"
-                       class="category-float block w-full">
-                        <img src="{{ asset('image/Pastry.jpg') }}"
-                             class="w-full aspect-[4/3] object-cover rounded-t-3xl">
+                    <a href="{{ route('categories.show', 'pastry-roti') }}" class="category-float block w-full">
+                        <img src="{{ asset('image/Pastry.jpg') }}" class="w-full aspect-[4/3] object-cover rounded-t-3xl">
                         <div class="py-3 text-center">
                             <h3 class="text-sm md:text-base font-medium text-[#362320]">
                                 Pastry & Roti
@@ -452,10 +466,9 @@
 
                 {{-- DESSERT BOX --}}
                 <div class="md:col-span-3">
-                    <a href="{{ route('categories.show','dessert-box') }}"
-                       class="category-float block w-full">
+                    <a href="{{ route('categories.show', 'dessert-box') }}" class="category-float block w-full">
                         <img src="{{ asset('image/dessertbox.jpg') }}"
-                             class="w-full aspect-[4/3] object-cover rounded-t-3xl">
+                            class="w-full aspect-[4/3] object-cover rounded-t-3xl">
                         <div class="py-3 text-center">
                             <h3 class="text-sm md:text-base font-medium text-[#362320]">
                                 Dessert Box
@@ -466,10 +479,8 @@
 
                 {{-- SNACK --}}
                 <div class="md:col-span-3">
-                    <a href="{{ route('categories.show','snack') }}"
-                       class="category-float block w-full">
-                        <img src="{{ asset('image/snack.jpg') }}"
-                             class="w-full aspect-[4/3] object-cover rounded-t-3xl">
+                    <a href="{{ route('categories.show', 'snack') }}" class="category-float block w-full">
+                        <img src="{{ asset('image/snack.jpg') }}" class="w-full aspect-[4/3] object-cover rounded-t-3xl">
                         <div class="py-3 text-center">
                             <h3 class="text-sm md:text-base font-medium text-[#362320]">
                                 Snack
@@ -497,7 +508,7 @@
                             </p>
                         </div>
                         <a href="{{ route('products.index') }}"
-                           class="btn btn-primary mt-6 self-start hover:scale-105 transition">
+                            class="btn btn-primary mt-6 self-start hover:scale-105 transition">
                             Order Now
                         </a>
                     </div>
@@ -531,7 +542,7 @@
                     <div class="category-card group rounded-2xl bg-white shadow transition overflow-hidden">
                         {{-- FOTO PRODUK --}}
                         <img src="{{ asset('image/dessertbox.jpg') }}"
-                             class="w-full h-52 object-cover transition duration-300 group-hover:scale-[1.02]">
+                            class="w-full h-52 object-cover transition duration-300 group-hover:scale-[1.02]">
 
                         <div class="p-4 relative z-[1]">
                             <h3 class="font-semibold text-lg text-bcake-cocoa">
@@ -583,7 +594,7 @@
         }
     }">
         <div class="relative rounded-3xl overflow-hidden border border-rose-200 shadow-soft bg-white"
-             @touchstart.passive="onTouchStart" @touchend.passive="onTouchEnd">
+            @touchstart.passive="onTouchStart" @touchend.passive="onTouchEnd">
 
             @php
                 $slides = [
@@ -625,16 +636,15 @@
             {{-- CONTAINER SLIDE LAYERED --}}
             <div class="relative min-h-[260px] sm:min-h-[320px] md:min-h-[360px] lg:min-h-[400px]">
                 @foreach ($slides as $i => $slide)
-                    <div
-                        class="absolute inset-0 transition-opacity duration-600 ease-out"
-                        :class="active === {{ $i }}
-                            ? 'opacity-100 z-20'
-                            : 'opacity-0 z-10 pointer-events-none'">
+                    <div class="absolute inset-0 transition-opacity duration-600 ease-out"
+                        :class="active === {{ $i }} ?
+                            'opacity-100 z-20' :
+                            'opacity-0 z-10 pointer-events-none'">
                         <div class="grid md:grid-cols-2 h-full">
 
                             {{-- GAMBAR --}}
                             <img src="{{ asset('image/' . $slide['img']) }}"
-                                 class="w-full h-[240px] sm:h-[300px] md:h-[350px] lg:h-[380px] object-cover">
+                                class="w-full h-[240px] sm:h-[300px] md:h-[350px] lg:h-[380px] object-cover">
 
                             {{-- TEKS --}}
                             <div class="p-8 md:p-10 lg:p-12 bg-rose-50/80 backdrop-blur flex flex-col justify-center">
@@ -660,7 +670,7 @@
                                 {{-- BUTTON --}}
                                 <div class="mt-5">
                                     <a href="{{ route('products.index') }}"
-                                       class="inline-flex items-center justify-center rounded-full
+                                        class="inline-flex items-center justify-center rounded-full
                                               bg-bcake-cherry hover:bg-bcake-wine
                                               text-white px-7 py-3 text-sm md:text-base font-medium
                                               shadow-soft transition">
@@ -697,11 +707,10 @@
             {{-- DOTS --}}
             <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
                 <template x-for="i in 4">
-                    <button
-                        class="h-2.5 w-2.5 rounded-full border border-rose-300 transition-all"
-                        :class="active === (i - 1)
-                            ? 'bg-[#890524] border-[#890524] scale-110'
-                            : 'bg-rose-100 hover:bg-rose-200'"
+                    <button class="h-2.5 w-2.5 rounded-full border border-rose-300 transition-all"
+                        :class="active === (i - 1) ?
+                            'bg-[#890524] border-[#890524] scale-110' :
+                            'bg-rose-100 hover:bg-rose-200'"
                         @click="active = i - 1">
                     </button>
                 </template>
@@ -712,7 +721,7 @@
 
     <footer class="relative mt-16 w-full bg-[#f7e3e7] text-bcake-truffle pt-10 pb-6 overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-6 bg-repeat-x"
-             style="background-image: url('{{ asset('image/lace-border.png') }}'); background-size: auto 100%;">
+            style="background-image: url('{{ asset('image/lace-border.png') }}'); background-size: auto 100%;">
         </div>
 
         <div class="max-w-7xl mx-auto px-6">
@@ -728,19 +737,19 @@
                     </h3>
                     <div class="flex justify-center md:justify-start gap-4 mt-3">
                         <a href="#"
-                           class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
+                            class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
                             <i class="fa-brands fa-instagram text-lg"></i>
                         </a>
                         <a href="#"
-                           class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
+                            class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
                             <i class="fa-brands fa-whatsapp text-lg"></i>
                         </a>
                         <a href="#"
-                           class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
+                            class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
                             <i class="fa-brands fa-tiktok text-lg"></i>
                         </a>
                         <a href="mailto:hello@bcake.local"
-                           class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
+                            class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
                             <i class="fa-solid fa-envelope text-lg"></i>
                         </a>
                     </div>

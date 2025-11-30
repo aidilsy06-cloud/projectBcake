@@ -225,6 +225,7 @@
 @section('content')
 
     {{-- ================= HERO CUPCAKE SIMPLE (MODEL BARU, SMOOTH) ================= --}}
+    {{-- ================= HERO CUPCAKE SIMPLE (MODEL BARU, SMOOTH) ================= --}}
     <section class="w-full overflow-visible relative">
         <div x-data="{
             active: 0,
@@ -249,23 +250,13 @@
 
                     <template x-for="(s, i) in slides" :key="'m-' + i">
                         <div x-show="active === i" x-transition.opacity.duration.400ms class="space-y-4">
+
                             {{-- FOTO --}}
                             <div class="flex justify-center">
                                 <div class="w-full shadow-xl rounded-3xl overflow-hidden">
                                     <img :src="s.image" class="w-full h-full object-cover">
                                 </div>
                             </div>
-
-                            {{-- LOGO KHUSUS SLIDE 1 --}}
-                            <template x-if="i === 0">
-                                <div class="flex justify-center">
-                                    <div
-                                        class="rounded-3xl bg-white/70 p-3 shadow-lg backdrop-blur-md border border-white/60">
-                                        <img src="{{ asset('image/logo_bcake.jpg') }}"
-                                            class="w-16 rounded-xl object-contain">
-                                    </div>
-                                </div>
-                            </template>
 
                             {{-- TEKS --}}
                             <div class="text-center space-y-3">
@@ -299,13 +290,11 @@
 
             {{-- ============== DESKTOP HERO (≥ md) ============== --}}
             <div class="hidden md:block overflow-visible relative">
-                {{-- BACKGROUND + SCALLOP --}}
                 <div class="hero-cupcake-bg hero-scallop-wrap">
                     <div
                         class="relative max-w-6xl mx-auto px-6 md:px-12 py-16
                            min-h-[440px] lg:min-h-[500px]">
 
-                        {{-- SLIDES LAYERED --}}
                         <template x-for="(s, i) in slides" :key="'d-' + i">
                             <div class="absolute inset-0 grid grid-cols-2 items-center gap-10
                                    transition-opacity duration-700 ease-out"
@@ -313,7 +302,7 @@
                                     'opacity-100 z-20' :
                                     'opacity-0 z-10 pointer-events-none'">
 
-                                {{-- FOTO (kanan) --}}
+                                {{-- FOTO --}}
                                 <div class="order-1 md:order-2 flex justify-center items-center">
                                     <div
                                         class="w-full max-w-xl h-[340px] lg:h-[380px] shadow-xl rounded-3xl overflow-hidden">
@@ -321,28 +310,14 @@
                                     </div>
                                 </div>
 
-                                {{-- TEKS (kiri) --}}
+                                {{-- TEKS --}}
                                 <div class="order-2 md:order-1 text-left space-y-4">
-
-                                    {{-- LOGO KHUSUS SLIDE 1 --}}
-                                    <template x-if="i === 0">
-                                        <div class="flex justify-start mb-3">
-                                            <div
-                                                class="rounded-3xl bg-white/70 p-3 shadow-lg backdrop-blur-md border border-white/60">
-                                                <img src="{{ asset('image/logo_bcake.jpg') }}"
-                                                    class="w-20 rounded-xl object-contain">
-                                            </div>
-                                        </div>
-                                    </template>
-
                                     <div class="hero-text-panel">
                                         <h2 class="font-display text-4xl lg:text-5xl leading-tight hero-title"
-                                            x-text="s.title">
-                                        </h2>
+                                            x-text="s.title"></h2>
 
                                         <p class="hero-tagline max-w-md leading-relaxed text-sm lg:text-base"
-                                            x-text="s.tagline">
-                                        </p>
+                                            x-text="s.tagline"></p>
                                     </div>
 
                                     <div class="pt-3">
@@ -353,14 +328,15 @@
                                             Order Now
                                         </a>
                                     </div>
-
                                 </div>
+
                             </div>
                         </template>
+
                     </div>
                 </div>
 
-                {{-- PANAH KIRI (DESKTOP ONLY) --}}
+                {{-- PANAH KIRI --}}
                 <button @click="prev()"
                     class="hidden md:flex absolute left-[-70px] top-1/2 -translate-y-1/2 
                        h-12 w-12 rounded-full items-center justify-center
@@ -369,7 +345,7 @@
                     ‹
                 </button>
 
-                {{-- PANAH KANAN (DESKTOP ONLY) --}}
+                {{-- PANAH KANAN --}}
                 <button @click="next()"
                     class="hidden md:flex absolute right-[-70px] top-1/2 -translate-y-1/2 
                        h-12 w-12 rounded-full items-center justify-center
@@ -390,6 +366,95 @@
 
         </div>
     </section>
+
+    {{-- 🎀 Cherry Ribbon Divider B'cake (smooth + brand colors) --}}
+    <div class="bcake-ribbon-wrap">
+        <svg viewBox="0 0 1440 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
+            class="w-full h-[120px] bcake-ribbon-shadow">
+            <defs>
+                <!-- garis lembut pakai icing mist -->
+                <linearGradient id="bc-line" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#d0d1c9" />
+                    <stop offset="50%" stop-color="#d0d1c9" />
+                    <stop offset="100%" stop-color="#d0d1c9" />
+                </linearGradient>
+
+                <!-- cherry pakai pink + bcake cherry + wine cherry -->
+                <linearGradient id="bc-cherry" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ffd7e6" />
+                    <stop offset="55%" stop-color="#e85b88" />
+                    <stop offset="100%" stop-color="#890524" />
+                </linearGradient>
+
+                <!-- pita pakai pink → cherry → wine cherry -->
+                <linearGradient id="bc-ribbon" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#ffe3f0" />
+                    <stop offset="45%" stop-color="#f28ab2" />
+                    <stop offset="100%" stop-color="#890524" />
+                </linearGradient>
+
+                <!-- batang pakai truffle dust → bitter cocoa -->
+                <linearGradient id="bc-stem" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#6a4e4a" />
+                    <stop offset="100%" stop-color="#362320" />
+                </linearGradient>
+            </defs>
+
+            <!-- garis lembut kiri–kanan (agak samar) -->
+            <path d="M0,165
+                       C220,145 440,190 720,170
+                       C1000,150 1220,195 1440,175" fill="none" stroke="url(#bc-line)" stroke-width="26"
+                stroke-linecap="round" opacity="0.35" />
+
+            <!-- grup cherry + pita di tengah -->
+            <g transform="translate(670,42)" opacity="0.9">
+                <!-- back glow lembut -->
+                <ellipse cx="58" cy="92" rx="60" ry="52" fill="#ffeef6" opacity="0.7" />
+
+                <!-- batang (smooth) -->
+                <path d="M46,78 C42,60 42,46 46,30" fill="none" stroke="url(#bc-stem)" stroke-width="3.5"
+                    stroke-linecap="round" />
+                <path d="M72,80 C76,60 78,44 76,28" fill="none" stroke="url(#bc-stem)" stroke-width="3.5"
+                    stroke-linecap="round" />
+
+                <!-- pita (lebih melengkung halus) -->
+                <!-- knot -->
+                <ellipse cx="59" cy="32" rx="9" ry="7" fill="url(#bc-ribbon)" />
+
+                <!-- loop kiri -->
+                <path d="M55,32
+                           C32,20 22,20 18,30
+                           C15,39 22,47 34,46
+                           C43,45 49,40 53,37" fill="none" stroke="url(#bc-ribbon)" stroke-width="8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+
+                <!-- loop kanan -->
+                <path d="M63,32
+                           C86,20 96,20 100,30
+                           C103,39 96,47 84,46
+                           C75,45 69,40 65,37" fill="none" stroke="url(#bc-ribbon)" stroke-width="8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+
+                <!-- ekor pita kiri -->
+                <path d="M54,37
+                           C46,50 42,62 40,78" fill="none" stroke="url(#bc-ribbon)" stroke-width="7"
+                    stroke-linecap="round" opacity="0.9" />
+                <!-- ekor pita kanan -->
+                <path d="M64,37
+                           C72,50 76,62 78,80" fill="none" stroke="url(#bc-ribbon)" stroke-width="7"
+                    stroke-linecap="round" opacity="0.9" />
+
+                <!-- cherries (sedikit lebih bulat & lembut) -->
+                <circle cx="42" cy="102" r="20" fill="url(#bc-cherry)" />
+                <circle cx="78" cy="104" r="20" fill="url(#bc-cherry)" />
+
+                <!-- highlight cherry biar nggak kaku -->
+                <ellipse cx="36" cy="95" rx="6" ry="4" fill="#ffeef7" opacity="0.85" />
+                <ellipse cx="72" cy="97" rx="6" ry="4" fill="#ffeef7" opacity="0.85" />
+            </g>
+        </svg>
+    </div>
+
 
     {{-- ========= WHY + FEATURED GRID (KATEGORI FLOAT) ========= --}}
     <section class="py-10 md:py-14">
@@ -438,7 +503,8 @@
                 {{-- RIGHT CATEGORY --}}
                 <div class="md:col-span-3">
                     <a href="{{ route('categories.show', 'cupcake-brownies') }}" class="category-float block w-full">
-                        <img src="{{ asset('image/cupcake.jpg') }}" class="w-full aspect-[4/3] object-cover rounded-t-3xl">
+                        <img src="{{ asset('image/cupcake.jpg') }}"
+                            class="w-full aspect-[4/3] object-cover rounded-t-3xl">
                         <div class="py-3 text-center">
                             <h3 class="text-sm md:text-base font-medium text-[#362320]">
                                 Cupcake & Brownies
@@ -455,7 +521,8 @@
                 {{-- PASTRY --}}
                 <div class="md:col-span-3">
                     <a href="{{ route('categories.show', 'pastry-roti') }}" class="category-float block w-full">
-                        <img src="{{ asset('image/Pastry.jpg') }}" class="w-full aspect-[4/3] object-cover rounded-t-3xl">
+                        <img src="{{ asset('image/Pastry.jpg') }}"
+                            class="w-full aspect-[4/3] object-cover rounded-t-3xl">
                         <div class="py-3 text-center">
                             <h3 class="text-sm md:text-base font-medium text-[#362320]">
                                 Pastry & Roti

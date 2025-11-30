@@ -114,6 +114,18 @@ body {
 }
 
 /* -------------------------------------------------------
+   🎀 Cherry Ribbon Divider (antara hero dan section berikutnya)
+--------------------------------------------------------*/
+.bcake-ribbon-wrap {
+  margin-top: -10px;    /* nempel ke scallop hero */
+  margin-bottom: 40px;  /* jarak ke section berikutnya */
+}
+
+.bcake-ribbon-shadow {
+  filter: drop-shadow(0 12px 24px rgba(137, 5, 36, 0.16));
+}
+
+/* -------------------------------------------------------
    💫 Custom Utility Tambahan (mask lengkung hero)
 --------------------------------------------------------*/
 @layer utilities {
@@ -122,4 +134,3 @@ body {
     -webkit-mask: radial-gradient(140px 70px at 50% 0, transparent 99%, black 101%);
   }
 }
-

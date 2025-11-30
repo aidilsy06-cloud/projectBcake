@@ -306,11 +306,42 @@
     </main>
 
     {{-- FOOTER --}}
-    <footer class="border-t border-rose-200/50 bg-white mt-auto">
-        <div
-            class="max-w-7xl mx-auto px-6 lg:px-10 py-6 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500 gap-2">
-            <p>© {{ date('Y') }} <b>B’cake</b>. Semua hak cipta dilindungi.</p>
-            <p class="text-gray-400">Crafted with <span class="text-rose-500">♥</span> & cocoa.</p>
+    <footer class="bcake-footer-wrap">
+        <div class="bcake-footer-bg">
+            <div class="max-w-6xl mx-auto px-6 lg:px-10">
+
+                <div class="bcake-footer-inner flex flex-col md:flex-row items-center justify-between gap-8">
+
+                    {{-- Brand kiri --}}
+                    <div class="text-center md:text-left">
+                        <div class="font-display text-2xl text-bcake-wine">B’cake</div>
+                        <p class="mt-1 text-sm italic text-bcake-truffle">
+                            “Because elegance can be sweet.”
+                        </p>
+                    </div>
+
+                    {{-- Social center --}}
+                    <div class="flex flex-col items-center">
+                        <span class="tracking-[0.25em] text-[11px] uppercase text-bcake-bitter">
+                            Contact & Socials
+                        </span>
+
+                        <div class="flex gap-3 mt-3">
+                            @foreach (range(1, 4) as $i)
+                                <div class="h-9 w-9 rounded-full bg-white shadow-md"></div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Copyright kanan --}}
+                    <div class="text-center md:text-right text-sm text-bcake-bitter">
+                        <div>© 2025 B’cake Bakery. All rights reserved.</div>
+                        <div class="mt-1">Designed with 🍒 by Team B’cake</div>
+                    </div>
+
+                </div>
+
+            </div>
         </div>
     </footer>
 

@@ -367,91 +367,58 @@
         </div>
     </section>
 
-    {{-- 🎀 Cherry Ribbon Divider B'cake (smooth + brand colors) --}}
-    <div class="bcake-ribbon-wrap">
-        <svg viewBox="0 0 1440 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
-            class="w-full h-[120px] bcake-ribbon-shadow">
+    {{-- 🍒 Heart Cherry B'cake --}}
+    <div class="bcake-heart-cherry-wrap">
+        <svg viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg" class="bcake-heart-cherry-svg w-[110px] h-[90px]"
+            aria-hidden="true">
             <defs>
-                <!-- garis lembut pakai icing mist -->
-                <linearGradient id="bc-line" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#d0d1c9" />
-                    <stop offset="50%" stop-color="#d0d1c9" />
-                    <stop offset="100%" stop-color="#d0d1c9" />
-                </linearGradient>
-
-                <!-- cherry pakai pink + bcake cherry + wine cherry -->
-                <linearGradient id="bc-cherry" x1="0%" y1="0%" x2="0%" y2="100%">
+                <!-- cherry: pink -> bcake cherry -->
+                <radialGradient id="hc-cherry" cx="30%" cy="20%" r="80%">
                     <stop offset="0%" stop-color="#ffd7e6" />
-                    <stop offset="55%" stop-color="#e85b88" />
+                    <stop offset="45%" stop-color="#e85b88" />
                     <stop offset="100%" stop-color="#890524" />
-                </linearGradient>
+                </radialGradient>
 
-                <!-- pita pakai pink → cherry → wine cherry -->
-                <linearGradient id="bc-ribbon" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#ffe3f0" />
-                    <stop offset="45%" stop-color="#f28ab2" />
-                    <stop offset="100%" stop-color="#890524" />
-                </linearGradient>
-
-                <!-- batang pakai truffle dust → bitter cocoa -->
-                <linearGradient id="bc-stem" x1="0%" y1="0%" x2="0%" y2="100%">
+                <!-- batang: truffle dust -> bitter cocoa -->
+                <linearGradient id="hc-stem" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" stop-color="#6a4e4a" />
                     <stop offset="100%" stop-color="#362320" />
                 </linearGradient>
             </defs>
 
-            <!-- garis lembut kiri–kanan (agak samar) -->
-            <path d="M0,165
-                       C220,145 440,190 720,170
-                       C1000,150 1220,195 1440,175" fill="none" stroke="url(#bc-line)" stroke-width="26"
-                stroke-linecap="round" opacity="0.35" />
+            <!-- bayangan lembut -->
+            <ellipse cx="70" cy="96" rx="32" ry="10" fill="#d0d1c9" opacity="0.35" />
 
-            <!-- grup cherry + pita di tengah -->
-            <g transform="translate(670,42)" opacity="0.9">
-                <!-- back glow lembut -->
-                <ellipse cx="58" cy="92" rx="60" ry="52" fill="#ffeef6" opacity="0.7" />
+            <!-- batang bentuk hati -->
+            <path d="M45,36
+                   C40,26 42,16 50,12
+                   C58,8 66,12 70,18
+                   C74,12 82,8 90,12
+                   C98,16 100,26 95,36
+                   C90,46 80,54 70,62
+                   C60,54 50,46 45,36Z" fill="none" stroke="url(#hc-stem)" stroke-width="3.2" stroke-linecap="round"
+                stroke-linejoin="round" />
 
-                <!-- batang (smooth) -->
-                <path d="M46,78 C42,60 42,46 46,30" fill="none" stroke="url(#bc-stem)" stroke-width="3.5"
-                    stroke-linecap="round" />
-                <path d="M72,80 C76,60 78,44 76,28" fill="none" stroke="url(#bc-stem)" stroke-width="3.5"
-                    stroke-linecap="round" />
+            <!-- tangkai turun ke buah kiri -->
+            <path d="M62,60 C56,70 54,78 53,86" fill="none" stroke="url(#hc-stem)" stroke-width="3"
+                stroke-linecap="round" />
 
-                <!-- pita (lebih melengkung halus) -->
-                <!-- knot -->
-                <ellipse cx="59" cy="32" rx="9" ry="7" fill="url(#bc-ribbon)" />
+            <!-- tangkai turun ke buah kanan -->
+            <path d="M78,60 C84,70 86,78 87,86" fill="none" stroke="url(#hc-stem)" stroke-width="3"
+                stroke-linecap="round" />
 
-                <!-- loop kiri -->
-                <path d="M55,32
-                           C32,20 22,20 18,30
-                           C15,39 22,47 34,46
-                           C43,45 49,40 53,37" fill="none" stroke="url(#bc-ribbon)" stroke-width="8"
-                    stroke-linecap="round" stroke-linejoin="round" />
+            <!-- cherry kiri -->
+            <circle cx="52" cy="88" r="18" fill="url(#hc-cherry)" />
+            <!-- cherry kanan -->
+            <circle cx="88" cy="88" r="18" fill="url(#hc-cherry)" />
 
-                <!-- loop kanan -->
-                <path d="M63,32
-                           C86,20 96,20 100,30
-                           C103,39 96,47 84,46
-                           C75,45 69,40 65,37" fill="none" stroke="url(#bc-ribbon)" stroke-width="8"
-                    stroke-linecap="round" stroke-linejoin="round" />
+            <!-- highlight glossy kiri -->
+            <ellipse cx="46" cy="80" rx="6" ry="4" fill="#ffeef7" opacity="0.9" />
+            <ellipse cx="57" cy="93" rx="4" ry="2.6" fill="#ffeef7" opacity="0.65" />
 
-                <!-- ekor pita kiri -->
-                <path d="M54,37
-                           C46,50 42,62 40,78" fill="none" stroke="url(#bc-ribbon)" stroke-width="7"
-                    stroke-linecap="round" opacity="0.9" />
-                <!-- ekor pita kanan -->
-                <path d="M64,37
-                           C72,50 76,62 78,80" fill="none" stroke="url(#bc-ribbon)" stroke-width="7"
-                    stroke-linecap="round" opacity="0.9" />
-
-                <!-- cherries (sedikit lebih bulat & lembut) -->
-                <circle cx="42" cy="102" r="20" fill="url(#bc-cherry)" />
-                <circle cx="78" cy="104" r="20" fill="url(#bc-cherry)" />
-
-                <!-- highlight cherry biar nggak kaku -->
-                <ellipse cx="36" cy="95" rx="6" ry="4" fill="#ffeef7" opacity="0.85" />
-                <ellipse cx="72" cy="97" rx="6" ry="4" fill="#ffeef7" opacity="0.85" />
-            </g>
+            <!-- highlight glossy kanan -->
+            <ellipse cx="82" cy="80" rx="6" ry="4" fill="#ffeef7" opacity="0.9" />
+            <ellipse cx="93" cy="93" rx="4" ry="2.6" fill="#ffeef7" opacity="0.65" />
         </svg>
     </div>
 
@@ -585,6 +552,125 @@
 
         </div>
     </section>
+
+    {{-- 🍰 Cake Icon Divider B'cake --}}
+    <div class="bcake-ribbon-wrap">
+        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" class="bcake-cake-svg w-[150px] h-[110px]"
+            aria-hidden="true">
+            <defs>
+                <!-- garis lembut pakai icing mist -->
+                <linearGradient id="bc-line" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#d0d1c9" />
+                    <stop offset="50%" stop-color="#d0d1c9" />
+                    <stop offset="100%" stop-color="#d0d1c9" />
+                </linearGradient>
+
+                <!-- atas kue: coklat tapi glossy -->
+                <radialGradient id="bc-top" cx="30%" cy="20%" r="80%">
+                    <stop offset="0%" stop-color="#6a4e4a" />
+                    <stop offset="40%" stop-color="#362320" />
+                    <stop offset="100%" stop-color="#57091d" />
+                </radialGradient>
+
+                <!-- sisi kue: sedikit lebih terang -->
+                <linearGradient id="bc-side" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#890524" />
+                    <stop offset="100%" stop-color="#6a4e4a" />
+                </linearGradient>
+
+                <!-- filling di dalam slice -->
+                <linearGradient id="bc-filling" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ffe6c4" />
+                    <stop offset="100%" stop-color="#f2c07a" />
+                </linearGradient>
+
+                <!-- cherry -->
+                <linearGradient id="bc-cherry" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ffd7e6" />
+                    <stop offset="100%" stop-color="#890524" />
+                </linearGradient>
+
+                <!-- batang cherry -->
+                <linearGradient id="bc-stem" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#6a4e4a" />
+                    <stop offset="100%" stop-color="#362320" />
+                </linearGradient>
+            </defs>
+
+            <!-- garis divider lembut -->
+            <path d="M0,90 C40,82 80,86 120,84 C140,83 150,82 160,80" fill="none" stroke="url(#bc-line)"
+                stroke-width="6" stroke-linecap="round" opacity="0.35" />
+
+            <!-- bayangan lembut di bawah kue -->
+            <ellipse cx="80" cy="88" rx="42" ry="10" fill="#d0d1c9" opacity="0.25" />
+
+            <!-- ===== KUE UTAMA (tanpa slice) ===== -->
+            <!-- sisi -->
+            <path d="M38,52
+                       C38,64 38,74 38,80
+                       C38,88 122,88 122,80
+                       C122,74 122,64 122,52
+                       Z" fill="url(#bc-side)" />
+            <!-- atas -->
+            <ellipse cx="80" cy="52" rx="42" ry="14" fill="url(#bc-top)" />
+
+            <!-- beberapa garis potongan tipis di atas kue -->
+            <path d="M80,38 L80,66" stroke="#362320" stroke-width="1.3" opacity="0.55" />
+            <path d="M58,40 L66,64" stroke="#362320" stroke-width="1.1" opacity="0.45" />
+            <path d="M102,40 L94,64" stroke="#362320" stroke-width="1.1" opacity="0.45" />
+
+            <!-- beberapa cherry kecil di atas -->
+            <g opacity="0.95">
+                <g>
+                    <path d="M52,30 C52,24 50,20 48,17" fill="none" stroke="url(#bc-stem)" stroke-width="1.4" />
+                    <circle cx="52" cy="32" r="4.2" fill="url(#bc-cherry)" />
+                    <circle cx="50.5" cy="30.5" r="1.5" fill="#ffeef7" opacity="0.9" />
+                </g>
+                <g>
+                    <path d="M80,26 C80,20 79,16 77,13" fill="none" stroke="url(#bc-stem)" stroke-width="1.4" />
+                    <circle cx="80" cy="28" r="4.2" fill="url(#bc-cherry)" />
+                    <circle cx="78.5" cy="26.5" r="1.5" fill="#ffeef7" opacity="0.9" />
+                </g>
+                <g>
+                    <path d="M108,30 C108,24 110,20 112,17" fill="none" stroke="url(#bc-stem)" stroke-width="1.4" />
+                    <circle cx="108" cy="32" r="4.2" fill="url(#bc-cherry)" />
+                    <circle cx="106.5" cy="30.5" r="1.5" fill="#ffeef7" opacity="0.9" />
+                </g>
+            </g>
+
+            <!-- ===== SLICE YANG BERGERAK KELUAR-MASUK ===== -->
+            <g class="bcake-cake-slice">
+                <!-- sisi slice -->
+                <path d="M80,52
+                           L120,44
+                           C124,45 128,49 127,54
+                           L123,80
+                           C122,84 118,86 114,86
+                           L80,82 Z" fill="url(#bc-side)" />
+
+                <!-- filling di dalam slice -->
+                <path d="M82,54
+                           L118,47
+                           C121,48 123,51 122,54
+                           L119,78
+                           C118,80 116,82 113,82
+                           L82,79 Z" fill="url(#bc-filling)" opacity="0.95" />
+
+                <!-- garis layer dalam slice -->
+                <path d="M83,60 L119,53" stroke="#d8a869" stroke-width="1.3" opacity="0.9" />
+                <path d="M83,66 L118,60" stroke="#d8a869" stroke-width="1.3" opacity="0.9" />
+                <path d="M84,72 L117,67" stroke="#d8a869" stroke-width="1.3" opacity="0.9" />
+
+                <!-- cherry di atas slice -->
+                <g transform="translate(118,40)">
+                    <path d="M0,-6 C-1,-10 -2,-14 -3,-17" fill="none" stroke="url(#bc-stem)" stroke-width="1.3" />
+                    <circle cx="0" cy="-3" r="4" fill="url(#bc-cherry)" />
+                    <circle cx="-1" cy="-4.5" r="1.4" fill="#ffeef7" opacity="0.9" />
+                </g>
+            </g>
+        </svg>
+    </div>
+
 
     {{-- ============ REKOMENDASI SPESIAL ============ --}}
     <section id="rekomendasi" class="max-w-7xl mx-auto px-6 py-14">
@@ -786,48 +872,5 @@
         </div>
     </section>
 
-    <footer class="relative mt-16 w-full bg-[#f7e3e7] text-bcake-truffle pt-10 pb-6 overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-6 bg-repeat-x"
-            style="background-image: url('{{ asset('image/lace-border.png') }}'); background-size: auto 100%;">
-        </div>
-
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex flex-col md:flex-row justify-between items-center md:items-start gap-6 md:gap-12">
-                <div class="text-center md:text-left">
-                    <h2 class="font-display text-3xl text-bcake-wine">B’cake</h2>
-                    <p class="mt-2 italic text-bcake-truffle/80">“Because elegance can be sweet.”</p>
-                </div>
-
-                <div class="text-center">
-                    <h3 class="font-medium uppercase tracking-widest text-sm text-bcake-truffle/70 mb-2">
-                        Contact &amp; Socials
-                    </h3>
-                    <div class="flex justify-center md:justify-start gap-4 mt-3">
-                        <a href="#"
-                            class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
-                            <i class="fa-brands fa-instagram text-lg"></i>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
-                            <i class="fa-brands fa-whatsapp text-lg"></i>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
-                            <i class="fa-brands fa-tiktok text-lg"></i>
-                        </a>
-                        <a href="mailto:hello@bcake.local"
-                            class="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-bcake-wine hover:text-white transition">
-                            <i class="fa-solid fa-envelope text-lg"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="text-center md:text-right">
-                    <p class="text-sm text-bcake-truffle/70">© {{ date('Y') }} B’cake Bakery. All rights reserved.</p>
-                    <p class="text-xs text-bcake-truffle/60">Designed with 🍒 by Team B’cake</p>
-                </div>
-            </div>
-        </div>
-    </footer>
 
 @endsection

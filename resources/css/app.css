@@ -114,16 +114,106 @@ body {
 }
 
 /* -------------------------------------------------------
-   🎀 Cherry Ribbon Divider (antara hero dan section berikutnya)
+   🍰 B’cake Cake Divider Icon (di bawah hero)
 --------------------------------------------------------*/
 .bcake-ribbon-wrap {
-  margin-top: -10px;    /* nempel ke scallop hero */
-  margin-bottom: 40px;  /* jarak ke section berikutnya */
+  margin-top: 16px;      /* nempel ke scallop hero */
+  margin-bottom: -45px;   /* jarak ke section berikutnya */
+  display: flex;
+  justify-content: center;
 }
 
-.bcake-ribbon-shadow {
-  filter: drop-shadow(0 12px 24px rgba(137, 5, 36, 0.16));
+/* SVG helper */
+.bcake-cake-svg {
+  overflow: visible;
 }
+
+/* Animasi slice keluar-masuk */
+@keyframes bcake-slice-move {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  30% {
+    transform: translate(18px, 6px);  /* geser dikit ke kanan & turun */
+  }
+  60% {
+    transform: translate(0, 0);
+  }
+}
+
+/* supaya transform bekerja di SVG */
+.bcake-cake-slice {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bcake-slice-move 3.8s ease-in-out infinite;
+}
+
+/* -------------------------------------------------------
+   🍒 Heart Cherry Icon (glossy, imut)
+--------------------------------------------------------*/
+.bcake-heart-cherry-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 45px;   /* atur sesuai posisi */
+}
+
+.bcake-heart-cherry-svg {
+  overflow: visible;
+  filter: drop-shadow(0 10px 22px rgba(137, 5, 36, 0.28));
+}
+
+/* animasi ngambang manis */
+@keyframes bcake-heart-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+
+.bcake-heart-cherry-svg {
+  animation: bcake-heart-float 4.8s ease-in-out infinite;
+}
+
+/* -------------------------------------------------------
+   🍰 B’cake Footer — stripes horizontal + scallop
+--------------------------------------------------------*/
+.bcake-footer-wrap {
+  margin-top: 80px; /* jarak dari section sebelumnya */
+}
+
+.bcake-footer-bg {
+  position: relative;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      #f7d2da 0px,     /* pink muda */
+      #f7d2da 22px,
+      #b55c69 22px,   /* wine */
+      #b55c69 44px
+    );
+  padding-top: 36px; /* space untuk scallop */
+}
+
+/* scallop atas */
+.bcake-footer-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 36px;
+  background:
+    radial-gradient(circle at 18px 18px, #ffeef2 18px, transparent 19px);
+  background-size: 36px 36px;
+  transform: translateY(-18px);
+}
+
+/* footer card */
+.bcake-footer-inner {
+  background: rgba(255, 247, 248, 0.92);
+  border-radius: 1.75rem;
+  box-shadow: 0 10px 35px rgba(137,5,36,0.15);
+  padding: 32px 40px;
+}
+
 
 /* -------------------------------------------------------
    💫 Custom Utility Tambahan (mask lengkung hero)

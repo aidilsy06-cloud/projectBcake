@@ -240,6 +240,58 @@ body {
 .bcake-footer-social:nth-child(3) { animation: bcake-bounce 3.8s infinite ease-in-out; }
 .bcake-footer-social:nth-child(4) { animation: bcake-bounce 4.6s infinite ease-in-out; }
 
+/* =======================================================
+   📖 B’cake Help Page Animations (Bantuan)
+======================================================= */
+
+/* wrapper awalnya invisible */
+.bcake-help-card-wrap {
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* --- ANIMASI MASUK --- */
+@keyframes bcake-help-in-left {
+  0%   { opacity: 0; transform: translateX(-40px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes bcake-help-in-right {
+  0%   { opacity: 0; transform: translateX(40px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes bcake-help-in-up {
+  0%   { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* arah animasi */
+.bcake-help-from-left {
+  animation: bcake-help-in-left 0.75s cubic-bezier(.18,.89,.32,1.18) forwards;
+}
+.bcake-help-from-right {
+  animation: bcake-help-in-right 0.75s cubic-bezier(.18,.89,.32,1.18) forwards;
+}
+.bcake-help-from-bottom {
+  animation: bcake-help-in-up 0.75s cubic-bezier(.18,.89,.32,1.18) forwards;
+}
+
+/* delay biar masuknya berurutan & smooth */
+.bcake-help-delay-1 { animation-delay: .10s; }
+.bcake-help-delay-2 { animation-delay: .22s; }
+.bcake-help-delay-3 { animation-delay: .34s; }
+
+/* --- ANIMASI NGAMBANG HALUS (inner card) --- */
+@keyframes bcake-help-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+.bcake-help-float {
+  animation: bcake-help-float 4.2s 1s ease-in-out infinite alternate;
+}
+
 /* -------------------------------------------------------
    💫 Custom Utility Tambahan (mask lengkung hero)
 --------------------------------------------------------*/

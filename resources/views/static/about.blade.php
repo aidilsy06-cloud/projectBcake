@@ -86,22 +86,110 @@
   .team-badge span:first-child{
     font-size:.9rem;
   }
+
+  /* ===== HERO STRIPES + GERIGI BAWAH ala BAKING TASTE ===== */
+  .about-logo-hero{
+    position: relative;
+    width: 100%;
+    border-radius: 2.4rem;
+    padding: 4.4rem 1.8rem 4.6rem; /* ruang atas lebih besar supaya logo turun */
+    overflow: hidden;
+    box-shadow: 0 32px 90px rgba(137,5,36,0.18);
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        #f8c6d8 0px,
+        #f8c6d8 30px,
+        #f18fb0 30px,
+        #f18fb0 60px
+      );
+  }
+
+  /* gerigi putih di bawah, nyambung ke background */
+  .about-logo-hero::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:36px;
+    background:
+      radial-gradient(circle at 18px -2px, transparent 18px, #fff7f8 19px)
+      0 0 / 36px 36px repeat-x;
+    z-index:1;
+  }
+
+  /* kartu logo (sebagai cupcake) */
+  .about-logo-card{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding: 1.4rem 1.6rem;
+    border-radius: 1.2rem;
+    background:#5b061d; /* bcake wine */
+    box-shadow:0 20px 50px rgba(91,6,29,0.55);
+    position: relative;
+    z-index:3;
+    margin-top: 1.2rem;   /* turunin logo ke tengah banner */
+    margin-bottom: 1.2rem;
+  }
+
+  .about-hero-title{
+    font-family: 'Playfair Display', 'Poppins', system-ui, serif;
+    font-size: clamp(2.2rem, 4vw, 3.1rem);
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color:#fff;
+    text-shadow:0 3px 16px rgba(137,5,36,.45);
+  }
+
+  .about-hero-sub{
+    font-size:.92rem;
+    max-width: 30rem;
+    color:#ffeef6;
+  }
 </style>
 @endpush
 
 @section('content')
 <section class="space-y-14 md:space-y-16">
-   {{-- TOMBOL KEMBALI --}}
-        <div>
-            <a href="javascript:history.back()"
-                class="inline-flex items-center gap-2 px-5 py-2 rounded-full 
-          bg-rose-200 text-bcake-wine font-medium 
-          shadow-md hover:bg-rose-300 hover:shadow-lg transition">
-                ← Kembali
-            </a>
 
+    {{-- TOMBOL KEMBALI --}}
+    <div>
+        <a href="javascript:history.back()"
+           class="inline-flex items-center gap-2 px-5 py-2 rounded-full 
+                  bg-rose-200 text-bcake-wine font-medium 
+                  shadow-md hover:bg-rose-300 hover:shadow-lg transition">
+            ← Kembali
+        </a>
+    </div>
 
-    {{-- HERO --}}
+    {{-- HERO ala BAKING TASTE: logo = cupcake, text = TENTANG B’CAKE --}}
+    <div class="max-w-5xl mx-auto" data-aos="fade-up">
+        <div class="about-logo-hero mb-10 flex flex-col items-center gap-4 text-center">
+
+            {{-- “cupcake” pakai logo B’cake --}}
+            <div class="about-logo-card">
+                <img src="{{ asset('image/logo_bcake.jpg') }}"
+                     alt="Logo B’cake"
+                     class="w-16 h-16 md:w-20 md:h-20 object-contain">
+            </div>
+
+            {{-- judul besar di dalam banner --}}
+            <h1 class="about-hero-title">
+                Tentang B’cake
+            </h1>
+
+            {{-- subjudul kecil di dalam banner --}}
+            <p class="about-hero-sub">
+                Marketplace kue elegan yang mempertemukan baker &amp; UMKM lokal Bengkalis
+                dengan pecinta dessert dalam satu ruang digital yang manis dan hangat.
+            </p>
+        </div>
+    </div>
+
+    {{-- HERO KONTEN --}}
     <div class="page-bg-about rounded-3xl border border-rose-100/70 px-6 py-9 md:px-12 md:py-12 relative overflow-hidden"
          data-aos="fade-up">
         <div class="absolute -right-24 -bottom-20 w-72 h-72 rounded-full bg-rose-200/40 blur-3xl"></div>
@@ -111,12 +199,12 @@
             <div>
                 <span class="pill-soft-about inline-flex items-center gap-2 mb-4 text-rose-700/80">
                     <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-rose-600 text-white text-[10px]">i</span>
-                    Tentang B’cake
+                    Profil singkat
                 </span>
 
-                <h1 class="font-display text-[1.9rem] md:text-[2.4rem] leading-snug text-rose-900 mb-3">
+                <h2 class="font-display text-[1.9rem] md:text-[2.4rem] leading-snug text-rose-900 mb-3">
                     Marketplace kue elegan<br class="hidden md:block"> untuk Bengkalis.
-                </h1>
+                </h2>
                 <p class="text-[.9rem] md:text-[.95rem] text-bcake-truffle/90 leading-relaxed max-w-xl">
                     B’cake adalah platform pemesanan kue yang mempertemukan
                     <span class="font-medium text-bcake-wine">baker &amp; UMKM lokal</span> dengan pecinta dessert
@@ -214,14 +302,13 @@
                     <span>🍓</span><span>UI &amp; konten</span>
                 </div>
                 <div class="team-photo mb-4">
-                    {{-- nanti bisa diganti <img src="..." class="w-full h-full object-cover rounded-[1.1rem]" /> --}}
                     W
                 </div>
                 <p class="font-semibold text-bcake-wine text-base md:text-lg">Warda Widya Ningsih</p>
                 <p class="text-xs text-bcake-truffle/80 mt-1">Desain Antarmuka &amp; Konten</p>
             </div>
 
-            {{-- Aidil (tengah) --}}
+            {{-- Aidil --}}
             <div class="team-card px-5 py-7 flex flex-col items-center text-center">
                 <div class="team-badge">
                     <span>🍒</span><span>Developer</span>

@@ -292,6 +292,96 @@ body {
   animation: bcake-help-float 4.2s 1s ease-in-out infinite alternate;
 }
 
+/* ===== HERO FULL WIDTH dengan STRIPES & FADE ===== */
+.about-logo-hero-full{
+  position: relative;
+  width: 100vw;
+  height: 240px;
+  border-radius: 2.4rem;
+  overflow: hidden;
+  box-shadow: 0 40px 120px rgba(137,5,36,0.22);
+
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      #f8c6d8 0px,
+      #f8c6d8 30px,
+      #f18fb0 30px,
+      #f18fb0 60px
+    );
+}
+
+/* Gerigi putih atas */
+.about-logo-hero-full::before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:-22px;
+  height:44px;
+  background:
+    radial-gradient(circle at 22px 22px,#fff 22px,transparent 23px)
+    0 0 / 44px 44px repeat-x;
+  z-index:3;
+}
+
+/* Gerigi bawah */
+.about-logo-hero-full::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-22px;
+  height:44px;
+  background:
+    radial-gradient(circle at 22px 0,#f18fb0 22px,transparent 23px)
+    0 0 / 44px 44px repeat-x;
+  z-index:3;
+}
+
+/* Fade ke kiri */
+.fade-left{
+  position:absolute;
+  top:0;
+  left:0;
+  width:180px;
+  height:100%;
+  background: linear-gradient(
+    to right,
+    #fff7f8 0%,
+    transparent 85%
+  );
+  z-index:4;
+}
+
+/* Fade ke kanan */
+.fade-right{
+  position:absolute;
+  top:0;
+  right:0;
+  width:180px;
+  height:100%;
+  background: linear-gradient(
+    to left,
+    #fff7f8 0%,
+    transparent 85%
+  );
+  z-index:4;
+}
+
+/* Kartu logo */
+.about-logo-card{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 1.4rem 1.6rem;
+  border-radius: 1rem;
+  background:#5b061d;
+  box-shadow:0 24px 55px rgba(91,6,29,0.55);
+  margin-top: -4.8rem; /* pas naik dari tengah */
+}
+
+
 /* -------------------------------------------------------
    💫 Custom Utility Tambahan (mask lengkung hero)
 --------------------------------------------------------*/

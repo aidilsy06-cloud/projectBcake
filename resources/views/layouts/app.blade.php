@@ -174,14 +174,22 @@
                             class="relative flex-1 min-w-0 max-w-xl" role="search">
                             <input name="q" type="text" placeholder="Cari kue…"
                                 class="w-full rounded-full border border-rose-200/70 bg-white/70 px-4 py-2 text-sm
-                                          focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-rose-400"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
-                            </svg>
+               focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300">
+
+                            {{-- tombol search (ikon bisa diklik) --}}
+                            <button type="submit"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center
+               h-7 w-7 rounded-full bg-white/80 border border-rose-200/70
+               hover:border-rose-400 hover:bg-rose-50
+               focus:outline-none focus:ring-2 focus:ring-rose-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-rose-500"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+                                </svg>
+                            </button>
                         </form>
+
                     </div>
 
                     {{-- actions kanan --}}

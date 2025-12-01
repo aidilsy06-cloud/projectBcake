@@ -13,26 +13,37 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::with(['store', 'category'])
-            ->where('status', 'approved');  // 🔒 hanya produk yang sudah diverifikasi admin
+        // ambil produk + relasi toko & kategori
+        $query = Product::with(['store', 'category']);
+        // ->where('status', 'approved');  // ❌ DIHAPUS karena di tabel tidak ada kolom status
 
-        // Search ?q=
+        // ==========================
+        //  🔍 PENCARIAN ?q=
+        // ==========================
         if ($request->filled('q')) {
-            $q = $request->q;
+            $q = trim($request->q);
+
             $query->where(function ($sub) use ($q) {
                 $sub->where('name', 'like', "%{$q}%")
-                    ->orWhereHas('store', fn ($s) => $s->where('name', 'like', "%{$q}%"));
+                    ->orWhereHas('store', function ($s) use ($q) {
+                        $s->where('name', 'like', "%{$q}%");
+                    });
             });
         }
 
-        // Filter kategori lewat ?category_id=xx (kalau kamu pakai)
+        // ==========================
+        //  FILTER KATEGORI ?category_id=
+        // ==========================
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
         }
 
         $products = $query->latest()->paginate(12);
 
-        // Kategori untuk sidebar/filter (tampilan yang di home / katalog jangan diubah layout-nya)
+        // flag untuk tampilan "pencarian tidak ditemukan"
+        $notFound = $request->filled('q') && $products->isEmpty();
+
+        // Kategori untuk sidebar/filter
         $categories = Category::orderBy('name')->get();
 
         return view('products.index', [
@@ -40,6 +51,7 @@ class ProductController extends Controller
             'categories'        => $categories,
             'currentCategoryId' => $request->category_id,
             'q'                 => $request->q,
+            'notFound'          => $notFound,   // ⬅️ kirim ke blade
         ]);
     }
 
@@ -50,19 +62,18 @@ class ProductController extends Controller
     public function byCategory(Category $category, Request $request)
     {
         $products = Product::with(['store', 'category'])
-            ->where('status', 'approved')          // 🔒 hanya produk disetujui
+            // ->where('status', 'approved')   // ❌ DIHAPUS juga
             ->where('category_id', $category->id)
             ->latest()
             ->paginate(12);
 
-        // kalau view kamu butuh list kategori di samping, tetap kirim
         $categories = Category::orderBy('name')->get();
 
         return view('products.by-category', [
-            'category'         => $category,
-            'products'         => $products,
-            'categories'       => $categories,
-            'currentCategoryId'=> $category->id,
+            'category'          => $category,
+            'products'          => $products,
+            'categories'        => $categories,
+            'currentCategoryId' => $category->id,
         ]);
     }
 
@@ -72,13 +83,16 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        // Extra keamanan: pembeli cuma boleh lihat produk approved
+        // Kalau nanti kamu bikin kolom status di tabel products,
+        // bagian ini boleh dipakai lagi dengan penyesuaian.
+        // Untuk sekarang, cek ini aman-aman aja (status akan null).
+        /*
         if ($product->status !== 'approved') {
-            // kalau mau, bisa izinkan admin/seller untuk lihat detail walau pending
             if (!auth()->check() || ! in_array(auth()->user()->role, ['admin', 'seller'])) {
                 abort(404);
             }
         }
+        */
 
         $product->load(['store', 'category']);
 

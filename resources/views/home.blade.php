@@ -225,19 +225,18 @@
 @section('content')
 
     {{-- ================= HERO CUPCAKE SIMPLE (MODEL BARU, SMOOTH) ================= --}}
-    {{-- ================= HERO CUPCAKE SIMPLE (MODEL BARU, SMOOTH) ================= --}}
     <section class="w-full overflow-visible relative">
         <div x-data="{
             active: 0,
             slides: [{
                     image: '{{ asset('image/slicecake.jpg') }}',
-                    title: 'Indulge in Every Sweet Creation.',
-                    tagline: 'Kelezatan yang dibuat penuh cinta oleh baker lokal — siap memanjakan setiap momen spesialmu.'
+                    title: 'Welcome to a world of sweetness.',
+                    tagline: 'Dunia manis yang hangat untuk menyenangkan hati.'
                 },
                 {
                     image: '{{ asset('image/longcake.jpg') }}',
-                    title: 'Delicate. Dreamy. Delightful.',
-                    tagline: 'Kue lembut berlapis krim manis dan buah segar, dibuat khusus untuk momen yang pengin terasa lebih istimewa.'
+                    title: 'Cute treats, happy hearts.',
+                    tagline: 'Cemilan imut, memberi kebahagiaan dan hari yang manis.'
                 }
             ],
             next() { this.active = (this.active + 1) % this.slides.length },

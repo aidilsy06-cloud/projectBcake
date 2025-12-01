@@ -14,17 +14,6 @@
     font-display: swap;
 }
 
-/* (nanti tambahkan Playfair Display di sini kalau sudah ada file-nya) */
-
-html {
-    font-family: 'Poppins', system-ui, sans-serif;
-    font-size: 16px;
-}
-body {
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-}
-
 /* -------------------------------------------------------
    🅱️ TAILWIND IMPORT (jangan dipindah)
 --------------------------------------------------------*/
@@ -33,11 +22,36 @@ body {
 @tailwind utilities;
 
 /* -------------------------------------------------------
+   🧱 GLOBAL RESET & LAYOUT FIX
+   (biar ga geser kiri-kanan / scroll horizontal)
+--------------------------------------------------------*/
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden !important;
+    font-family: 'Poppins', system-ui, sans-serif;
+    font-size: 16px;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* -------------------------------------------------------
    🌸 B’cake Global Style Helpers
 --------------------------------------------------------*/
 .grain {
     @apply bg-grain bg-[length:12px_12px] bg-repeat;
 }
+
 .btn {
     @apply inline-flex items-center justify-center font-medium rounded-xl2 px-5 py-3 shadow-soft transition;
 }
@@ -118,7 +132,7 @@ body {
 --------------------------------------------------------*/
 .bcake-ribbon-wrap {
   margin-top: 16px;      /* nempel ke scallop hero */
-  margin-bottom: -45px;   /* jarak ke section berikutnya */
+  margin-bottom: -45px;  /* jarak ke section berikutnya */
   display: flex;
   justify-content: center;
 }
@@ -292,15 +306,20 @@ body {
   animation: bcake-help-float 4.2s 1s ease-in-out infinite alternate;
 }
 
-/* ===== HERO FULL WIDTH dengan STRIPES & FADE ===== */
-.about-logo-hero-full{
+/* =======================================================
+   🎀 ABOUT LOGO HERO (STRIPES) — dibuat rapi & center
+======================================================= */
+
+/* wrapper hero about: lebar ikut container, tidak bikin scroll */
+.about-logo-hero-full {
   position: relative;
-  width: 100vw;
+  width: 100%;
+  max-width: 1200px;   /* biar rapi di tengah */
+  margin: 0 auto;
   height: 240px;
   border-radius: 2.4rem;
   overflow: hidden;
   box-shadow: 0 40px 120px rgba(137,5,36,0.22);
-
   background:
     repeating-linear-gradient(
       to bottom,
@@ -380,7 +399,6 @@ body {
   box-shadow:0 24px 55px rgba(91,6,29,0.55);
   margin-top: -4.8rem; /* pas naik dari tengah */
 }
-
 
 /* -------------------------------------------------------
    💫 Custom Utility Tambahan (mask lengkung hero)

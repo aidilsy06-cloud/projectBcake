@@ -289,10 +289,10 @@
 
             {{-- ============== DESKTOP HERO (≥ md) ============== --}}
             <div class="hidden md:block overflow-visible relative">
-                <div class="hero-cupcake-bg hero-scallop-wrap">
-                    <div
-                        class="relative max-w-6xl mx-auto px-6 md:px-12 py-16
-                           min-h-[440px] lg:min-h-[500px]">
+                {{-- STRIPES: agak lebar, center, tapi masih ada ruang buat panah --}}
+                <div class="hero-cupcake-bg hero-scallop-wrap max-w-6xl mx-auto rounded-[2.3rem]">
+                    <div class="relative px-8 lg:px-10 py-10
+                           min-h-[360px] lg:min-h-[400px]">
 
                         <template x-for="(s, i) in slides" :key="'d-' + i">
                             <div class="absolute inset-0 grid grid-cols-2 items-center gap-10
@@ -303,27 +303,26 @@
 
                                 {{-- FOTO --}}
                                 <div class="order-1 md:order-2 flex justify-center items-center">
-                                    <div
-                                        class="w-full max-w-xl h-[340px] lg:h-[380px] shadow-xl rounded-3xl overflow-hidden">
-                                        <img :src="s.image" class="w-full h-full object-cover">
+                                    <div class="hero-photo-scallop w-full max-w-xl h-[260px] lg:h-[310px] shadow-xl">
+                                        <img :src="s.image">
                                     </div>
                                 </div>
 
                                 {{-- TEKS --}}
-                                <div class="order-2 md:order-1 text-left space-y-4">
+                                <div class="order-2 md:order-1 text-left space-y-5">
                                     <div class="hero-text-panel">
-                                        <h2 class="font-display text-4xl lg:text-5xl leading-tight hero-title"
+                                        <h2 class="font-display text-[2.1rem] lg:text-[2.5rem] leading-tight hero-title"
                                             x-text="s.title"></h2>
 
                                         <p class="hero-tagline max-w-md leading-relaxed text-sm lg:text-base"
                                             x-text="s.tagline"></p>
                                     </div>
 
-                                    <div class="pt-3">
+                                    <div class="pt-1">
                                         <a href="{{ route('products.index') }}"
                                             class="inline-flex items-center justify-center px-7 py-3 rounded-full
                                               bg-bcake-cherry hover:bg-bcake-wine text-white font-medium
-                                              shadow-md transition">
+                                              shadow-md transition text-sm lg:text-base">
                                             Order Now
                                         </a>
                                     </div>
@@ -335,21 +334,21 @@
                     </div>
                 </div>
 
-                {{-- PANAH KIRI --}}
+                {{-- PANAH KIRI (kecil & bulat) --}}
                 <button @click="prev()"
-                    class="hidden md:flex absolute left-[-70px] top-1/2 -translate-y-1/2 
-                       h-12 w-12 rounded-full items-center justify-center
-                       bg-[#890524] text-white shadow-2xl border-2 border-[#57091d]
-                       hover:bg-[#57091d] hover:scale-[1.08] transition z-50">
+                    class="hidden md:flex absolute left-3 lg:left-6 top-1/2 -translate-y-1/2 
+                       h-8 w-8 rounded-full items-center justify-center text-sm
+                       bg-[#890524] text-white shadow-2xl border border-[#57091d]
+                       hover:bg-[#57091d] hover:scale-[1.10] transition z-50">
                     ‹
                 </button>
 
                 {{-- PANAH KANAN --}}
                 <button @click="next()"
-                    class="hidden md:flex absolute right-[-70px] top-1/2 -translate-y-1/2 
-                       h-12 w-12 rounded-full items-center justify-center
-                       bg-[#890524] text-white shadow-2xl border-2 border-[#57091d]
-                       hover:bg-[#57091d] hover:scale-[1.08] transition z-50">
+                    class="hidden md:flex absolute right-3 lg:right-6 top-1/2 -translate-y-1/2 
+                       h-8 w-8 rounded-full items-center justify-center text-sm
+                       bg-[#890524] text-white shadow-2xl border border-[#57091d]
+                       hover:bg-[#57091d] hover:scale-[1.10] transition z-50">
                     ›
                 </button>
 
@@ -362,7 +361,6 @@
                     </template>
                 </div>
             </div>
-
         </div>
     </section>
 
@@ -390,13 +388,13 @@
 
             <!-- batang bentuk hati -->
             <path d="M45,36
-                   C40,26 42,16 50,12
-                   C58,8 66,12 70,18
-                   C74,12 82,8 90,12
-                   C98,16 100,26 95,36
-                   C90,46 80,54 70,62
-                   C60,54 50,46 45,36Z" fill="none" stroke="url(#hc-stem)" stroke-width="3.2" stroke-linecap="round"
-                stroke-linejoin="round" />
+                           C40,26 42,16 50,12
+                           C58,8 66,12 70,18
+                           C74,12 82,8 90,12
+                           C98,16 100,26 95,36
+                           C90,46 80,54 70,62
+                           C60,54 50,46 45,36Z" fill="none" stroke="url(#hc-stem)" stroke-width="3.2"
+                stroke-linecap="round" stroke-linejoin="round" />
 
             <!-- tangkai turun ke buah kiri -->
             <path d="M62,60 C56,70 54,78 53,86" fill="none" stroke="url(#hc-stem)" stroke-width="3"
@@ -606,10 +604,10 @@
             <!-- ===== KUE UTAMA (tanpa slice) ===== -->
             <!-- sisi -->
             <path d="M38,52
-                       C38,64 38,74 38,80
-                       C38,88 122,88 122,80
-                       C122,74 122,64 122,52
-                       Z" fill="url(#bc-side)" />
+                               C38,64 38,74 38,80
+                               C38,88 122,88 122,80
+                               C122,74 122,64 122,52
+                               Z" fill="url(#bc-side)" />
             <!-- atas -->
             <ellipse cx="80" cy="52" rx="42" ry="14" fill="url(#bc-top)" />
 
@@ -641,19 +639,19 @@
             <g class="bcake-cake-slice">
                 <!-- sisi slice -->
                 <path d="M80,52
-                           L120,44
-                           C124,45 128,49 127,54
-                           L123,80
-                           C122,84 118,86 114,86
-                           L80,82 Z" fill="url(#bc-side)" />
+                                   L120,44
+                                   C124,45 128,49 127,54
+                                   L123,80
+                                   C122,84 118,86 114,86
+                                   L80,82 Z" fill="url(#bc-side)" />
 
                 <!-- filling di dalam slice -->
                 <path d="M82,54
-                           L118,47
-                           C121,48 123,51 122,54
-                           L119,78
-                           C118,80 116,82 113,82
-                           L82,79 Z" fill="url(#bc-filling)" opacity="0.95" />
+                                   L118,47
+                                   C121,48 123,51 122,54
+                                   L119,78
+                                   C118,80 116,82 113,82
+                                   L82,79 Z" fill="url(#bc-filling)" opacity="0.95" />
 
                 <!-- garis layer dalam slice -->
                 <path d="M83,60 L119,53" stroke="#d8a869" stroke-width="1.3" opacity="0.9" />

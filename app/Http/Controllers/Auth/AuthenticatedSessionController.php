@@ -40,26 +40,43 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // Cek email + password
+        // 1. Cek email + password (Breeze)
         $request->authenticate();
 
-        // Regenerate session untuk keamanan
+        // 2. Regenerate session untuk keamanan
         $request->session()->regenerate();
 
-        $user = Auth::user();
+        $user = $request->user(); // sama dengan Auth::user()
         $role = $user->role ?? 'buyer';
 
+        // 3. Cek OTP: hanya seller & buyer yang WAJIB is_verified = true
+        if ($role !== 'admin' && ! $user->is_verified) {
+
+            // paksa logout lagi
+            Auth::logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()
+                ->withErrors([
+                    'email' => 'Akun kamu belum diverifikasi. Cek email untuk kode OTP yang sudah dikirim ya 💌',
+                ])
+                ->onlyInput('email');
+        }
+
+        // 4. Tentukan dashboard sesuai role
         $target = match ($role) {
             'admin'  => route('admin.dashboard'),
             'seller' => route('seller.dashboard'),
             default  => route('buyer.dashboard'),
         };
 
-        // Set DUA flash sekalian, supaya semua layout bisa pakai
+        // 5. Set flash message sukses
         session()->flash('login_success', "Kamu berhasil login! Selamat datang kembali di B'cake 💗");
         session()->flash('success', "Kamu berhasil login! Selamat datang kembali di B'cake 💗");
 
-        // redirect ke dashboard sesuai role
+        // 6. Redirect ke dashboard sesuai role
         return redirect()->intended($target);
     }
 

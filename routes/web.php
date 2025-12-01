@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\OTPController; // 👉 untuk OTP
 
 // HOME publik
 use App\Http\Controllers\HomeController;
@@ -133,7 +134,7 @@ Route::middleware('auth')
     ->name('orders.success');
 
 /* ----------------------------------------
-| AUTH (LOGIN / REGISTER / LOGOUT)
+| AUTH (LOGIN / REGISTER / LOGOUT / OTP)
 |---------------------------------------- */
 Route::middleware('guest')->group(function () {
     // Login
@@ -143,8 +144,14 @@ Route::middleware('guest')->group(function () {
     // Register
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store']);
+
+    // OTP (verifikasi akun setelah register)
+    Route::get('/verify-otp', [OTPController::class, 'form'])->name('otp.form');
+    Route::post('/verify-otp', [OTPController::class, 'verify'])->name('otp.verify');
+    Route::post('/resend-otp', [OTPController::class, 'resend'])->name('otp.resend');
 });
 
+// Logout
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
@@ -206,7 +213,7 @@ Route::prefix('admin')
         // CRUD Produk
         Route::resource('products', AdminProductController::class)->except(['show']);
 
-        // ✅ route khusus update status produk
+        // route khusus update status produk
         Route::post('/products/{product}/status', [AdminProductController::class, 'updateStatus'])
             ->name('products.updateStatus');
 

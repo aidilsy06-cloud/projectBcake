@@ -8,7 +8,6 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -18,7 +17,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',   // <— DITAMBAHKAN
+        'role',          // existing
+        'is_verified',   // <— WAJIB UNTUK OTP
     ];
 
     /**
@@ -36,12 +36,13 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
+            'is_verified'       => 'boolean',   // <— Bagus untuk ease di query login
         ];
     }
 
     /**
-     * Helper role.
+     * Helper role-checking.
      */
     public function isAdmin(): bool
     {

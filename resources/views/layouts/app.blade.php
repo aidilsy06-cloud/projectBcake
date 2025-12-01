@@ -306,44 +306,78 @@
     </main>
 
     {{-- FOOTER --}}
-    <footer class="bcake-footer-wrap">
-        <div class="bcake-footer-bg">
-            <div class="max-w-6xl mx-auto px-6 lg:px-10">
+    <footer class="mt-20">
 
-                <div class="bcake-footer-inner flex flex-col md:flex-row items-center justify-between gap-8">
+        {{-- Gerigi putih --}}
+        <div class="bcake-footer-scallop w-full"></div>
 
-                    {{-- Brand kiri --}}
-                    <div class="text-center md:text-left">
-                        <div class="font-display text-2xl text-bcake-wine">B’cake</div>
-                        <p class="mt-1 text-sm italic text-bcake-truffle">
+        {{-- Stripes Footer --}}
+        <div class="bcake-footer-bg w-full py-16 flex justify-center px-6">
+
+            <div class="bcake-footer-card w-full max-w-6xl">
+
+                {{-- Main Grid --}}
+                <div class="grid md:grid-cols-3 gap-10 items-center text-center md:text-left">
+
+                    {{-- LEFT – BRAND --}}
+                    <div>
+                        <h2 class="text-3xl font-display text-bcake-wine">B’cake</h2>
+                        <p class="text-bcake-bitter mt-2 italic">
                             “Because elegance can be sweet.”
                         </p>
                     </div>
 
-                    {{-- Social center --}}
+                    {{-- CENTER – CONTACT & SOCIALS --}}
                     <div class="flex flex-col items-center">
-                        <span class="tracking-[0.25em] text-[11px] uppercase text-bcake-bitter">
-                            Contact & Socials
-                        </span>
+                        <p class="tracking-[.25em] text-sm text-bcake-bitter mb-3">
+                            CONTACT & SOCIALS
+                        </p>
 
-                        <div class="flex gap-3 mt-3">
-                            @foreach (range(1, 4) as $i)
-                                <div class="h-9 w-9 rounded-full bg-white shadow-md"></div>
-                            @endforeach
+                        <div class="flex gap-4">
+
+                            {{-- WhatsApp --}}
+                            <a href="https://wa.me/6281234567890" target="_blank" class="bcake-footer-social"
+                                aria-label="WhatsApp B’cake">
+                                💬
+                            </a>
+
+                            {{-- Instagram --}}
+                            <a href="https://instagram.com/username" target="_blank" class="bcake-footer-social"
+                                aria-label="Instagram B’cake">
+                                📸
+                            </a>
+
+                            {{-- Email --}}
+                            <a href="mailto:hello@bcake.com" class="bcake-footer-social" aria-label="Email B’cake">
+                                ✉️
+                            </a>
+
+                            {{-- TikTok --}}
+                            <a href="https://tiktok.com/@username" target="_blank" class="bcake-footer-social"
+                                aria-label="Tiktok B’cake">
+                                🎵
+                            </a>
+
                         </div>
                     </div>
 
-                    {{-- Copyright kanan --}}
-                    <div class="text-center md:text-right text-sm text-bcake-bitter">
-                        <div>© 2025 B’cake Bakery. All rights reserved.</div>
-                        <div class="mt-1">Designed with 🍒 by Team B’cake</div>
+                    {{-- RIGHT – COPYRIGHT --}}
+                    <div class="text-center md:text-right text-bcake-bitter">
+                        <p>© 2025 B’cake Bakery. All rights reserved.</p>
+
+                        <p class="mt-1">
+                            Designed with <span class="text-xl">🍒</span>
+                            by <strong>Team B’cake</strong>
+                        </p>
                     </div>
 
                 </div>
 
             </div>
         </div>
+
     </footer>
+
 
     {{-- TOAST NOTIFIKASI GLOBAL --}}
     @php

@@ -172,48 +172,73 @@ body {
   animation: bcake-heart-float 4.8s ease-in-out infinite;
 }
 
-/* -------------------------------------------------------
-   🍰 B’cake Footer — stripes horizontal + scallop
---------------------------------------------------------*/
-.bcake-footer-wrap {
-  margin-top: 80px; /* jarak dari section sebelumnya */
-}
+/* =======================================================
+   🍰 B’cake FOOTER STYLES (STRIPES + GERIGI + CARD)
+======================================================= */
 
+/* Footer stripes background */
 .bcake-footer-bg {
-  position: relative;
   background:
     repeating-linear-gradient(
       to bottom,
-      #f7d2da 0px,     /* pink muda */
-      #f7d2da 22px,
-      #b55c69 22px,   /* wine */
-      #b55c69 44px
+      #b55c69 0px,
+      #b55c69 28px,
+      #f9dfe4 28px,
+      #f9dfe4 56px
     );
-  padding-top: 36px; /* space untuk scallop */
 }
 
-/* scallop atas */
-.bcake-footer-bg::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 36px;
-  background:
-    radial-gradient(circle at 18px 18px, #ffeef2 18px, transparent 19px);
-  background-size: 36px 36px;
-  transform: translateY(-18px);
+/* Scallop (gerigi atas footer) */
+.bcake-footer-scallop {
+  background: radial-gradient(circle at 50% 100%, #fff 70%, transparent 71%);
+  background-size: 40px 40px;
+  height: 40px;
+  width: 100%;
 }
 
-/* footer card */
-.bcake-footer-inner {
-  background: rgba(255, 247, 248, 0.92);
-  border-radius: 1.75rem;
-  box-shadow: 0 10px 35px rgba(137,5,36,0.15);
-  padding: 32px 40px;
+/* Footer inner card */
+.bcake-footer-card {
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(8px);
+  border-radius: 2rem;
+  padding: 2.8rem 3rem;
+  box-shadow: 0 18px 40px rgba(137, 5, 36, 0.18);
 }
 
+/* =======================================================
+   🍒 B’cake Social Icons (Clickable + Glossy + Hover)
+======================================================= */
+
+.bcake-footer-social {
+  height: 2.6rem;
+  width: 2.6rem;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #890524; /* wine cherry */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.25rem;
+  box-shadow: 0 10px 20px rgba(137, 5, 36, 0.20);
+  transition: all .22s ease;
+}
+
+.bcake-footer-social:hover {
+  transform: translateY(-4px) scale(1.05);
+  background: #fff4f6;
+  box-shadow: 0 16px 32px rgba(137, 5, 36, 0.25);
+}
+
+/* Animasi halus icon */
+@keyframes bcake-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.bcake-footer-social:nth-child(1) { animation: bcake-bounce 4s infinite ease-in-out; }
+.bcake-footer-social:nth-child(2) { animation: bcake-bounce 4.4s infinite ease-in-out; }
+.bcake-footer-social:nth-child(3) { animation: bcake-bounce 3.8s infinite ease-in-out; }
+.bcake-footer-social:nth-child(4) { animation: bcake-bounce 4.6s infinite ease-in-out; }
 
 /* -------------------------------------------------------
    💫 Custom Utility Tambahan (mask lengkung hero)

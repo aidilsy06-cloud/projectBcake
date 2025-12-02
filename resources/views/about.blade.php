@@ -5,12 +5,13 @@
 @push('head')
 <style>
   :root{
-    --bcake-wine:#890524;
-    --bcake-deep:#57091d;
-    --bcake-cocoa:#362320;
+    /* PALET BRAND */
+    --bcake-wine:  #9B335F;  /* wine / berry */
+    --bcake-deep:  #7E2A50;
+    --bcake-cocoa: #442127;
   }
 
-  /* latar lembut */
+  /* latar halaman lembut */
   .page-bg{
     background:
       radial-gradient(900px 500px at 5% -10%, #ffe6eb 0%, transparent 60%),
@@ -19,11 +20,102 @@
   }
 
   .about-shell{
-    max-width: 64rem;          /* kira2 1024px */
+    max-width: 64rem;
     margin: 0 auto;
     padding: 2.75rem 1.25rem 4rem;
   }
 
+  /* ============================
+     🎀 HERO STRIPES TENTANG B’CAKE
+  ============================= */
+  .hero-about-banner{
+    position: relative;
+    border-radius: 2.5rem;
+    padding: 4rem 1.5rem 3.4rem;
+    overflow: hidden;
+    box-shadow: 0 22px 55px rgba(155,51,95,.22);
+    background:
+      radial-gradient(120% 120% at 50% 0%, rgba(255,255,255,.22) 0%, transparent 55%),
+      repeating-linear-gradient(
+        to bottom,
+        #f7d2da 0px,
+        #f7d2da 22px,
+        #b55c69 22px,
+        #b55c69 44px
+      );
+  }
+
+  /* scallop bawah */
+  .hero-about-banner::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:-20px;
+    height:40px;
+    background:
+      radial-gradient(circle at 20px 0, #fff 20px, transparent 21px) repeat-x;
+    background-size:40px 40px;
+  }
+
+  .hero-about-inner{
+    position:relative;
+    z-index:1;
+    text-align:center;
+    color:#fff;
+  }
+
+  .hero-logo-badge{
+    margin:0 auto 1.75rem;
+    width:110px;
+    height:110px;
+    border-radius:2rem;
+    background:#480016;
+    box-shadow:
+      0 28px 55px rgba(72,0,22,.7),
+      0 0 0 10px rgba(255,255,255,.06);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .hero-logo-text{
+    font-family:"Playfair Display",serif;
+    font-size:1.8rem;
+    font-weight:700;
+    letter-spacing:.08em;
+  }
+
+  .hero-about-title{
+    font-family:"Playfair Display",serif;
+    font-size:2.1rem;
+    letter-spacing:.12em;
+    font-weight:700;
+    text-transform:uppercase;
+    text-shadow:0 2px 14px rgba(0,0,0,.35);
+    margin-bottom:1.1rem;
+  }
+
+  .hero-about-tagline{
+    max-width:40rem;
+    margin:0 auto;
+    font-size:.98rem;
+    line-height:1.7;
+    color:rgba(255,255,255,.88);
+  }
+
+  .hero-about-tagline span.line-2{
+    display:block;
+    opacity:.9;
+  }
+  .hero-about-tagline span.line-3{
+    display:block;
+    opacity:.8;
+  }
+
+  /* ============================
+     KARTU KONTEN BAWAH
+  ============================= */
   .card-soft{
     background: linear-gradient(145deg,#ffffff,#fff6f7 55%,#ffecef 100%);
     box-shadow:0 16px 38px rgba(137,5,36,.09);
@@ -36,8 +128,8 @@
     padding:.35rem .9rem;
     font-size:.78rem;
     background:#fff;
-    border:1px solid rgba(137,5,36,.12);
-    color:#7f102f;
+    border:1px solid rgba(155,51,95,.16);
+    color:var(--bcake-wine);
     display:inline-flex;
     align-items:center;
     gap:.35rem;
@@ -53,15 +145,7 @@
   .section-text{
     font-size:.96rem;
     line-height:1.7;
-    color:rgba(54,35,32,.86);
-  }
-
-  .about-hero-title{
-    font-family:"Playfair Display",serif;
-    font-size:1.9rem;
-    font-weight:700;
-    color:var(--bcake-deep);
-    letter-spacing:.01em;
+    color:rgba(68,33,39,.9);
   }
 
   .steps-list{
@@ -88,7 +172,7 @@
     justify-content:center;
     font-size:.8rem;
     font-weight:600;
-    color:var(--bcake-deep);
+    color:var(--bcake-wine);
     box-shadow:0 4px 10px rgba(137,5,36,.12);
   }
 
@@ -100,18 +184,18 @@
 
   .step-text{
     font-size:.9rem;
-    color:rgba(54,35,32,.82);
+    color:rgba(68,33,39,.86);
   }
 
   @media (min-width:768px){
-    .about-hero-layout{
-      display:grid;
-      grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);
-      gap:2.5rem;
-      align-items:center;
+    .about-shell{
+      padding-inline:1.5rem;
     }
-    .about-hero-title{
-      font-size:2.15rem;
+    .hero-about-banner{
+      padding:4.3rem 3rem 3.6rem;
+    }
+    .hero-about-title{
+      font-size:2.4rem;
     }
   }
 
@@ -128,41 +212,24 @@
 <div class="page-bg">
   <div class="about-shell space-y-10 md:space-y-12">
 
-    {{-- HERO / INTRO --}}
+    {{-- 🧁 HERO STRIPES TENTANG B’CAKE --}}
     <section>
-      <div class="card-soft p-6 md:p-8 relative overflow-hidden">
-        <div class="absolute -right-20 -bottom-24 w-72 h-72 bg-rose-100 rounded-full opacity-60 blur-3xl"></div>
-
-        <div class="about-hero-layout relative z-[1] gap-6">
-          <div class="space-y-3">
-            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/85 text-[0.75rem] font-semibold text-rose-700 border border-rose-100">
-              <span class="text-lg leading-none">🎂</span>
-              Tentang B’cake
-            </span>
-
-            <h1 class="about-hero-title">
-              Marketplace kue manis untuk momen manismu.
-            </h1>
-
-            <p class="section-text max-w-2xl text-[0.95rem] md:text-[0.98rem]">
-              B’cake adalah <strong>marketplace kue dan dessert</strong> yang menghubungkan pelanggan
-              dengan UMKM bakery di Bengkalis dan sekitarnya. Di satu tempat, kamu bisa
-              menemukan berbagai kue cantik, membandingkan toko, lalu memesan dengan mudah
-              lewat website — detail pesanan diteruskan ke WhatsApp toko untuk proses lanjut.
-            </p>
+      <div class="hero-about-banner">
+        <div class="hero-about-inner">
+          <div class="hero-logo-badge">
+            {{-- kalau punya file logo, ganti span ini jadi <img src="..." /> --}}
+            <span class="hero-logo-text">B’cake</span>
           </div>
 
-          <div class="hidden md:block">
-            <div class="h-full flex items-center">
-              <div class="rounded-2xl bg-white/80 border border-rose-100 px-5 py-4 shadow-sm max-w-xs ml-auto">
-                <p class="text-[0.9rem] leading-relaxed text-rose-900/85">
-                  Lewat tampilan yang lembut dan alur pemesanan yang sederhana, B’cake ingin
-                  membuat pengalaman mencari kue terasa hangat, terarah, dan tetap manis
-                  dari awal sampai akhir.
-                </p>
-              </div>
-            </div>
-          </div>
+          <h1 class="hero-about-title">
+            TENTANG B’CAKE
+          </h1>
+
+          <p class="hero-about-tagline">
+            Marketplace kue elegan yang mempertemukan baker &amp; UMKM
+            lokal Bengkalis dengan pecinta dessert dalam satu ruang digital
+            <span class="line-2">yang manis dan hangat.</span>
+          </p>
         </div>
       </div>
     </section>
@@ -213,37 +280,37 @@
       <h2 class="section-title">Kenapa Memilih B’cake?</h2>
       <div class="grid md:grid-cols-2 gap-4 md:gap-5">
         <div class="card-soft p-4 md:p-5">
-          <h3 class="font-semibold text-rose-900 mb-1 text-sm md:text-[0.98rem]">
+          <h3 class="font-semibold text-[0.98rem] mb-1" style="color:var(--bcake-deep);">
             ✨ Banyak pilihan toko &amp; kue
           </h3>
-          <p class="text-xs md:text-[0.93rem] text-rose-900/80 leading-relaxed">
+          <p class="text-xs md:text-[0.93rem] leading-relaxed" style="color:rgba(68,33,39,.88);">
             Dari <em>custom cake</em>, dessert box, cupcake, hingga snack — semuanya
             dikurasi dalam kategori yang rapi supaya kamu mudah menemukan yang cocok.
           </p>
         </div>
         <div class="card-soft p-4 md:p-5">
-          <h3 class="font-semibold text-rose-900 mb-1 text-sm md:text-[0.98rem]">
+          <h3 class="font-semibold text-[0.98rem] mb-1" style="color:var(--bcake-deep);">
             📍 Fokus pada UMKM lokal
           </h3>
-          <p class="text-xs md:text-[0.93rem] text-rose-900/80 leading-relaxed">
+          <p class="text-xs md:text-[0.93rem] leading-relaxed" style="color:rgba(68,33,39,.88);">
             B’cake membantu bakery lokal di Bengkalis dan sekitar untuk tampil profesional,
             mendapat lebih banyak pesanan, dan menjangkau pelanggan baru.
           </p>
         </div>
         <div class="card-soft p-4 md:p-5">
-          <h3 class="font-semibold text-rose-900 mb-1 text-sm md:text-[0.98rem]">
+          <h3 class="font-semibold text-[0.98rem] mb-1" style="color:var(--bcake-deep);">
             🧾 Detail pesanan yang jelas
           </h3>
-          <p class="text-xs md:text-[0.93rem] text-rose-900/80 leading-relaxed">
+          <p class="text-xs md:text-[0.93rem] leading-relaxed" style="color:rgba(68,33,39,.88);">
             Jumlah, varian rasa, catatan dekorasi, hingga waktu pengambilan/pengantaran
             tertulis rapi di form pesanan, lalu dikirim ke WhatsApp toko.
           </p>
         </div>
         <div class="card-soft p-4 md:p-5">
-          <h3 class="font-semibold text-rose-900 mb-1 text-sm md:text-[0.98rem]">
+          <h3 class="font-semibold text-[0.98rem] mb-1" style="color:var(--bcake-deep);">
             💬 Komunikasi langsung dengan toko
           </h3>
-          <p class="text-xs md:text-[0.93rem] text-rose-900/80 leading-relaxed">
+          <p class="text-xs md:text-[0.93rem] leading-relaxed" style="color:rgba(68,33,39,.88);">
             Setelah checkout, kamu bisa melanjutkan komunikasi dan konfirmasi pembayaran
             langsung dengan pemilik toko melalui WhatsApp.
           </p>

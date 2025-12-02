@@ -7,7 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\OTPController; // 👉 untuk OTP
+use App\Http\Controllers\Auth\OTPController;
 
 // HOME publik
 use App\Http\Controllers\HomeController;
@@ -20,13 +20,13 @@ use App\Http\Controllers\Buyer\HomeController as BuyerHomeController;
 use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
 use App\Http\Controllers\Seller\StoreController as SellerStore;
 use App\Http\Controllers\Seller\ProductController as SellerProductController;
-use App\Http\Controllers\Seller\OrderController as SellerOrderController;   // tracking pesanan seller
+use App\Http\Controllers\Seller\OrderController as SellerOrderController;
 
 // Admin
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\Admin\StoreController as AdminStoreController;     // CRUD toko admin
-use App\Http\Controllers\Admin\OrderController as AdminOrderController;     // tracking pesanan admin
+use App\Http\Controllers\Admin\StoreController as AdminStoreController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
 // Order / transaksi (form → WhatsApp)
 use App\Http\Controllers\OrderController;
@@ -35,14 +35,18 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Order;
 
-/* ----------------------------------------
+/*
+|--------------------------------------------------------------------------
 | HEALTHCHECK
-|---------------------------------------- */
+|--------------------------------------------------------------------------
+*/
 Route::get('/_health', fn () => 'ok');
 
-/* ----------------------------------------
+/*
+|--------------------------------------------------------------------------
 | HELPERS (aman saat DB belum siap)
-|---------------------------------------- */
+|--------------------------------------------------------------------------
+*/
 if (! function_exists('safeCount')) {
     function safeCount(callable $cb): int {
         try {
@@ -61,9 +65,12 @@ if (! function_exists('pickDashboardView')) {
     }
 }
 
-/* ----------------------------------------
+/*
+|--------------------------------------------------------------------------
 | PUBLIC PAGES
-|---------------------------------------- */
+|--------------------------------------------------------------------------
+*/
+
 // Halaman depan (landing page publik)
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -79,9 +86,11 @@ Route::controller(ProductController::class)->group(function () {
 Route::get('/kategori/{category:slug}', [ProductController::class, 'byCategory'])
     ->name('categories.show');
 
-/* ----------------------------------------
+/*
+|--------------------------------------------------------------------------
 | CART / KERANJANG  (WAJIB LOGIN)
-|---------------------------------------- */
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')
     ->prefix('cart')
     ->name('cart.')
@@ -93,7 +102,7 @@ Route::middleware('auth')
         // HALAMAN CHECKOUT (lanjut ke pemesanan)
         Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
 
-        // Tambah ke keranjang -> form: route('cart.add', $product)
+        // Tambah ke keranjang
         Route::post('/add/{product}', [CartController::class, 'add'])->name('add');
 
         // Update banyak item sekaligus
@@ -106,22 +115,28 @@ Route::middleware('auth')
         Route::delete('/', [CartController::class, 'clear'])->name('clear');
     });
 
-/* ----------------------------------------
+/*
+|--------------------------------------------------------------------------
 | HALAMAN STATIS
-|---------------------------------------- */
+|--------------------------------------------------------------------------
+*/
 Route::view('/tentang-kami', 'static.about')->name('about');
 Route::view('/bantuan', 'static.help')->name('help');
 Route::redirect('/help', '/bantuan');
 
-/* ----------------------------------------
+/*
+|--------------------------------------------------------------------------
 | TOKO (PUBLIK / BUYER)
-|---------------------------------------- */
+|--------------------------------------------------------------------------
+*/
 Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
 Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
 
-/* ----------------------------------------
+/*
+|--------------------------------------------------------------------------
 | ORDER → WHATSAPP PENJUAL + HALAMAN SUKSES
-|---------------------------------------- */
+|--------------------------------------------------------------------------
+*/
 
 // FORM PEMESANAN → simpan order + siapkan URL WA
 Route::middleware('auth')
@@ -133,9 +148,11 @@ Route::middleware('auth')
     ->get('/orders/{order}/success', [OrderController::class, 'success'])
     ->name('orders.success');
 
-/* ----------------------------------------
+/*
+|--------------------------------------------------------------------------
 | AUTH (LOGIN / REGISTER / LOGOUT / OTP)
-|---------------------------------------- */
+|--------------------------------------------------------------------------
+*/
 Route::middleware('guest')->group(function () {
     // Login
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
@@ -156,9 +173,11 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
-/* ----------------------------------------
+/*
+|--------------------------------------------------------------------------
 | DASHBOARD REDIRECT (UMUM)
-|---------------------------------------- */
+|--------------------------------------------------------------------------
+*/
 Route::get('/dashboard', function () {
     $user = auth()->user();
     if (! $user) {
@@ -176,13 +195,17 @@ Route::get('/dashboard', function () {
         : view('dashboard');
 })->middleware('auth')->name('dashboard');
 
-/* ----------------------------------------
+/*
+|--------------------------------------------------------------------------
 | ADMIN
-|---------------------------------------- */
+|--------------------------------------------------------------------------
+*/
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware('auth')
+    ->middleware(['auth', 'role:admin'])   // ⬅️ penting: hanya admin
     ->group(function () {
+
+        // Dashboard Admin
         Route::get('/', function () {
             $user = auth()->user();
 
@@ -217,7 +240,7 @@ Route::prefix('admin')
         Route::post('/products/{product}/status', [AdminProductController::class, 'updateStatus'])
             ->name('products.updateStatus');
 
-        // CRUD Toko
+        // CRUD Toko (Admin kelola semua toko)
         Route::resource('stores', AdminStoreController::class)->except(['show']);
 
         // TRACKING PESANAN (ADMIN)
@@ -226,38 +249,30 @@ Route::prefix('admin')
         Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
     });
 
-/* ----------------------------------------
+/*
+|--------------------------------------------------------------------------
 | SELLER
-|---------------------------------------- */
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth', 'verified'])
     ->prefix('seller')
     ->as('seller.')
     ->group(function () {
+
         Route::get('/', [SellerDashboard::class, 'index'])->name('dashboard');
 
-        // Kelola toko
+        // Kelola toko oleh seller (1 toko milik dia)
         Route::get('/store', [SellerStore::class, 'show'])->name('store.show');
         Route::get('/store/edit', [SellerStore::class, 'edit'])->name('store.edit');
         Route::put('/store', [SellerStore::class, 'update'])->name('store.update');
 
         // Produk seller
-        Route::get('/products', [SellerProductController::class, 'index'])
-            ->name('products.index');
-
-        Route::get('/products/create', [SellerProductController::class, 'create'])
-            ->name('products.create');
-
-        Route::post('/products', [SellerProductController::class, 'store'])
-            ->name('products.store');
-
-        Route::get('/products/{product}/edit', [SellerProductController::class, 'edit'])
-            ->name('products.edit');
-
-        Route::put('/products/{product}', [SellerProductController::class, 'update'])
-            ->name('products.update');
-
-        Route::delete('/products/{product}', [SellerProductController::class, 'destroy'])
-            ->name('products.destroy');
+        Route::get('/products', [SellerProductController::class, 'index'])->name('products.index');
+        Route::get('/products/create', [SellerProductController::class, 'create'])->name('products.create');
+        Route::post('/products', [SellerProductController::class, 'store'])->name('products.store');
+        Route::get('/products/{product}/edit', [SellerProductController::class, 'edit'])->name('products.edit');
+        Route::put('/products/{product}', [SellerProductController::class, 'update'])->name('products.update');
+        Route::delete('/products/{product}', [SellerProductController::class, 'destroy'])->name('products.destroy');
 
         // TRACKING PESANAN (SELLER)
         Route::get('/orders', [SellerOrderController::class, 'index'])->name('orders.index');
@@ -269,9 +284,11 @@ Route::middleware(['auth', 'verified'])
         Route::get('/settings', fn () => view('seller.placeholders.settings'))->name('settings');
     });
 
-/* ----------------------------------------
+/*
+|--------------------------------------------------------------------------
 | BUYER
-|---------------------------------------- */
+|--------------------------------------------------------------------------
+*/
 Route::prefix('buyer')
     ->name('buyer.')
     ->middleware('auth')
@@ -284,7 +301,7 @@ Route::prefix('buyer')
         // Bantuan (versi buyer)
         Route::view('/help', 'static.help')->name('help');
 
-        // Toko untuk buyer
+        // Toko untuk buyer (versi list khusus buyer kalau perlu)
         Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
         Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
 

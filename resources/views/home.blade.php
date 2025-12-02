@@ -191,6 +191,26 @@
                 transform: translateY(-6px);
             }
         }
+
+        /* 🧁 Scrollbar horizontal hilang untuk slider */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* 🍓 Animasi muncul untuk kartu rekomendasi */
+        .rec-card {
+            opacity: 0;
+            transform: translateY(26px);
+            transition:
+                opacity .65s ease-out,
+                transform .65s ease-out;
+            will-change: opacity, transform;
+        }
+
+        .rec-card.rec-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 @endpush
 
@@ -314,7 +334,7 @@
                     </div>
                 </div>
 
-                {{-- PANAH DI LUAR STRIPES, JELAS KELIHATAN --}}
+                {{-- PANAH DI LUAR STRIPES --}}
                 <button @click="prev()"
                     class="hidden md:flex absolute left-6 lg:left-10 top-1/2 -translate-y-1/2 
                        h-8 w-8 rounded-full items-center justify-center text-sm
@@ -353,13 +373,13 @@
 
             <ellipse cx="70" cy="96" rx="32" ry="10" fill="#d0d1c9" opacity="0.35" />
             <path d="M45,36
-                                 C40,26 42,16 50,12
-                                 C58,8 66,12 70,18
-                                 C74,12 82,8 90,12
-                                 C98,16 100,26 95,36
-                                 C90,46 80,54 70,62
-                                 C60,54 50,46 45,36Z" fill="none" stroke="url(#hc-stem)" stroke-width="3.2"
-                stroke-linecap="round" stroke-linejoin="round" />
+                                                         C40,26 42,16 50,12
+                                                         C58,8 66,12 70,18
+                                                         C74,12 82,8 90,12
+                                                         C98,16 100,26 95,36
+                                                         C90,46 80,54 70,62
+                                                         C60,54 50,46 45,36Z" fill="none" stroke="url(#hc-stem)"
+                stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M62,60 C56,70 54,78 53,86" fill="none" stroke="url(#hc-stem)" stroke-width="3"
                 stroke-linecap="round" />
             <path d="M78,60 C84,70 86,78 87,86" fill="none" stroke="url(#hc-stem)" stroke-width="3"
@@ -493,7 +513,120 @@
 
     {{-- 🍰 Cake Icon Divider B'cake --}}
     <div class="bcake-ribbon-wrap">
-        @includeIf('partials.cake-divider')
+        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" class="bcake-cake-svg w-[150px] h-[110px]"
+            aria-hidden="true">
+            <defs>
+                <!-- garis lembut pakai icing mist -->
+                <linearGradient id="bc-line" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#d0d1c9" />
+                    <stop offset="50%" stop-color="#d0d1c9" />
+                    <stop offset="100%" stop-color="#d0d1c9" />
+                </linearGradient>
+
+                <!-- atas kue: coklat tapi glossy -->
+                <radialGradient id="bc-top" cx="30%" cy="20%" r="80%">
+                    <stop offset="0%" stop-color="#6a4e4a" />
+                    <stop offset="40%" stop-color="#362320" />
+                    <stop offset="100%" stop-color="#57091d" />
+                </radialGradient>
+
+                <!-- sisi kue: sedikit lebih terang -->
+                <linearGradient id="bc-side" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#890524" />
+                    <stop offset="100%" stop-color="#6a4e4a" />
+                </linearGradient>
+
+                <!-- filling di dalam slice -->
+                <linearGradient id="bc-filling" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ffe6c4" />
+                    <stop offset="100%" stop-color="#f2c07a" />
+                </linearGradient>
+
+                <!-- cherry -->
+                <linearGradient id="bc-cherry" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ffd7e6" />
+                    <stop offset="100%" stop-color="#890524" />
+                </linearGradient>
+
+                <!-- batang cherry -->
+                <linearGradient id="bc-stem" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#6a4e4a" />
+                    <stop offset="100%" stop-color="#362320" />
+                </linearGradient>
+            </defs>
+
+            <!-- garis divider lembut -->
+            <path d="M0,90 C40,82 80,86 120,84 C140,83 150,82 160,80" fill="none" stroke="url(#bc-line)"
+                stroke-width="6" stroke-linecap="round" opacity="0.35" />
+
+            <!-- bayangan lembut di bawah kue -->
+            <ellipse cx="80" cy="88" rx="42" ry="10" fill="#d0d1c9" opacity="0.25" />
+
+            <!-- ===== KUE UTAMA (tanpa slice) ===== -->
+            <!-- sisi -->
+            <path d="M38,52
+                   C38,64 38,74 38,80
+                   C38,88 122,88 122,80
+                   C122,74 122,64 122,52
+                   Z" fill="url(#bc-side)" />
+            <!-- atas -->
+            <ellipse cx="80" cy="52" rx="42" ry="14" fill="url(#bc-top)" />
+
+            <!-- beberapa garis potongan tipis di atas kue -->
+            <path d="M80,38 L80,66" stroke="#362320" stroke-width="1.3" opacity="0.55" />
+            <path d="M58,40 L66,64" stroke="#362320" stroke-width="1.1" opacity="0.45" />
+            <path d="M102,40 L94,64" stroke="#362320" stroke-width="1.1" opacity="0.45" />
+
+            <!-- beberapa cherry kecil di atas -->
+            <g opacity="0.95">
+                <g>
+                    <path d="M52,30 C52,24 50,20 48,17" fill="none" stroke="url(#bc-stem)" stroke-width="1.4" />
+                    <circle cx="52" cy="32" r="4.2" fill="url(#bc-cherry)" />
+                    <circle cx="50.5" cy="30.5" r="1.5" fill="#ffeef7" opacity="0.9" />
+                </g>
+                <g>
+                    <path d="M80,26 C80,20 79,16 77,13" fill="none" stroke="url(#bc-stem)" stroke-width="1.4" />
+                    <circle cx="80" cy="28" r="4.2" fill="url(#bc-cherry)" />
+                    <circle cx="78.5" cy="26.5" r="1.5" fill="#ffeef7" opacity="0.9" />
+                </g>
+                <g>
+                    <path d="M108,30 C108,24 110,20 112,17" fill="none" stroke="url(#bc-stem)" stroke-width="1.4" />
+                    <circle cx="108" cy="32" r="4.2" fill="url(#bc-cherry)" />
+                    <circle cx="106.5" cy="30.5" r="1.5" fill="#ffeef7" opacity="0.9" />
+                </g>
+            </g>
+
+            <!-- ===== SLICE YANG BERGERAK KELUAR-MASUK ===== -->
+            <g class="bcake-cake-slice">
+                <!-- sisi slice -->
+                <path d="M80,52
+                       L120,44
+                       C124,45 128,49 127,54
+                       L123,80
+                       C122,84 118,86 114,86
+                       L80,82 Z" fill="url(#bc-side)" />
+
+                <!-- filling di dalam slice -->
+                <path d="M82,54
+                       L118,47
+                       C121,48 123,51 122,54
+                       L119,78
+                       C118,80 116,82 113,82
+                       L82,79 Z" fill="url(#bc-filling)" opacity="0.95" />
+
+                <!-- garis layer dalam slice -->
+                <path d="M83,60 L119,53" stroke="#d8a869" stroke-width="1.3" opacity="0.9" />
+                <path d="M83,66 L118,60" stroke="#d8a869" stroke-width="1.3" opacity="0.9" />
+                <path d="M84,72 L117,67" stroke="#d8a869" stroke-width="1.3" opacity="0.9" />
+
+                <!-- cherry di atas slice -->
+                <g transform="translate(118,40)">
+                    <path d="M0,-6 C-1,-10 -2,-14 -3,-17" fill="none" stroke="url(#bc-stem)" stroke-width="1.3" />
+                    <circle cx="0" cy="-3" r="4" fill="url(#bc-cherry)" />
+                    <circle cx="-1" cy="-4.5" r="1.4" fill="#ffeef7" opacity="0.9" />
+                </g>
+            </g>
+        </svg>
     </div>
 
     {{-- ============ REKOMENDASI SPESIAL ============ --}}
@@ -503,21 +636,20 @@
             Deretan pilihan kue terbaik yang direkomendasikan untuk kamu.
         </p>
 
-        <div class="relative mt-8">
-            <button
-                class="hidden md:flex absolute -left-10 top-1/2 -translate-y-1/2 h-9 w-9
-                       items-center justify-center rounded-full ring-1 ring-rose-200 
-                       bg-white shadow hover:bg-rose-50">
-                ‹
-            </button>
+        <div class="mt-8">
+            <!-- SLIDER LIST -->
+            <div class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-3 scrollbar-none"
+                style="-ms-overflow-style: none; scrollbar-width: none;">
 
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse ($bestSellers as $product)
-                    <div class="category-card group rounded-2xl bg-white shadow transition overflow-hidden">
+                    <div class="rec-card snap-start bg-white rounded-2xl shadow group overflow-hidden shrink-0 
+                           border border-pink-100 min-w-[300px] w-[300px]"
+                        style="transition-delay: {{ $loop->index * 90 }}ms">
+
                         <img src="{{ asset('image/dessertbox.jpg') }}"
                             class="w-full h-52 object-cover transition duration-300 group-hover:scale-[1.02]">
 
-                        <div class="p-4 relative z-[1]">
+                        <div class="p-4">
                             <h3 class="font-semibold text-lg text-bcake-cocoa">
                                 {{ $product->name }}
                             </h3>
@@ -533,18 +665,11 @@
                         </div>
                     </div>
                 @empty
-                    <p class="col-span-3 text-center text-gray-400 py-6">
+                    <p class="text-center text-gray-400 py-6">
                         Belum ada produk yang bisa ditampilkan saat ini.
                     </p>
                 @endforelse
             </div>
-
-            <button
-                class="hidden md:flex absolute -right-10 top-1/2 -translate-y-1/2 h-9 w-9
-                       items-center justify-center rounded-full ring-1 ring-rose-200 
-                       bg-white shadow hover:bg-rose-50">
-                ›
-            </button>
         </div>
     </section>
 
@@ -606,9 +731,7 @@
             <div class="relative min-h-[260px] sm:min-h-[320px] md:min-h-[360px] lg:min-h-[400px]">
                 @foreach ($slides as $i => $slide)
                     <div class="absolute inset-0 transition-opacity duration-600 ease-out"
-                        :class="active === {{ $i }} ?
-                            'opacity-100 z-20' :
-                            'opacity-0 z-10 pointer-events-none'">
+                        :class="active === {{ $i }} ? 'opacity-100 z-20' : 'opacity-0 z-10 pointer-events-none'">
                         <div class="grid md:grid-cols-2 h-full">
                             <img src="{{ asset('image/' . $slide['img']) }}"
                                 class="w-full h-[240px] sm:h-[300px] md:h-[350px] lg:h-[380px] object-cover">
@@ -680,3 +803,30 @@
     </section>
 
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.rec-card');
+
+            // fallback kalau browser lama
+            if (!('IntersectionObserver' in window)) {
+                cards.forEach(c => c.classList.add('rec-visible'));
+                return;
+            }
+
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('rec-visible');
+                        obs.unobserve(entry.target); // animasi sekali saja
+                    }
+                });
+            }, {
+                threshold: 0.2
+            });
+
+            cards.forEach(card => observer.observe(card));
+        });
+    </script>
+@endpush

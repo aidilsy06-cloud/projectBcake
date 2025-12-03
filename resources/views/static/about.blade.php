@@ -201,18 +201,20 @@
     pointer-events:none;
   }
 
-  /* ============== BANYAK GELEMBUNG CHERRY & PITA ============== */
+  /* ============== GELEMBUNG CHERRY & PITA DARI BAWAH SAMPAI ATAS ============== */
 
+  /* area bubble full tinggi hero */
   .about-hero-bubbles{
     position:absolute;
-    inset:0;
-    overflow:hidden;
+    inset:0;               /* full area hero */
+    overflow:visible;
     pointer-events:none;
     z-index:2;
   }
 
   .bubble{
     position:absolute;
+    bottom:-80px;          /* mulai sedikit keluar di bawah drip */
     width:58px;
     height:58px;
     border-radius:999px;
@@ -228,31 +230,33 @@
   }
 
   /* posisi & timing random biar natural */
-  .bubble--1{ left:6%;  animation-duration:11s; animation-delay:0s;  }
-  .bubble--2{ left:18%; animation-duration:9s;  animation-delay:2s; }
-  .bubble--3{ left:32%; animation-duration:12s; animation-delay:1s; }
-  .bubble--4{ left:50%; animation-duration:10s; animation-delay:3s; }
-  .bubble--5{ left:68%; animation-duration:8.5s;animation-delay:1.8s;}
-  .bubble--6{ left:82%; animation-duration:11.5s;animation-delay:4s; }
-  .bubble--7{ left:92%; animation-duration:9.5s; animation-delay:5s; }
+  .bubble--1{ left:6%;  animation-duration:11s;  animation-delay:0s;   }
+  .bubble--2{ left:18%; animation-duration:9.5s; animation-delay:2s;   }
+  .bubble--3{ left:32%; animation-duration:12s;  animation-delay:1s;   }
+  .bubble--4{ left:50%; animation-duration:10.5s;animation-delay:3s;   }
+  .bubble--5{ left:68%; animation-duration:9s;   animation-delay:1.8s; }
+  .bubble--6{ left:82%; animation-duration:11.5s;animation-delay:4s;   }
+  .bubble--7{ left:92%; animation-duration:9.5s; animation-delay:5s;   }
 
   @keyframes bubbleRise{
     0%{
-      transform:translateY(120%) scale(.8);
+      transform:translateY(40px) scale(.8);   /* agak turun dulu */
       opacity:0;
     }
-    10%{
+    15%{
       opacity:1;
     }
-    50%{
-      transform:translateY(10%) scale(1.03);
+    55%{
+      /* posisi kira2 di area judul / oval putih */
+      transform:translateY(-220px) scale(1.03);
       opacity:1;
     }
-    80%{
-      opacity:1;
+    85%{
+      opacity:.35;
     }
     100%{
-      transform:translateY(-40%) scale(1.05);
+      /* naik melewati bagian atas stripes (garis biru kamu) */
+      transform:translateY(-420px) scale(.96);
       opacity:0;
     }
   }

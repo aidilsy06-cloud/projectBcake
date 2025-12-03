@@ -12,18 +12,23 @@
 
     {{-- SEO / OG --}}
     <link rel="canonical" href="{{ url()->current() }}">
-    <meta name="description" content="@yield('meta_description', 'Marketplace kue elegan — jual & beli cake favorit di B’cake.')">
+    <meta name="description"
+          content="@yield('meta_description', 'Marketplace kue elegan — jual & beli cake favorit di B’cake.')">
     <meta name="theme-color" content="#890524">
     <meta name="color-scheme" content="light">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="@yield('og_title', trim($__env->yieldContent('title', 'B’cake — Elegant Bakery')))">
-    <meta property="og:description" content="@yield('og_description', 'Tempat istimewa untuk menampilkan & menemukan kue terbaik.')">
+    <meta property="og:title"
+          content="@yield('og_title', trim($__env->yieldContent('title', 'B’cake — Elegant Bakery')))">
+    <meta property="og:description"
+          content="@yield('og_description', 'Tempat istimewa untuk menampilkan & menemukan kue terbaik.')">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:image" content="{{ asset('image/logo_bcake.jpg') }}">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="@yield('tw_title', trim($__env->yieldContent('title', 'B’cake — Elegant Bakery')))">
-    <meta name="twitter:description" content="@yield('tw_description', 'Tempat istimewa untuk menampilkan & menemukan kue terbaik.')">
+    <meta name="twitter:title"
+          content="@yield('tw_title', trim($__env->yieldContent('title', 'B’cake — Elegant Bakery')))">
+    <meta name="twitter:description"
+          content="@yield('tw_description', 'Tempat istimewa untuk menampilkan & menemukan kue terbaik.')">
     <meta name="twitter:image" content="{{ asset('image/logo_bcake.jpg') }}">
 
     {{-- Favicon --}}
@@ -41,10 +46,10 @@
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap"
         rel="stylesheet">
 
-    {{-- AOS (Animate On Scroll) --}}
+    {{-- AOS --}}
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
 
-    {{-- Alpine.js --}}
+    {{-- Alpine --}}
     <script src="https://unpkg.com/alpinejs" defer></script>
 
     <style>
@@ -113,27 +118,27 @@
 
 <body class="bg-rose-50 text-gray-800 antialiased min-h-screen flex flex-col">
 
-    {{-- HEADER / NAVBAR --}}
-    <header class="sticky top-0 z-50 w-full">
+    {{-- HEADER / NAVBAR (FIXED) --}}
+    <header id="bcakeHeader"
+            class="fixed top-0 left-0 right-0 z-50 w-full transition-shadow duration-300">
         <div class="bg-white/80 backdrop-blur border-b border-rose-200/50">
             <div class="max-w-7xl mx-auto px-6 lg:px-10">
                 <div class="grid items-center py-4 md:grid-cols-[auto_1fr_auto] gap-4">
 
                     {{-- brand + toggle --}}
                     <div class="flex items-center gap-3">
-                        {{-- tombol garis tiga: SEKARANG MUNCUL DI DESKTOP & MOBILE --}}
                         <button id="btnSidebar"
                             class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-rose-200/70 text-rose-800"
                             aria-label="Buka menu" aria-expanded="false" aria-controls="sidebarMobile">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="opacity-80">
                                 <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" />
+                                      stroke-linecap="round" />
                             </svg>
                         </button>
 
                         <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
                             <img src="{{ asset('image/logo_bcake.jpg') }}" alt="Logo B’cake"
-                                class="h-10 w-10 rounded-lg object-cover ring-1 ring-rose-200/60">
+                                 class="h-10 w-10 rounded-lg object-cover ring-1 ring-rose-200/60">
                             <span class="font-display text-2xl tracking-wide text-rose-800">B’cake</span>
                         </a>
                     </div>
@@ -143,27 +148,27 @@
                         <ul class="flex items-center gap-7 text-rose-800/90">
                             <li>
                                 <a href="{{ route('home') }}"
-                                    class="{{ request()->routeIs('home') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">
+                                   class="{{ request()->routeIs('home') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">
                                     Home
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('products.index') }}"
-                                    class="{{ request()->routeIs('products.*') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">
+                                   class="{{ request()->routeIs('products.*') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">
                                     Produk
                                 </a>
                             </li>
                             @if (Route::has('stores.index'))
                                 <li>
                                     <a href="{{ route('stores.index') }}"
-                                        class="{{ request()->routeIs('stores.*') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">
+                                       class="{{ request()->routeIs('stores.*') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">
                                         Toko
                                     </a>
                                 </li>
                             @endif
                             <li>
                                 <a href="{{ Route::has('buyer.help') && auth()->check() ? route('buyer.help') : route('help') }}"
-                                    class="{{ request()->routeIs('help') || request()->routeIs('buyer.help') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">
+                                   class="{{ request()->routeIs('help') || request()->routeIs('buyer.help') ? 'text-rose-900 font-semibold' : 'hover:text-rose-900' }}">
                                     Bantuan
                                 </a>
                             </li>
@@ -171,58 +176,56 @@
 
                         {{-- search --}}
                         <form action="{{ route('products.index') }}" method="get"
-                            class="relative flex-1 min-w-0 max-w-xl" role="search">
+                              class="relative flex-1 min-w-0 max-w-xl" role="search">
                             <input name="q" type="text" placeholder="Cari kue…"
-                                class="w-full rounded-full border border-rose-200/70 bg-white/70 px-4 py-2 text-sm
-               focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300">
+                                   class="w-full rounded-full border border-rose-200/70 bg-white/70 px-4 py-2 text-sm
+                                          focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-rose-300">
 
-                            {{-- tombol search (ikon bisa diklik) --}}
                             <button type="submit"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center
-               h-7 w-7 rounded-full bg-white/80 border border-rose-200/70
-               hover:border-rose-400 hover:bg-rose-50
-               focus:outline-none focus:ring-2 focus:ring-rose-300">
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center
+                                           h-7 w-7 rounded-full bg-white/80 border border-rose-200/70
+                                           hover:border-rose-400 hover:bg-rose-50
+                                           focus:outline-none focus:ring-2 focus:ring-rose-300">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-rose-500"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+                                          d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
                                 </svg>
                             </button>
                         </form>
-
                     </div>
 
                     {{-- actions kanan --}}
                     <div class="flex items-center gap-3">
                         <a href="{{ route('cart.index') }}"
-                            class="inline-flex items-center rounded-full border border-rose-200/70 bg-white/70 px-3 py-2 hover:border-rose-300"
-                            aria-label="Keranjang">
+                           class="inline-flex items-center rounded-full border border-rose-200/70 bg-white/70 px-3 py-2 hover:border-rose-300"
+                           aria-label="Keranjang">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-700" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" aria-hidden="true">
+                                 fill="none" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 3h2l.4 2M7 13h10l3-8H6.4M7 13L5.4 5M7 13l-2 9m12-9l-2 9M9 22a1 1 0 100-2 1 1 0 000 2z" />
+                                      d="M3 3h2l.4 2M7 13h10l3-8H6.4M7 13L5.4 5M7 13l-2 9m12-9l-2 9M9 22a1 1 0 100-2 1 1 0 000 2z" />
                             </svg>
                         </a>
 
                         @auth
                             <a href="{{ route('dashboard') }}"
-                                class="rounded-full bg-rose-600 text-white px-4 py-2 text-sm hover:bg-rose-700">
+                               class="rounded-full bg-rose-600 text-white px-4 py-2 text-sm hover:bg-rose-700">
                                 Dashboard
                             </a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit"
-                                    class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">
+                                        class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">
                                     Logout
                                 </button>
                             </form>
                         @else
                             <a href="{{ route('login') }}"
-                                class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">
+                               class="rounded-full border border-rose-200/70 px-4 py-2 text-sm hover:border-rose-300">
                                 Login
                             </a>
                             <a href="{{ route('register') }}"
-                                class="rounded-full bg-rose-700 text-white px-4 py-2 text-sm hover:bg-rose-800">
+                               class="rounded-full bg-rose-700 text-white px-4 py-2 text-sm hover:bg-rose-800">
                                 Daftar
                             </a>
                         @endauth
@@ -234,57 +237,56 @@
         </div>
     </header>
 
-    {{-- MOBILE / DESKTOP DRAWER (sidebar garis tiga) --}}
+    {{-- BACKDROP + SIDEBAR MOBILE --}}
     <div id="backdropMobile" class="fixed inset-0 bg-black/30 z-40" aria-hidden="true"></div>
     <aside id="sidebarMobile"
-        class="fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] bg-white z-50 p-5 border-r border-rose-200/60"
-        role="dialog" aria-modal="true" aria-labelledby="mobileNavTitle">
+           class="fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] bg-white z-50 p-5 border-r border-rose-200/60"
+           role="dialog" aria-modal="true" aria-labelledby="mobileNavTitle">
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-3">
                 <img src="{{ asset('image/logo_bcake.jpg') }}"
-                    class="h-8 w-8 rounded-lg object-cover ring-1 ring-rose-200/60" alt="Logo B’cake">
+                     class="h-8 w-8 rounded-lg object-cover ring-1 ring-rose-200/60" alt="Logo B’cake">
                 <h2 id="mobileNavTitle" class="font-semibold">Navigasi</h2>
             </div>
             <button id="btnSidebarClose" aria-label="Tutup menu"
-                class="w-9 h-9 inline-flex items-center justify-center rounded-full border border-rose-200/70">
+                    class="w-9 h-9 inline-flex items-center justify-center rounded-full border border-rose-200/70">
                 ✕
             </button>
         </div>
 
         <nav class="space-y-1 text-rose-800/90">
             <a href="{{ route('home') }}"
-                class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('home') ? 'bg-rose-50 font-medium' : '' }}">
+               class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('home') ? 'bg-rose-50 font-medium' : '' }}">
                 🏠 Home
             </a>
             <a href="{{ route('products.index') }}"
-                class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('products.*') ? 'bg-rose-50 font-medium' : '' }}">
+               class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('products.*') ? 'bg-rose-50 font-medium' : '' }}">
                 📋 Menu / Produk
             </a>
             @if (Route::has('stores.index'))
                 <a href="{{ route('stores.index') }}"
-                    class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('stores.*') ? 'bg-rose-50 font-medium' : '' }}">
+                   class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('stores.*') ? 'bg-rose-50 font-medium' : '' }}">
                     🏪 Toko
                 </a>
             @endif
             <a href="{{ route('cart.index') }}"
-                class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('cart.*') ? 'bg-rose-50 font-medium' : '' }}">
+               class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('cart.*') ? 'bg-rose-50 font-medium' : '' }}">
                 🛒 Keranjang
             </a>
             <a href="{{ Route::has('buyer.help') && auth()->check() ? route('buyer.help') : route('help') }}"
-                class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('help') || request()->routeIs('buyer.help') ? 'bg-rose-50 font-medium' : '' }}">
+               class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('help') || request()->routeIs('buyer.help') ? 'bg-rose-50 font-medium' : '' }}">
                 🆘 Bantuan
             </a>
-            {{-- Link anchor ke section Tentang di home (kalau ada) --}}
             <a href="{{ route('about') }}"
-                class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('about') ? 'bg-rose-50 font-medium' : '' }}">
+               class="block px-3 py-2 rounded-lg hover:bg-rose-50 {{ request()->routeIs('about') ? 'bg-rose-50 font-medium' : '' }}">
                 ℹ️ Tentang Kami
             </a>
-
         </nav>
 
         <div class="mt-6 border-t pt-4">
             @auth
-                <a href="{{ route('dashboard') }}" class="block px-3 py-2 rounded-lg bg-rose-600 text-white text-center">
+                <a href="{{ route('dashboard') }}"
+                   class="block px-3 py-2 rounded-lg bg-rose-600 text-white text-center">
                     Dashboard
                 </a>
                 <form method="POST" action="{{ route('logout') }}" class="mt-2">
@@ -295,10 +297,12 @@
                 </form>
             @else
                 <div class="grid grid-cols-2 gap-2">
-                    <a href="{{ route('login') }}" class="px-3 py-2 rounded-lg border border-rose-200/70 text-center">
+                    <a href="{{ route('login') }}"
+                       class="px-3 py-2 rounded-lg border border-rose-200/70 text-center">
                         Login
                     </a>
-                    <a href="{{ route('register') }}" class="px-3 py-2 rounded-lg bg-rose-700 text-white text-center">
+                    <a href="{{ route('register') }}"
+                       class="px-3 py-2 rounded-lg bg-rose-700 text-white text-center">
                         Daftar
                     </a>
                 </div>
@@ -306,8 +310,8 @@
         </div>
     </aside>
 
-    {{-- MAIN --}}
-    <main class="flex-1 w-full">
+    {{-- MAIN (dikasih padding-top setinggi header supaya konten nggak ketutup) --}}
+    <main class="flex-1 w-full pt-24 md:pt-28">
         <div class="max-w-7xl mx-auto px-6 lg:px-10 py-8">
             @yield('content')
         </div>
@@ -315,19 +319,12 @@
 
     {{-- FOOTER --}}
     <footer class="mt-20">
-
-        {{-- Gerigi putih --}}
         <div class="bcake-footer-scallop w-full"></div>
 
-        {{-- Stripes Footer --}}
         <div class="bcake-footer-bg w-full py-16 flex justify-center px-6">
-
             <div class="bcake-footer-card w-full max-w-6xl">
-
-                {{-- Main Grid --}}
                 <div class="grid md:grid-cols-3 gap-10 items-center text-center md:text-left">
 
-                    {{-- LEFT – BRAND --}}
                     <div>
                         <h2 class="text-3xl font-display text-bcake-wine">B’cake</h2>
                         <p class="text-bcake-bitter mt-2 italic">
@@ -335,44 +332,25 @@
                         </p>
                     </div>
 
-                    {{-- CENTER – CONTACT & SOCIALS --}}
                     <div class="flex flex-col items-center">
                         <p class="tracking-[.25em] text-sm text-bcake-bitter mb-3">
                             CONTACT & SOCIALS
                         </p>
 
                         <div class="flex gap-4">
-
-                            {{-- WhatsApp --}}
                             <a href="https://wa.me/6281234567890" target="_blank" class="bcake-footer-social"
-                                aria-label="WhatsApp B’cake">
-                                💬
-                            </a>
-
-                            {{-- Instagram --}}
+                               aria-label="WhatsApp B’cake">💬</a>
                             <a href="https://instagram.com/username" target="_blank" class="bcake-footer-social"
-                                aria-label="Instagram B’cake">
-                                📸
-                            </a>
-
-                            {{-- Email --}}
-                            <a href="mailto:hello@bcake.com" class="bcake-footer-social" aria-label="Email B’cake">
-                                ✉️
-                            </a>
-
-                            {{-- TikTok --}}
+                               aria-label="Instagram B’cake">📸</a>
+                            <a href="mailto:hello@bcake.com" class="bcake-footer-social"
+                               aria-label="Email B’cake">✉️</a>
                             <a href="https://tiktok.com/@username" target="_blank" class="bcake-footer-social"
-                                aria-label="Tiktok B’cake">
-                                🎵
-                            </a>
-
+                               aria-label="Tiktok B’cake">🎵</a>
                         </div>
                     </div>
 
-                    {{-- RIGHT – COPYRIGHT --}}
                     <div class="text-center md:text-right text-bcake-bitter">
                         <p>© 2025 B’cake Bakery. All rights reserved.</p>
-
                         <p class="mt-1">
                             Designed with <span class="text-xl">🍒</span>
                             by <strong>Team B’cake</strong>
@@ -380,14 +358,11 @@
                     </div>
 
                 </div>
-
             </div>
         </div>
-
     </footer>
 
-
-    {{-- TOAST NOTIFIKASI GLOBAL --}}
+    {{-- TOAST --}}
     @php
         $flashSuccess = session('success') ?? session('login_success');
         $flashError = session('error');
@@ -432,6 +407,7 @@
             const drawer = document.getElementById('sidebarMobile');
             const btnClose = document.getElementById('btnSidebarClose');
             const backdrop = document.getElementById('backdropMobile');
+            const header = document.getElementById('bcakeHeader');
 
             function openSidebar() {
                 if (!drawer || !backdrop || !btnOpen) return;
@@ -463,6 +439,19 @@
                     setTimeout(() => toast.remove(), 400);
                 }, 3500);
             }
+
+            // shadow halus saat scroll
+            if (header) {
+                const onScroll = () => {
+                    if (window.scrollY > 8) {
+                        header.classList.add('shadow-md');
+                    } else {
+                        header.classList.remove('shadow-md');
+                    }
+                };
+                onScroll();
+                window.addEventListener('scroll', onScroll);
+            }
         });
     </script>
 
@@ -470,8 +459,8 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({
-            duration: 700, // lama animasi (ms)
-            once: true, // animasi hanya sekali saat muncul
+            duration: 700,
+            once: true,
         });
     </script>
 

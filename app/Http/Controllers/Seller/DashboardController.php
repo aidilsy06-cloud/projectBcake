@@ -19,44 +19,48 @@ class DashboardController extends Controller
         // relasi: User hasOne Store
         $store = $user->store;
 
-        // ===============================
-        // TOTAL PRODUK — pakai store_id
-        // ===============================
-        $totalProducts = 0;
-        if ($store) {
-            $totalProducts = Product::where('store_id', $store->id)->count();
-        }
-
-        // ===============================
-        // DATA CHART PENJUALAN 6 BULAN
-        // ===============================
+        // ==========================================
+        // DEFAULT VALUE (kalau seller belum punya toko)
+        // ==========================================
         $salesLabels = [];
         $salesValues = [];
+        $totalProducts = 0;
+        $recentOrders = collect();
 
+        // siapkan 6 label bulan dulu (biar chart tetap rapi)
         $now = now();
         for ($i = 5; $i >= 0; $i--) {
-            $month = $now->copy()->subMonths($i);
-            $salesLabels[] = $month->format('M');
-
-            $sales = Order::when($store, function ($q) use ($store) {
-                    $q->where('store_id', $store->id);
-                })
-                ->whereYear('created_at', $month->year)
-                ->whereMonth('created_at', $month->month)
-                ->sum('total_price');
-
-            $salesValues[] = (int) $sales;
+            $monthObj = $now->copy()->subMonths($i);
+            $salesLabels[] = $monthObj->format('M');
+            $salesValues[] = 0;   // nanti di-override kalau ada store
         }
 
-        // ===============================
-        // PESANAN TERBARU
-        // ===============================
-        $recentOrders = Order::when($store, function ($q) use ($store) {
-                $q->where('store_id', $store->id);
-            })
-            ->latest()
-            ->take(5)
-            ->get();
+        // ==========================================
+        // KALAU SELLER SUDAH PUNYA TOKO
+        // ==========================================
+        if ($store) {
+            // TOTAL PRODUK PER TOKO
+            $totalProducts = Product::where('store_id', $store->id)->count();
+
+            // GRAFIK PENJUALAN 6 BULAN TERAKHIR (HANYA TOKO INI)
+            $salesValues = []; // reset
+            for ($i = 5; $i >= 0; $i--) {
+                $month = $now->copy()->subMonths($i);
+
+                $sales = Order::where('store_id', $store->id)
+                    ->whereYear('created_at', $month->year)
+                    ->whereMonth('created_at', $month->month)
+                    ->sum('total_price');   // pastikan nama kolomnya benar
+
+                $salesValues[] = (int) $sales;
+            }
+
+            // PESANAN TERBARU UNTUK TOKO INI SAJA
+            $recentOrders = Order::where('store_id', $store->id)
+                ->latest()
+                ->take(5)
+                ->get();
+        }
 
         return view('seller.dashboard', [
             'user'          => $user,

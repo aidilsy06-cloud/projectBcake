@@ -10,52 +10,36 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * Atribut yang bisa diisi mass assignment.
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role',          // existing
-        'is_verified',   // <— WAJIB UNTUK OTP
+        'role',
+        'is_verified',
     ];
 
-    /**
-     * Atribut yang disembunyikan saat serialisasi.
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Casting atribut.
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
-            'is_verified'       => 'boolean',   // <— Bagus untuk ease di query login
+            'is_verified'       => 'boolean',
         ];
     }
 
-    /**
-     * Helper role-checking.
-     */
-    public function isAdmin(): bool
-    {
-        return $this->role === 'admin';
-    }
+    /** ROLE CHECK */
+    public function isAdmin(): bool { return $this->role === 'admin'; }
+    public function isSeller(): bool { return $this->role === 'seller'; }
+    public function isBuyer(): bool { return $this->role === 'buyer'; }
 
-    public function isSeller(): bool
+    /** RELASI TOKO SELLER */
+    public function store()
     {
-        return $this->role === 'seller';
-    }
-
-    public function isBuyer(): bool
-    {
-        return $this->role === 'buyer';
+        return $this->hasOne(Store::class);
     }
 }

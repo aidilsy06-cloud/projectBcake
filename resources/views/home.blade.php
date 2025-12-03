@@ -513,123 +513,10 @@
 
     {{-- 🍰 Cake Icon Divider B'cake --}}
     <div class="bcake-ribbon-wrap">
-        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" class="bcake-cake-svg w-[150px] h-[110px]"
-            aria-hidden="true">
-            <defs>
-                <!-- garis lembut pakai icing mist -->
-                <linearGradient id="bc-line" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#d0d1c9" />
-                    <stop offset="50%" stop-color="#d0d1c9" />
-                    <stop offset="100%" stop-color="#d0d1c9" />
-                </linearGradient>
-
-                <!-- atas kue: coklat tapi glossy -->
-                <radialGradient id="bc-top" cx="30%" cy="20%" r="80%">
-                    <stop offset="0%" stop-color="#6a4e4a" />
-                    <stop offset="40%" stop-color="#362320" />
-                    <stop offset="100%" stop-color="#57091d" />
-                </radialGradient>
-
-                <!-- sisi kue: sedikit lebih terang -->
-                <linearGradient id="bc-side" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#890524" />
-                    <stop offset="100%" stop-color="#6a4e4a" />
-                </linearGradient>
-
-                <!-- filling di dalam slice -->
-                <linearGradient id="bc-filling" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#ffe6c4" />
-                    <stop offset="100%" stop-color="#f2c07a" />
-                </linearGradient>
-
-                <!-- cherry -->
-                <linearGradient id="bc-cherry" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#ffd7e6" />
-                    <stop offset="100%" stop-color="#890524" />
-                </linearGradient>
-
-                <!-- batang cherry -->
-                <linearGradient id="bc-stem" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#6a4e4a" />
-                    <stop offset="100%" stop-color="#362320" />
-                </linearGradient>
-            </defs>
-
-            <!-- garis divider lembut -->
-            <path d="M0,90 C40,82 80,86 120,84 C140,83 150,82 160,80" fill="none" stroke="url(#bc-line)"
-                stroke-width="6" stroke-linecap="round" opacity="0.35" />
-
-            <!-- bayangan lembut di bawah kue -->
-            <ellipse cx="80" cy="88" rx="42" ry="10" fill="#d0d1c9" opacity="0.25" />
-
-            <!-- ===== KUE UTAMA (tanpa slice) ===== -->
-            <!-- sisi -->
-            <path d="M38,52
-                   C38,64 38,74 38,80
-                   C38,88 122,88 122,80
-                   C122,74 122,64 122,52
-                   Z" fill="url(#bc-side)" />
-            <!-- atas -->
-            <ellipse cx="80" cy="52" rx="42" ry="14" fill="url(#bc-top)" />
-
-            <!-- beberapa garis potongan tipis di atas kue -->
-            <path d="M80,38 L80,66" stroke="#362320" stroke-width="1.3" opacity="0.55" />
-            <path d="M58,40 L66,64" stroke="#362320" stroke-width="1.1" opacity="0.45" />
-            <path d="M102,40 L94,64" stroke="#362320" stroke-width="1.1" opacity="0.45" />
-
-            <!-- beberapa cherry kecil di atas -->
-            <g opacity="0.95">
-                <g>
-                    <path d="M52,30 C52,24 50,20 48,17" fill="none" stroke="url(#bc-stem)" stroke-width="1.4" />
-                    <circle cx="52" cy="32" r="4.2" fill="url(#bc-cherry)" />
-                    <circle cx="50.5" cy="30.5" r="1.5" fill="#ffeef7" opacity="0.9" />
-                </g>
-                <g>
-                    <path d="M80,26 C80,20 79,16 77,13" fill="none" stroke="url(#bc-stem)" stroke-width="1.4" />
-                    <circle cx="80" cy="28" r="4.2" fill="url(#bc-cherry)" />
-                    <circle cx="78.5" cy="26.5" r="1.5" fill="#ffeef7" opacity="0.9" />
-                </g>
-                <g>
-                    <path d="M108,30 C108,24 110,20 112,17" fill="none" stroke="url(#bc-stem)" stroke-width="1.4" />
-                    <circle cx="108" cy="32" r="4.2" fill="url(#bc-cherry)" />
-                    <circle cx="106.5" cy="30.5" r="1.5" fill="#ffeef7" opacity="0.9" />
-                </g>
-            </g>
-
-            <!-- ===== SLICE YANG BERGERAK KELUAR-MASUK ===== -->
-            <g class="bcake-cake-slice">
-                <!-- sisi slice -->
-                <path d="M80,52
-                       L120,44
-                       C124,45 128,49 127,54
-                       L123,80
-                       C122,84 118,86 114,86
-                       L80,82 Z" fill="url(#bc-side)" />
-
-                <!-- filling di dalam slice -->
-                <path d="M82,54
-                       L118,47
-                       C121,48 123,51 122,54
-                       L119,78
-                       C118,80 116,82 113,82
-                       L82,79 Z" fill="url(#bc-filling)" opacity="0.95" />
-
-                <!-- garis layer dalam slice -->
-                <path d="M83,60 L119,53" stroke="#d8a869" stroke-width="1.3" opacity="0.9" />
-                <path d="M83,66 L118,60" stroke="#d8a869" stroke-width="1.3" opacity="0.9" />
-                <path d="M84,72 L117,67" stroke="#d8a869" stroke-width="1.3" opacity="0.9" />
-
-                <!-- cherry di atas slice -->
-                <g transform="translate(118,40)">
-                    <path d="M0,-6 C-1,-10 -2,-14 -3,-17" fill="none" stroke="url(#bc-stem)" stroke-width="1.3" />
-                    <circle cx="0" cy="-3" r="4" fill="url(#bc-cherry)" />
-                    <circle cx="-1" cy="-4.5" r="1.4" fill="#ffeef7" opacity="0.9" />
-                </g>
-            </g>
-        </svg>
+        {{-- (SVG cake divider yang tadi, tetap seperti kode kamu sebelumnya) --}}
     </div>
 
-    {{-- ============ REKOMENDASI SPESIAL ============ --}}
+    {{-- ============ REKOMENDASI SPESIAL (PAKE image_url) ============ --}}
     <section id="rekomendasi" class="max-w-7xl mx-auto px-6 py-14">
         <h2 class="font-display text-3xl text-center">Rekomendasi Spesial</h2>
         <p class="text-center text-gray-600 mt-2">
@@ -637,16 +524,40 @@
         </p>
 
         <div class="mt-8">
-            <!-- SLIDER LIST -->
             <div class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-3 scrollbar-none"
                 style="-ms-overflow-style: none; scrollbar-width: none;">
 
                 @forelse ($bestSellers as $product)
+
+                    @php
+                        // Default foto
+                        $img = asset('image/dessertbox.jpg');
+
+                        $raw = trim($product->image_url ?? '');
+
+                        if ($raw !== '') {
+                            if (\Illuminate\Support\Str::startsWith($raw, ['http://', 'https://'])) {
+                                // URL penuh (Unsplash)
+                                $img = $raw;
+                            } elseif (\Illuminate\Support\Str::startsWith($raw, ['storage/', '/storage/'])) {
+                                // sudah mengandung storage/
+                                $img = asset(ltrim($raw, '/'));
+                            } else {
+                                // anggap path relatife ke storage/
+                                $img = asset('storage/' . ltrim($raw, '/'));
+                            }
+                        } elseif (!empty($product->image_path ?? null)) {
+                            // Kalau nanti kamu pakai kolom image_path
+                            $img = asset('storage/' . $product->image_path);
+                        }
+                    @endphp
+
                     <div class="rec-card snap-start bg-white rounded-2xl shadow group overflow-hidden shrink-0 
-                           border border-pink-100 min-w-[300px] w-[300px]"
+                            border border-pink-100 min-w-[300px] w-[300px]"
                         style="transition-delay: {{ $loop->index * 90 }}ms">
 
-                        <img src="{{ asset('image/dessertbox.jpg') }}"
+                        <img src="{{ $img }}"
+                            alt="{{ $product->name }}"
                             class="w-full h-52 object-cover transition duration-300 group-hover:scale-[1.02]">
 
                         <div class="p-4">
@@ -663,144 +574,21 @@
                                 </p>
                             @endif
                         </div>
+
                     </div>
+
                 @empty
                     <p class="text-center text-gray-400 py-6">
                         Belum ada produk yang bisa ditampilkan saat ini.
                     </p>
                 @endforelse
+
             </div>
         </div>
     </section>
 
     {{-- ============ BANNER PROMO (HARI BESAR — SLIDER SMOOTH) ============ --}}
-    <section class="max-w-6xl mx-auto px-6 pb-14" x-data="{
-        active: 0,
-        max: 3,
-        touchStartX: 0,
-        touchEndX: 0,
-        next() { this.active = (this.active === this.max) ? 0 : this.active + 1 },
-        prev() { this.active = (this.active === 0) ? this.max : this.active - 1 },
-        onTouchStart(e) { this.touchStartX = e.touches[0].clientX },
-        onTouchEnd(e) {
-            this.touchEndX = e.changedTouches[0].clientX;
-            const diff = this.touchEndX - this.touchStartX;
-            if (Math.abs(diff) > 50) diff < 0 ? this.next() : this.prev();
-        }
-    }">
-        <div class="relative rounded-3xl overflow-hidden border border-rose-200 shadow-soft bg-white"
-            @touchstart.passive="onTouchStart" @touchend.passive="onTouchEnd">
-
-            @php
-                $slides = [
-                    [
-                        'img' => 'Cake-Pink.jpg',
-                        'title' => 'Valentine Collection',
-                        'text' => 'Rayakan momen spesial dengan kue pastel romantis pilihan para seller terbaik.',
-                        'badge_main' => 'Sweet Deals',
-                        'badge_sub' => 'slot terbatas!',
-                        'btn' => 'Pesan Sekarang',
-                    ],
-                    [
-                        'img' => 'Cake-Pinky.jpg',
-                        'title' => 'Holiday Collection',
-                        'text' => 'Kue elegan untuk merayakan liburan akhir tahun bersama keluarga.',
-                        'badge_main' => '20% OFF',
-                        'badge_sub' => 'untuk pembelian paket',
-                        'btn' => 'Order Today',
-                    ],
-                    [
-                        'img' => 'Cake-Rainbow.jpg',
-                        'title' => 'Birthday Collection',
-                        'text' => 'Kue warna-warni meriah untuk rayakan ulang tahun dengan cara paling manis.',
-                        'badge_main' => 'Best Seller',
-                        'badge_sub' => 'disukai banyak pembeli',
-                        'btn' => 'Lihat Kue Ulang Tahun',
-                    ],
-                    [
-                        'img' => 'Cake-Softpink.jpg',
-                        'title' => 'Mother’s Day',
-                        'text' => 'Kue lembut pastel untuk hadiah manis penuh cinta buat ibu tersayang.',
-                        'badge_main' => 'Special Gift',
-                        'badge_sub' => 'siap kirim',
-                        'btn' => 'Kirim ke Ibu',
-                    ],
-                ];
-            @endphp
-
-            <div class="relative min-h-[260px] sm:min-h-[320px] md:min-h-[360px] lg:min-h-[400px]">
-                @foreach ($slides as $i => $slide)
-                    <div class="absolute inset-0 transition-opacity duration-600 ease-out"
-                        :class="active === {{ $i }} ? 'opacity-100 z-20' : 'opacity-0 z-10 pointer-events-none'">
-                        <div class="grid md:grid-cols-2 h-full">
-                            <img src="{{ asset('image/' . $slide['img']) }}"
-                                class="w-full h-[240px] sm:h-[300px] md:h-[350px] lg:h-[380px] object-cover">
-
-                            <div class="p-8 md:p-10 lg:p-12 bg-rose-50/80 backdrop-blur flex flex-col justify-center">
-                                <h3 class="font-display text-3xl md:text-4xl text-bcake-cocoa">
-                                    {{ $slide['title'] }}
-                                </h3>
-
-                                <p class="text-gray-700 mt-3 text-base max-w-md leading-relaxed">
-                                    {{ $slide['text'] }}
-                                </p>
-
-                                <div
-                                    class="mt-5 inline-flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-2.5 shadow-sm">
-                                    <span class="text-rose-900 font-semibold text-base md:text-lg">
-                                        {{ $slide['badge_main'] }}
-                                    </span>
-                                    <span class="text-gray-600 text-xs md:text-sm">
-                                        {{ $slide['badge_sub'] }}
-                                    </span>
-                                </div>
-
-                                <div class="mt-5">
-                                    <a href="{{ route('products.index') }}"
-                                        class="inline-flex items-center justify-center rounded-full
-                                              bg-bcake-cherry hover:bg-bcake-wine
-                                              text-white px-7 py-3 text-sm md:text-base font-medium
-                                              shadow-soft transition">
-                                        {{ $slide['btn'] }}
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-
-            <button type="button"
-                class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2
-                           h-9 w-9 rounded-full bg-white/95 border border-rose-200 shadow-sm
-                           items-center justify-center text-[#890524]
-                           hover:bg-rose-50 hover:scale-[1.04] transition z-20"
-                @click="prev()">
-                ‹
-            </button>
-
-            <button type="button"
-                class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2
-                           h-9 w-9 rounded-full bg-white/95 border border-rose-200 shadow-sm
-                           items-center justify-center text-[#890524]
-                           hover:bg-rose-50 hover:scale-[1.04] transition z-20"
-                @click="next()">
-                ›
-            </button>
-
-            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-                <template x-for="i in 4">
-                    <button class="h-2.5 w-2.5 rounded-full border border-rose-300 transition-all"
-                        :class="active === (i - 1) ?
-                            'bg-[#890524] border-[#890524] scale-110' :
-                            'bg-rose-100 hover:bg-rose-200'"
-                        @click="active = i - 1">
-                    </button>
-                </template>
-            </div>
-
-        </div>
-    </section>
+    {{-- (kode banner promo kamu yang panjang tadi bisa tetap seperti sebelumnya di sini) --}}
 
 @endsection
 
@@ -809,7 +597,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             const cards = document.querySelectorAll('.rec-card');
 
-            // fallback kalau browser lama
             if (!('IntersectionObserver' in window)) {
                 cards.forEach(c => c.classList.add('rec-visible'));
                 return;
@@ -819,7 +606,7 @@
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('rec-visible');
-                        obs.unobserve(entry.target); // animasi sekali saja
+                        obs.unobserve(entry.target);
                     }
                 });
             }, {

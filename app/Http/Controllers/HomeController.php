@@ -9,14 +9,17 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Produk terbaru buat di landing
+        // Produk terbaru
         try {
-            $latestProducts = Product::latest()->take(8)->get();
+            $latestProducts = Product::latest()
+                ->where('status', 'approved') // optional
+                ->take(8)
+                ->get();
         } catch (\Throwable $e) {
             $latestProducts = collect();
         }
 
-        // Toko populer
+        // Toko populer berdasarkan jumlah produk
         try {
             $popularStores = Store::withCount('products')
                 ->orderByDesc('products_count')
@@ -26,14 +29,21 @@ class HomeController extends Controller
             $popularStores = collect();
         }
 
-        // BEST SELLERS – sementara pakai produk terbaru juga,
-        // atau ganti query ini sesuai fieldmu (misal where('is_best_seller',1))
-        $bestSellers = $latestProducts;
+        // Produk rekomendasi spesial
+        try {
+            $recommendedProducts = Product::where('is_recommended', 1)
+                ->where('status', 'approved') // optional
+                ->take(8)
+                ->get();
+        } catch (\Throwable $e) {
+            $recommendedProducts = collect();
+        }
 
         return view('home', [
-            'latestProducts' => $latestProducts,
-            'popularStores'  => $popularStores,
-            'bestSellers'    => $bestSellers,   // <-- tambahin ini
+            'latestProducts'     => $latestProducts,
+            'popularStores'      => $popularStores,
+            'bestSellers'        => $latestProducts,
+            'recommendedProducts'=> $recommendedProducts,
         ]);
     }
 }

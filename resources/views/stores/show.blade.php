@@ -4,6 +4,41 @@
 
 @section('content')
 
+@php
+    // ========== HELPER KECIL UNTUK BANGUN URL GAMBAR ==========
+    $makeImage = function ($raw, $default = null) {
+        if (!$raw) {
+            return $default;
+        }
+
+        $raw = ltrim($raw, '/');
+
+        if (substr($raw, 0, 4) === 'http') {
+            // sudah full URL (unsplash, dll)
+            return $raw;
+        }
+
+        if (strpos($raw, 'storage/') === 0) {
+            // sudah diawali storage/
+            return asset($raw);
+        }
+
+        // contoh: "products/xxx.png" -> "/storage/products/xxx.png"
+        return asset('storage/' . $raw);
+    };
+
+    // banner & logo
+    $bannerSrc = $makeImage(
+        $store->banner_url ?? $store->banner ?? null,
+        'https://via.placeholder.com/1200x400?text=Banner+Toko'
+    );
+
+    $logoSrc = $makeImage(
+        $store->logo_url ?? $store->logo ?? null,
+        'https://via.placeholder.com/120.png?text=Logo'
+    );
+@endphp
+
 <div class="mb-4 inline-flex">
     <a href="{{ route('buyer.stores.index') }}"
        class="px-3 py-1.5 rounded-full bg-rose-100 text-bcake-wine text-xs hover:bg-rose-200 transition">
@@ -14,13 +49,15 @@
 {{-- ===================== HEADER TOKO ===================== --}}
 <section class="mb-8">
     <div class="relative h-56 rounded-2xl overflow-hidden shadow-soft">
-        <img src="{{ $store->banner_url ?? 'https://via.placeholder.com/1200x400?text=Banner+Toko' }}"
-             class="w-full h-full object-cover">
+        <img src="{{ $bannerSrc }}"
+             class="w-full h-full object-cover"
+             alt="Banner {{ $store->name }}">
     </div>
 
     <div class="flex items-center gap-4 mt-4">
-        <img src="{{ $store->logo_url ?? 'https://via.placeholder.com/120.png?text=Logo' }}"
-             class="h-20 w-20 rounded-xl object-cover border border-rose-200 shadow-soft">
+        <img src="{{ $logoSrc }}"
+             class="h-20 w-20 rounded-xl object-cover border border-rose-200 shadow-soft"
+             alt="Logo {{ $store->name }}">
 
         <div>
             <h1 class="text-3xl font-display text-bcake-wine">{{ $store->name }}</h1>
@@ -37,19 +74,16 @@
                 $waNumber = null;
 
                 if (!empty($store->whatsapp)) {
-                    // ambil dari kolom `whatsapp` di tabel stores
-                    $raw = preg_replace('/\D+/', '', $store->whatsapp); // hanya angka
+                    $rawWa = preg_replace('/\D+/', '', $store->whatsapp); // hanya angka
 
-                    // kalau format 08xxxx → ubah ke 62xxxx
-                    if (substr($raw, 0, 1) === '0') {
-                        $raw = '62' . substr($raw, 1);
+                    if (substr($rawWa, 0, 1) === '0') {
+                        $rawWa = '62' . substr($rawWa, 1); // 08xxxx -> 62xxxx
                     }
 
-                    $waNumber = $raw;
+                    $waNumber = $rawWa;
                 }
             @endphp
 
-            {{-- Tombol WhatsApp / info jika belum diatur --}}
             <div class="mt-3">
                 @if($waNumber)
                     <a href="https://wa.me/{{ $waNumber }}"
@@ -80,7 +114,6 @@
         Isi data berikut untuk melakukan pemesanan. Setelah submit, kamu akan diarahkan ke WhatsApp penjual 💗
     </p>
 
-    {{-- pakai route ke OrderController@store --}}
     <form action="{{ route('stores.order', $store) }}" method="POST" class="space-y-4">
         @csrf
 
@@ -150,10 +183,22 @@
     @else
         <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @foreach($products as $product)
+                @php
+                    $productImg = $makeImage(
+                        $product->image_url
+                            ?? $product->cover_url
+                            ?? $product->photo
+                            ?? $product->image
+                            ?? null,
+                        'https://via.placeholder.com/400'
+                    );
+                @endphp
+
                 <a href="{{ route('products.show', $product->slug) }}"
                    class="block bg-white rounded-2xl border border-rose-200 overflow-hidden shadow-soft hover:shadow-lg transition">
-                    <img src="{{ $product->image_url ?? 'https://via.placeholder.com/400' }}"
-                         class="w-full h-52 object-cover">
+                    <img src="{{ $productImg }}"
+                         class="w-full h-52 object-cover"
+                         alt="{{ $product->name }}">
 
                     <div class="p-4">
                         <h3 class="font-medium text-bcake-bitter">{{ $product->name }}</h3>

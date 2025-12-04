@@ -80,8 +80,9 @@
 
 @section('content')
 @php
+  // fallback logo
   $logo = $store->logo_url
-      ?? ($store->logo ? asset('storage/'.$store->logo) : asset('image/Cake Pinky.jpg'));
+      ?? ($store->logo ? asset('storage/'.$store->logo) : asset('image/Cake-Pinky.jpg'));
 
   $list = isset($products) ? $products : ($store->products ?? collect());
 
@@ -89,7 +90,7 @@
       ? route('buyer.stores.index')
       : route('stores.index');
 
-  $sort = $sort ?? request('sort','latest'); // disiapkan kalau nanti mau dipakai sorting
+  $sort = $sort ?? request('sort','latest');
 @endphp
 
 <div class="bg-rose-50/60">
@@ -169,19 +170,18 @@
       </div>
     </section>
 
-    {{-- ================= PRODUK SAYA ================= --}}
+    {{-- ================= PRODUK DARI TOKO INI ================= --}}
     <section class="space-y-4">
       <div class="flex items-center justify-between gap-3">
         <div>
           <h3 class="font-semibold text-lg text-[var(--bcake-cocoa)]">
-            Produk Saya
+            Produk dari {{ $store->name }}
           </h3>
           <p class="text-xs md:text-sm text-rose-800/80">
             Koleksi kue pilihan dari {{ $store->name }}.
           </p>
         </div>
 
-        {{-- tombol tambah produk (kalau kamu pakai route ini) --}}
         @if(Route::has('seller.products.create'))
           <a href="{{ route('seller.products.create') }}" class="hidden sm:inline-flex btn-primary items-center gap-1">
             + Tambah produk
@@ -192,10 +192,10 @@
       @php
         $fallback = [
           ['Cake Pinky',    26000, asset('image/Cake-Pinky.jpg'),    url('/product/cake-pinky')],
-      ['Cake Rainbow',  28000, asset('image/Cake-Rainbow.jpg'),  url('/product/cake-rainbow')],
-      ['Cake Pink',     32000, asset('image/Cake-Pink.jpg'),     url('/product/cake-pink')],
-      ['Cake Softpink', 22000, asset('image/Cake-Softpink.jpg'), url('/product/cake-softpink')],
-    ];
+          ['Cake Rainbow',  28000, asset('image/Cake-Rainbow.jpg'),  url('/product/cake-rainbow')],
+          ['Cake Pink',     32000, asset('image/Cake-Pink.jpg'),     url('/product/cake-pink')],
+          ['Cake Softpink', 22000, asset('image/Cake-Softpink.jpg'), url('/product/cake-softpink')],
+        ];
       @endphp
 
       @if(
@@ -206,12 +206,36 @@
         <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-2">
           @foreach($list as $p)
             @php
-              $img = $p->cover_url
-                  ?? ($p->image_url ?? null)
-                  ?? (isset($p->image) ? asset('storage/'.$p->image) : asset('image/Cake Pinky.jpg'));
+                // ambil path gambar mentah
+                $raw = $p->image_url
+                    ?? $p->cover_url
+                    ?? $p->photo
+                    ?? $p->image
+                    ?? null;
 
-              $to  = route('products.show', $p->slug ?? $p->id);
+                $debugRaw = $raw;
+
+                if ($raw) {
+                    $raw = ltrim($raw, '/');
+
+                    if (substr($raw, 0, 4) === 'http') {
+                        // URL penuh (Unsplash, dll)
+                        $img = $raw;
+                    } elseif (strpos($raw, 'storage/') === 0) {
+                        // sudah diawali "storage/"
+                        $img = asset($raw);
+                    } else {
+                        // contoh di DB: "products/xxx.png" → "/storage/products/xxx.png"
+                        $img = asset('storage/'.$raw);
+                    }
+                } else {
+                    // placeholder kalau belum ada gambar
+                    $img = asset('image/Cake-Pinky.jpg');
+                }
+
+                $to  = route('products.show', $p->slug ?? $p->id);
             @endphp
+
             <article class="card p-4 flex flex-col">
               <a href="{{ $to }}" class="block overflow-hidden rounded-xl">
                 <img src="{{ $img }}"
@@ -227,6 +251,14 @@
                 <div class="price-grad text-sm md:text-base">
                   Rp {{ number_format($p->price ?? 0,0,',','.') }}
                 </div>
+
+                {{-- DEBUG: tampilkan path mentah dan path final --}}
+                <span class="text-[10px] text-gray-400 break-all">
+                  raw: {{ $debugRaw ?? 'null' }}
+                </span>
+                <span class="text-[10px] text-gray-400 break-all">
+                  src: {{ $img }}
+                </span>
 
                 <div class="mt-1 flex items-center justify-between gap-2">
                   <span class="text-[0.7rem] text-rose-500/80">
@@ -248,7 +280,6 @@
             {{ $list->links() }}
           </div>
         @endif
-
       @else
         {{-- ==== EMPTY STATE / FALLBACK ==== --}}
         <div class="rounded-3xl border border-dashed border-rose-200 bg-white/60 px-6 py-10 text-center mb-4">

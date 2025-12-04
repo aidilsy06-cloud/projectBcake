@@ -194,7 +194,18 @@
 
         {{-- LATEST ORDERS --}}
         <section class="bg-white rounded-2xl shadow-soft ring-soft p-6">
-          <h3 class="font-semibold mb-3">Latest Orders</h3>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-semibold">Latest Orders</h3>
+
+            {{-- tombol ke halaman semua pesanan --}}
+            @if(Route::has('buyer.orders.index'))
+              <a href="{{ route('buyer.orders.index') }}"
+                 class="text-xs text-bcake-wine hover:underline">
+                Lihat semua
+              </a>
+            @endif
+          </div>
+
           <div class="overflow-hidden rounded-xl ring-1 ring-rose-200/60">
             <table class="w-full text-sm">
               <thead class="bg-rose-50 text-gray-600">
@@ -207,16 +218,27 @@
               </thead>
               <tbody>
                 @forelse($orders as $o)
-                  <tr class="border-t">
-                    <td class="px-3 py-2 font-medium">#ORD{{ $o->id }}</td>
+                  @php
+                    $amount = $o->total_price ?? $o->total_amount ?? 0;
+                    $code   = $o->code ?? ('ORD'.$o->id);
+                  @endphp
+                  <tr
+                    class="border-t cursor-pointer hover:bg-rose-50 transition"
+                    @if(Route::has('buyer.orders.show'))
+                      onclick="window.location='{{ route('buyer.orders.show', $o) }}'"
+                    @endif
+                  >
+                    <td class="px-3 py-2 font-medium text-bcake-wine">
+                      #{{ $code }}
+                    </td>
                     <td class="px-3 py-2 text-xs">
-                      {{ $o->items_count }} item
+                      {{ $o->items_count ?? $o->items->count() }} item
                     </td>
                     <td class="px-3 py-2 text-xs">
                       {{ $o->created_at?->format('d/m/Y') }}
                     </td>
                     <td class="px-3 py-2 text-right font-semibold text-bcake-grad">
-                      Rp {{ number_format($o->total_price, 0, ',', '.') }}
+                      Rp {{ number_format($amount, 0, ',', '.') }}
                     </td>
                   </tr>
                 @empty

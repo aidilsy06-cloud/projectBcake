@@ -15,6 +15,7 @@ use App\Http\Controllers\HomeController;
 // Buyer / publik
 use App\Http\Controllers\Buyer\StoreController;
 use App\Http\Controllers\Buyer\HomeController as BuyerHomeController;
+use App\Http\Controllers\Buyer\OrderController as BuyerOrderController;   // 👈 NEW
 
 // Seller
 use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
@@ -28,8 +29,8 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\StoreController as AdminStoreController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
-// Order / transaksi (form → WhatsApp)
-use App\Http\Controllers\OrderController;
+// Order / transaksi (form → WhatsApp) publik
+use App\Http\Controllers\OrderController as PublicOrderController;        // 👈 di-alias
 
 use App\Models\Product;
 use App\Models\User;
@@ -134,18 +135,18 @@ Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('store
 
 /*
 |--------------------------------------------------------------------------
-| ORDER → WHATSAPP PENJUAL + HALAMAN SUKSES
+| ORDER → WHATSAPP PENJUAL + HALAMAN SUKSES (PUBLIC)
 |--------------------------------------------------------------------------
 */
 
 // FORM PEMESANAN → simpan order + siapkan URL WA
 Route::middleware('auth')
-    ->post('/store/{store:slug}/order', [OrderController::class, 'store'])
+    ->post('/store/{store:slug}/order', [PublicOrderController::class, 'store'])
     ->name('stores.order');
 
 // HALAMAN SUKSES SETELAH PESANAN DIBUAT
 Route::middleware('auth')
-    ->get('/orders/{order}/success', [OrderController::class, 'success'])
+    ->get('/orders/{order}/success', [PublicOrderController::class, 'success'])
     ->name('orders.success');
 
 /*
@@ -202,7 +203,7 @@ Route::get('/dashboard', function () {
 */
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['auth', 'role:admin'])   // ⬅️ penting: hanya admin
+    ->middleware(['auth', 'role:admin'])
     ->group(function () {
 
         // Dashboard Admin
@@ -301,10 +302,11 @@ Route::prefix('buyer')
         // Bantuan (versi buyer)
         Route::view('/help', 'static.help')->name('help');
 
-        // Toko untuk buyer (versi list khusus buyer kalau perlu)
+        // Toko untuk buyer
         Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
         Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('stores.show');
 
-        // RIWAYAT PESANAN BUYER
-        Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+        // RIWAYAT PESANAN BUYER + DETAIL (TRACKING)
+        Route::get('/orders', [BuyerOrderController::class, 'index'])->name('orders.index');   // 👈 list
+        Route::get('/orders/{order}', [BuyerOrderController::class, 'show'])->name('orders.show'); // 👈 detail
     });

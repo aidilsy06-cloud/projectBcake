@@ -22,8 +22,8 @@ class HomeController extends Controller
             abort(403);
         }
 
-        // 5 pesanan terbaru milik buyer ini
-        $orders = Order::withCount('items')
+        // 5 pesanan terbaru milik buyer ini (+ relasi store & items)
+        $orders = Order::with(['store', 'items'])
             ->where('user_id', $user->id)
             ->latest()
             ->take(5)
@@ -35,12 +35,10 @@ class HomeController extends Controller
             ->take(8)
             ->get();
 
-        // stats kecil kalau mau dipakai di view
         $stats = [
             'orders_count' => $orders->count(),
         ];
 
-        // view: resources/views/buyer/index.blade.php
         return view('buyer.index', [
             'user'   => $user,
             'orders' => $orders,

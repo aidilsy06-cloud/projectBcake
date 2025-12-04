@@ -120,9 +120,32 @@
         <div class="space-y-6">
             @foreach ($products as $p)
                 @php
-                    $img = $p->image_path
-                            ? asset('storage/' . $p->image_path)
-                            : asset('image/cake.jpg');
+                    // ambil path gambar dari beberapa kemungkinan kolom
+                    $raw = $p->image_url
+                        ?? $p->cover_url
+                        ?? $p->photo
+                        ?? $p->image
+                        ?? null;
+
+                    if ($raw) {
+                        $raw = ltrim($raw, '/');
+
+                        if (substr($raw, 0, 4) === 'http') {
+                            // URL penuh (unsplash, dll)
+                            $img = $raw;
+                        } elseif (strpos($raw, 'storage/') === 0 || strpos($raw, 'image/') === 0) {
+                            // sudah relatif ke public
+                            $img = asset($raw);
+                        } else {
+                            // contoh di DB: "products/xxx.png" -> "/storage/products/xxx.png"
+                            $img = asset('storage/'.$raw);
+                        }
+                    } else {
+                        // kalau benar-benar tidak ada, pakai placeholder
+                        $img = asset('image/cake.jpg');
+                    }
+
+                    $to = route('products.show', $p->slug ?? $p->id);
                 @endphp
 
                 <article
@@ -132,7 +155,7 @@
                     {{-- Thumbnail kiri --}}
                     <div class="md:col-span-3">
                         <div class="relative p-4">
-                            <a href="{{ route('products.show', $p->slug ?? $p->id) }}" class="block group">
+                            <a href="{{ $to }}" class="block group">
                                 <img src="{{ $img }}" alt="{{ $p->name }}"
                                      class="w-full aspect-[4/3] md:aspect-square object-cover rounded-2xl 
                                             ring-1 ring-rose-100 shadow-md 
@@ -171,7 +194,7 @@
                                 {{ 'Rp ' . number_format($p->price, 0, ',', '.') }}
                             </span>
 
-                            <a href="{{ route('products.show', $p->slug ?? $p->id) }}"
+                            <a href="{{ $to }}"
                                class="inline-flex items-center text-sm px-4 py-2 rounded-full border border-rose-200 
                                       text-bcake-wine hover:bg-rose-50">
                                 Detail

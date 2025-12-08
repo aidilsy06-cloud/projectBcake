@@ -4,8 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
-use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\View;
+use App\Http\Middleware\RoleMiddleware;
+use App\Models\Category;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,19 +19,23 @@ class AppServiceProvider extends ServiceProvider
     {
         /*
         |--------------------------------------------------------------------------
-        | 1) Alias Middleware (tetap)
+        | 1) Alias Middleware
         |--------------------------------------------------------------------------
         */
         $router->aliasMiddleware('role', RoleMiddleware::class);
 
-
         /*
         |--------------------------------------------------------------------------
-        | 2) View Composer (membuat $cartCount tersedia di semua view)
+        | 2) View Composer global
+        |    - $cartCount       → ikon keranjang
+        |    - $navbarCategories → dropdown kategori di navbar / mobile
         |--------------------------------------------------------------------------
         */
         View::composer('*', function ($view) {
 
+            // ============================
+            // CART COUNT
+            // ============================
             // PRIORITAS 1 — jika controller set session('cart_count') manual
             $cartCount = (int) session('cart_count', 0);
 
@@ -53,17 +58,28 @@ class AppServiceProvider extends ServiceProvider
                     if (isset($cart['items']) && is_array($cart['items'])) {
                         $cartCount = max($cartCount, count($cart['items']));
                     }
-                }
-                elseif ($cart instanceof \Countable) {
+                } elseif ($cart instanceof \Countable) {
                     // Jika session cart berupa Collection
                     $cartCount = max($cartCount, count($cart));
                 }
             }
 
-            // Kirim ke semua view
-            $view->with('cartCount', $cartCount);
-        });
+            // ============================
+            // NAVBAR CATEGORIES
+            // ============================
+            try {
+                $navbarCategories = Category::orderBy('name')->get();
+            } catch (\Throwable $e) {
+                // kalau belum migrate / DB error, jangan bikin error view
+                $navbarCategories = collect();
+            }
 
+            // Kirim ke semua view
+            $view->with([
+                'cartCount'        => $cartCount,
+                'navbarCategories' => $navbarCategories,
+            ]);
+        });
 
         /*
         |--------------------------------------------------------------------------

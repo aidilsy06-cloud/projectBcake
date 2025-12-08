@@ -211,6 +211,64 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* 🍰 BADGE SLICE CAKE DI ATAS REKOMENDASI */
+        .bcake-reco-shell {
+            position: relative;
+            margin-top: 1rem;
+        }
+
+        .bcake-reco-cake-badge {
+            position: absolute;
+            top: -44px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 88px;
+            height: 88px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 20%, #ffeef7, #ffb9cf 60%, #f06b88);
+            box-shadow: 0 14px 30px rgba(176, 13, 58, .28);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            z-index: 5;
+        }
+
+        .bcake-reco-cake-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 999px;
+            background: #fff7fb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            animation: bcake-reco-float 2.3s ease-in-out infinite;
+        }
+
+        .bcake-reco-cake-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        @keyframes bcake-reco-float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        .bcake-reco-title {
+            margin-top: 2.2rem;
+        }
     </style>
 @endpush
 
@@ -373,12 +431,12 @@
 
             <ellipse cx="70" cy="96" rx="32" ry="10" fill="#d0d1c9" opacity="0.35" />
             <path d="M45,36
-                                                         C40,26 42,16 50,12
-                                                         C58,8 66,12 70,18
-                                                         C74,12 82,8 90,12
-                                                         C98,16 100,26 95,36
-                                                         C90,46 80,54 70,62
-                                                         C60,54 50,46 45,36Z" fill="none" stroke="url(#hc-stem)"
+                                                             C40,26 42,16 50,12
+                                                             C58,8 66,12 70,18
+                                                             C74,12 82,8 90,12
+                                                             C98,16 100,26 95,36
+                                                             C90,46 80,54 70,62
+                                                             C60,54 50,46 45,36Z" fill="none" stroke="url(#hc-stem)"
                 stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M62,60 C56,70 54,78 53,86" fill="none" stroke="url(#hc-stem)" stroke-width="3"
                 stroke-linecap="round" />
@@ -513,76 +571,189 @@
 
     {{-- 🍰 Cake Icon Divider B'cake --}}
     <div class="bcake-ribbon-wrap">
-        {{-- (SVG cake divider yang tadi, tetap seperti kode kamu sebelumnya) --}}
+        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" class="bcake-cake-svg w-[150px] h-[110px]"
+            aria-hidden="true">
+            <defs>
+                <!-- garis lembut pakai icing mist -->
+                <linearGradient id="bc-line" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#d0d1c9" />
+                    <stop offset="50%" stop-color="#d0d1c9" />
+                    <stop offset="100%" stop-color="#d0d1c9" />
+                </linearGradient>
+
+                <!-- atas kue: coklat tapi glossy -->
+                <radialGradient id="bc-top" cx="30%" cy="20%" r="80%">
+                    <stop offset="0%" stop-color="#6a4e4a" />
+                    <stop offset="40%" stop-color="#362320" />
+                    <stop offset="100%" stop-color="#57091d" />
+                </radialGradient>
+
+                <!-- sisi kue: sedikit lebih terang -->
+                <linearGradient id="bc-side" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#890524" />
+                    <stop offset="100%" stop-color="#6a4e4a" />
+                </linearGradient>
+
+                <!-- filling di dalam slice -->
+                <linearGradient id="bc-filling" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ffe6c4" />
+                    <stop offset="100%" stop-color="#f2c07a" />
+                </linearGradient>
+
+                <!-- cherry -->
+                <linearGradient id="bc-cherry" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ffd7e6" />
+                    <stop offset="100%" stop-color="#890524" />
+                </linearGradient>
+
+                <!-- batang cherry -->
+                <linearGradient id="bc-stem" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#6a4e4a" />
+                    <stop offset="100%" stop-color="#362320" />
+                </linearGradient>
+            </defs>
+
+            <!-- garis divider lembut -->
+            <path d="M0,90 C40,82 80,86 120,84 C140,83 150,82 160,80" fill="none" stroke="url(#bc-line)"
+                stroke-width="6" stroke-linecap="round" opacity="0.35" />
+
+            <!-- bayangan lembut di bawah kue -->
+            <ellipse cx="80" cy="88" rx="42" ry="10" fill="#d0d1c9" opacity="0.25" />
+
+            <!-- ===== KUE UTAMA (tanpa slice) ===== -->
+            <!-- sisi -->
+            <path d="M38,52
+                   C38,64 38,74 38,80
+                   C38,88 122,88 122,80
+                   C122,74 122,64 122,52
+                   Z" fill="url(#bc-side)" />
+            <!-- atas -->
+            <ellipse cx="80" cy="52" rx="42" ry="14" fill="url(#bc-top)" />
+
+            <!-- beberapa garis potongan tipis di atas kue -->
+            <path d="M80,38 L80,66" stroke="#362320" stroke-width="1.3" opacity="0.55" />
+            <path d="M58,40 L66,64" stroke="#362320" stroke-width="1.1" opacity="0.45" />
+            <path d="M102,40 L94,64" stroke="#362320" stroke-width="1.1" opacity="0.45" />
+
+            <!-- beberapa cherry kecil di atas -->
+            <g opacity="0.95">
+                <g>
+                    <path d="M52,30 C52,24 50,20 48,17" fill="none" stroke="url(#bc-stem)" stroke-width="1.4" />
+                    <circle cx="52" cy="32" r="4.2" fill="url(#bc-cherry)" />
+                    <circle cx="50.5" cy="30.5" r="1.5" fill="#ffeef7" opacity="0.9" />
+                </g>
+                <g>
+                    <path d="M80,26 C80,20 79,16 77,13" fill="none" stroke="url(#bc-stem)" stroke-width="1.4" />
+                    <circle cx="80" cy="28" r="4.2" fill="url(#bc-cherry)" />
+                    <circle cx="78.5" cy="26.5" r="1.5" fill="#ffeef7" opacity="0.9" />
+                </g>
+                <g>
+                    <path d="M108,30 C108,24 110,20 112,17" fill="none" stroke="url(#bc-stem)" stroke-width="1.4" />
+                    <circle cx="108" cy="32" r="4.2" fill="url(#bc-cherry)" />
+                    <circle cx="106.5" cy="30.5" r="1.5" fill="#ffeef7" opacity="0.9" />
+                </g>
+            </g>
+
+            <!-- ===== SLICE YANG BERGERAK KELUAR-MASUK ===== -->
+            <g class="bcake-cake-slice">
+                <!-- sisi slice -->
+                <path d="M80,52
+                       L120,44
+                       C124,45 128,49 127,54
+                       L123,80
+                       C122,84 118,86 114,86
+                       L80,82 Z" fill="url(#bc-side)" />
+
+                <!-- filling di dalam slice -->
+                <path d="M82,54
+                       L118,47
+                       C121,48 123,51 122,54
+                       L119,78
+                       C118,80 116,82 113,82
+                       L82,79 Z" fill="url(#bc-filling)" opacity="0.95" />
+
+                <!-- garis layer dalam slice -->
+                <path d="M83,60 L119,53" stroke="#d8a869" stroke-width="1.3" opacity="0.9" />
+                <path d="M83,66 L118,60" stroke="#d8a869" stroke-width="1.3" opacity="0.9" />
+                <path d="M84,72 L117,67" stroke="#d8a869" stroke-width="1.3" opacity="0.9" />
+
+                <!-- cherry di atas slice -->
+                <g transform="translate(118,40)">
+                    <path d="M0,-6 C-1,-10 -2,-14 -3,-17" fill="none" stroke="url(#bc-stem)" stroke-width="1.3" />
+                    <circle cx="0" cy="-3" r="4" fill="url(#bc-cherry)" />
+                    <circle cx="-1" cy="-4.5" r="1.4" fill="#ffeef7" opacity="0.9" />
+                </g>
+            </g>
+        </svg>
     </div>
 
     {{-- ============ REKOMENDASI SPESIAL (PAKE image_url) ============ --}}
-    <section id="rekomendasi" class="max-w-7xl mx-auto px-6 py-14">
-        <h2 class="font-display text-3xl text-center">Rekomendasi Spesial</h2>
-        <p class="text-center text-gray-600 mt-2">
-            Deretan pilihan kue terbaik yang direkomendasikan untuk kamu.
-        </p>
+    <section id="rekomendasi" class="py-14">
+        <div class="bcake-reco-shell max-w-7xl mx-auto px-6 text-center">
+            <h2 class="font-display text-3xl bcake-reco-title">Rekomendasi Spesial</h2>
+            <p class="text-center text-gray-600 mt-2">
+                Deretan pilihan kue terbaik yang direkomendasikan untuk kamu.
+            </p>
 
-        <div class="mt-8">
-            <div class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-3 scrollbar-none"
-                style="-ms-overflow-style: none; scrollbar-width: none;">
+            <div class="mt-8">
+                <div class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-3 scrollbar-none"
+                    style="-ms-overflow-style: none; scrollbar-width: none;">
 
-                @forelse ($bestSellers as $product)
+                    @forelse ($bestSellers as $product)
+                        @php
+                            // Default foto
+                            $img = asset('image/dessertbox.jpg');
 
-                    @php
-                        // Default foto
-                        $img = asset('image/dessertbox.jpg');
+                            $raw = trim($product->image_url ?? '');
 
-                        $raw = trim($product->image_url ?? '');
-
-                        if ($raw !== '') {
-                            if (\Illuminate\Support\Str::startsWith($raw, ['http://', 'https://'])) {
-                                // URL penuh (Unsplash)
-                                $img = $raw;
-                            } elseif (\Illuminate\Support\Str::startsWith($raw, ['storage/', '/storage/'])) {
-                                // sudah mengandung storage/
-                                $img = asset(ltrim($raw, '/'));
-                            } else {
-                                // anggap path relatife ke storage/
-                                $img = asset('storage/' . ltrim($raw, '/'));
+                            if ($raw !== '') {
+                                if (\Illuminate\Support\Str::startsWith($raw, ['http://', 'https://'])) {
+                                    // URL penuh (Unsplash)
+                                    $img = $raw;
+                                } elseif (\Illuminate\Support\Str::startsWith($raw, ['storage/', '/storage/'])) {
+                                    // sudah mengandung storage/
+                                    $img = asset(ltrim($raw, '/'));
+                                } else {
+                                    // anggap path relatife ke storage/
+                                    $img = asset('storage/' . ltrim($raw, '/'));
+                                }
+                            } elseif (!empty($product->image_path ?? null)) {
+                                // Kalau nanti kamu pakai kolom image_path
+                                $img = asset('storage/' . $product->image_path);
                             }
-                        } elseif (!empty($product->image_path ?? null)) {
-                            // Kalau nanti kamu pakai kolom image_path
-                            $img = asset('storage/' . $product->image_path);
-                        }
-                    @endphp
+                        @endphp
 
-                    <div class="rec-card snap-start bg-white rounded-2xl shadow group overflow-hidden shrink-0 
+                        <div class="rec-card snap-start bg-white rounded-2xl shadow group overflow-hidden shrink-0 
                             border border-pink-100 min-w-[300px] w-[300px]"
-                        style="transition-delay: {{ $loop->index * 90 }}ms">
+                            style="transition-delay: {{ $loop->index * 90 }}ms">
 
-                        <img src="{{ $img }}"
-                            alt="{{ $product->name }}"
-                            class="w-full h-52 object-cover transition duration-300 group-hover:scale-[1.02]">
+                            <img src="{{ $img }}" alt="{{ $product->name }}"
+                                class="w-full h-52 object-cover transition duration-300 group-hover:scale-[1.02]">
 
-                        <div class="p-4">
-                            <h3 class="font-semibold text-lg text-bcake-cocoa">
-                                {{ $product->name }}
-                            </h3>
-                            <p class="text-sm text-gray-500 mt-1">
-                                Rekomendasi pilihan B’cake
-                            </p>
-
-                            @if (!is_null($product->price ?? null))
-                                <p class="mt-2 text-base font-semibold text-rose-700">
-                                    Rp {{ number_format($product->price, 0, ',', '.') }}
+                            <div class="p-4">
+                                <h3 class="font-semibold text-lg text-bcake-cocoa">
+                                    {{ $product->name }}
+                                </h3>
+                                <p class="text-sm text-gray-500 mt-1">
+                                    Rekomendasi pilihan B’cake
                                 </p>
-                            @endif
+
+                                @if (!is_null($product->price ?? null))
+                                    <p class="mt-2 text-base font-semibold text-rose-700">
+                                        Rp {{ number_format($product->price, 0, ',', '.') }}
+                                    </p>
+                                @endif
+                            </div>
+
                         </div>
 
-                    </div>
+                    @empty
+                        <p class="text-center text-gray-400 py-6">
+                            Belum ada produk yang bisa ditampilkan saat ini.
+                        </p>
+                    @endforelse
 
-                @empty
-                    <p class="text-center text-gray-400 py-6">
-                        Belum ada produk yang bisa ditampilkan saat ini.
-                    </p>
-                @endforelse
-
+                </div>
             </div>
         </div>
     </section>

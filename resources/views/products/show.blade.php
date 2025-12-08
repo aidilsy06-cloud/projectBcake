@@ -117,7 +117,7 @@
         $img = asset('image/Cake-Pinky.jpg');
     }
 
-    $store = $product->store ?? null;
+    $store   = $product->store ?? null;
     $backUrl = url()->previous();
 @endphp
 
@@ -220,25 +220,57 @@
           </div>
 
           {{-- TOMBOL AKSI --}}
-          <div class="pt-4 flex flex-wrap items-center gap-3">
-            @php
-              // kalau kamu punya kolom whatsapp di tabel stores, bisa pakai itu
-              $waNumber = $store->whatsapp ?? null;
-              $waText = urlencode("Halo, saya tertarik dengan produk ".$product->name." di B’cake.");
-              $waLink = $waNumber
-                        ? "https://wa.me/".$waNumber."?text=".$waText
-                        : "https://wa.me/?text=".$waText;
-            @endphp
+          <div class="pt-4 space-y-3">
 
-            <a href="{{ $waLink }}" target="_blank" class="btn-primary">
-              💬 Kirim WhatsApp Penjual
-            </a>
+            {{-- FORM TAMBAH KE KERANJANG --}}
+            @auth
+              <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                @csrf
+                <div class="flex flex-wrap items-center gap-3">
+                  <div class="flex items-center gap-2 text-xs">
+                    <span class="text-gray-600">Jumlah:</span>
+                    <input
+                      type="number"
+                      name="qty"
+                      min="1"
+                      max="{{ $product->stock ?? 99 }}"
+                      value="1"
+                      class="w-20 rounded-xl border border-rose-200 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-rose-300">
+                  </div>
 
-            @if($store)
-              <a href="{{ route('stores.show', $store->slug ?? $store->id) }}" class="btn-soft">
-                Lihat toko {{ $store->name }}
+                  <button type="submit" class="btn-primary">
+                    🛒 Tambah ke Keranjang
+                  </button>
+                </div>
+              </form>
+            @else
+              <div class="flex flex-wrap items-center gap-3 text-xs text-gray-600">
+                <a href="{{ route('login') }}" class="btn-primary">
+                  🛒 Login untuk tambah ke keranjang
+                </a>
+              </div>
+            @endauth
+
+            {{-- TOMBOL WHATSAPP & LIHAT TOKO --}}
+            <div class="flex flex-wrap items-center gap-3">
+              @php
+                $waNumber = $store->whatsapp ?? null;
+                $waText   = urlencode("Halo, saya tertarik dengan produk ".$product->name." di B’cake.");
+                $waLink   = $waNumber
+                            ? "https://wa.me/".$waNumber."?text=".$waText
+                            : "https://wa.me/?text=".$waText;
+              @endphp
+
+              <a href="{{ $waLink }}" target="_blank" class="btn-soft">
+                💬 Kirim WhatsApp Penjual
               </a>
-            @endif
+
+              @if($store)
+                <a href="{{ route('stores.show', $store->slug ?? $store->id) }}" class="btn-soft">
+                  Lihat toko {{ $store->name }}
+                </a>
+              @endif
+            </div>
           </div>
         </div>
       </div>

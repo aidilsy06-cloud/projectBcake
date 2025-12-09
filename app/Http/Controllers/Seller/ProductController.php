@@ -34,7 +34,6 @@ class ProductController extends Controller
 
         $products = $query->latest()->paginate(15);
 
-        // NOTE: pakai 'Seller.products.index' (S besar)
         return view('Seller.products.index', compact('products'));
     }
 
@@ -48,7 +47,6 @@ class ProductController extends Controller
         // Kategori untuk dropdown
         $categories = Category::orderBy('name')->get();
 
-        // NOTE: pakai 'Seller.products.create'
         return view('Seller.products.create', [
             'categories' => $categories,
             'user'       => $user,
@@ -90,7 +88,7 @@ class ProductController extends Controller
             'stock'       => $data['stock'],
             'description' => $data['description'] ?? null,
             'image_url'   => $imagePath,
-            'status'      => 'pending',   // ⬅️ menunggu verifikasi admin
+            'status'      => 'pending',   // menunggu verifikasi admin
         ]);
 
         return redirect()
@@ -99,18 +97,32 @@ class ProductController extends Controller
     }
 
     /**
+     * Cek hak akses untuk edit/update/destroy produk.
+     */
+    protected function authorizeProduct(Product $product)
+    {
+        $user  = Auth::user();
+        $store = $user->store;
+
+        $isAdmin      = ($user->role ?? null) === 'admin';
+        $ownsByUser   = $product->user_id === $user->id;
+        $ownsByStore  = $store && $product->store_id === $store->id;
+
+        // kalau bukan admin dan bukan pemilik produk/toko → 403
+        abort_unless($isAdmin || $ownsByUser || $ownsByStore, 403);
+
+        return $user;
+    }
+
+    /**
      * Form edit produk.
      */
     public function edit(Product $product)
     {
-        $user = Auth::user();
-
-        // pastikan punya si seller
-        abort_if($product->user_id !== $user->id, 403);
+        $user = $this->authorizeProduct($product);
 
         $categories = Category::orderBy('name')->get();
 
-        // NOTE: pakai 'Seller.products.edit'
         return view('Seller.products.edit', [
             'product'    => $product,
             'categories' => $categories,
@@ -118,12 +130,11 @@ class ProductController extends Controller
     }
 
     /**
-     * Update produk (opsional: reset status ke pending kalau sebelumnya approved).
+     * Update produk.
      */
     public function update(Request $request, Product $product)
     {
-        $user = Auth::user();
-        abort_if($product->user_id !== $user->id, 403);
+        $user = $this->authorizeProduct($product);
 
         $data = $request->validate([
             'name'        => ['required', 'string', 'max:150'],
@@ -137,7 +148,6 @@ class ProductController extends Controller
         $imagePath = $product->image_url;
 
         if ($request->hasFile('image')) {
-            // hapus gambar lama kalau ada
             if ($product->image_url) {
                 Storage::disk('public')->delete($product->image_url);
             }
@@ -171,8 +181,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $user = Auth::user();
-        abort_if($product->user_id !== $user->id, 403);
+        $this->authorizeProduct($product);
 
         if ($product->image_url) {
             Storage::disk('public')->delete($product->image_url);

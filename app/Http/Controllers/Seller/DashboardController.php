@@ -22,15 +22,15 @@ class DashboardController extends Controller
         // ==========================================
         // DEFAULT VALUE (kalau seller belum punya toko)
         // ==========================================
-        $salesLabels = [];
-        $salesValues = [];
+        $salesLabels   = [];
+        $salesValues   = [];
         $totalProducts = 0;
-        $recentOrders = collect();
+        $recentOrders  = collect();
 
         // siapkan 6 label bulan dulu (biar chart tetap rapi)
         $now = now();
         for ($i = 5; $i >= 0; $i--) {
-            $monthObj = $now->copy()->subMonths($i);
+            $monthObj      = $now->copy()->subMonths($i);
             $salesLabels[] = $monthObj->format('M');
             $salesValues[] = 0;   // nanti di-override kalau ada store
         }
@@ -62,7 +62,8 @@ class DashboardController extends Controller
                 ->get();
         }
 
-        return view('seller.dashboard', [
+        // NOTE: pakai 'Seller.dashboard' (S besar) karena folder view-mu bernama 'Seller'
+        return view('Seller.dashboard', [
             'user'          => $user,
             'store'         => $store,
             'totalProducts' => $totalProducts,

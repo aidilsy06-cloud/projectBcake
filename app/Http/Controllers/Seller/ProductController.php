@@ -7,12 +7,47 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-// Storage sudah tidak dipakai, boleh dihapus:
-// use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    /**
+     * Helper upload gambar produk ke public/storage/products.
+     * Mengembalikan path relatif: "products/namafile.jpg"
+     */
+    protected function uploadProductImage(?\Illuminate\Http\UploadedFile $file, ?string $oldPath = null): ?string
+    {
+        if (! $file) {
+            // tidak ada file baru → pakai path lama saja
+            return $oldPath;
+        }
+
+        // hapus file lama kalau ada
+        if ($oldPath) {
+            $oldFull = public_path('storage/' . ltrim($oldPath, '/'));
+            if (is_file($oldFull)) {
+                @unlink($oldFull);
+            }
+        }
+
+        // pastikan folder public/storage/products ada
+        $uploadDir = public_path('storage/products');
+        if (! is_dir($uploadDir)) {
+            @mkdir($uploadDir, 0755, true);
+        }
+
+        $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $ext          = $file->getClientOriginalExtension();
+        $safeName     = Str::slug($originalName);
+        $filename     = time() . '_' . $safeName . '.' . $ext;
+
+        // simpan langsung ke public/storage/products
+        $file->move($uploadDir, $filename);
+
+        // yang disimpan ke DB: "products/namafile.jpg"
+        return 'products/' . $filename;
+    }
+
     /**
      * Daftar produk milik seller yang login.
      */
@@ -35,6 +70,7 @@ class ProductController extends Controller
 
         $products = $query->latest()->paginate(15);
 
+        // Folder view: resources/views/Seller/products/index.blade.php
         return view('Seller.products.index', compact('products'));
     }
 
@@ -45,7 +81,6 @@ class ProductController extends Controller
     {
         $user = Auth::user();
 
-        // Kategori untuk dropdown
         $categories = Category::orderBy('name')->get();
 
         return view('Seller.products.create', [
@@ -60,7 +95,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $user  = Auth::user();
-        $store = $user->store;
+        $store = $user->store; // relasi user->store
 
         $data = $request->validate([
             'name'        => ['required', 'string', 'max:150'],
@@ -71,26 +106,12 @@ class ProductController extends Controller
             'image'       => ['nullable', 'image', 'max:2048'],
         ]);
 
-        // ==============================
-        // UPLOAD GAMBAR TANPA STORAGE:LINK
-        // ==============================
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $filename = time() . '_' . $request->file('image')->getClientOriginalName();
-
-            // Simpan langsung ke public/storage/products
-            $request->file('image')->move(
-                public_path('storage/products'),
-                $filename
-            );
-
-            // Di database simpan relatif dari folder storage/
-            $imagePath = 'products/' . $filename;
-        }
+        // upload gambar ke public/storage/products
+        $imagePath = $this->uploadProductImage($request->file('image'));
 
         $slug = Str::slug($data['name']) . '-' . uniqid();
 
-        $product = Product::create([
+        Product::create([
             'user_id'     => $user->id,
             'store_id'    => $store?->id,
             'category_id' => $data['category_id'] ?? null,
@@ -99,8 +120,8 @@ class ProductController extends Controller
             'price'       => $data['price'],
             'stock'       => $data['stock'],
             'description' => $data['description'] ?? null,
-            'image_url'   => $imagePath,
-            'status'      => 'pending',
+            'image_url'   => $imagePath,   // contoh: "products/goguma.png"
+            'status'      => 'pending',    // menunggu verifikasi admin
         ]);
 
         return redirect()
@@ -115,8 +136,15 @@ class ProductController extends Controller
     {
         $user = Auth::user();
 
-        // cuma cek role aja, gak cek user_id/store_id lagi
-        abort_unless(in_array($user->role ?? null, ['seller', 'admin']), 403);
+        // boleh seller pemilik / admin
+        if (! in_array($user->role ?? null, ['seller', 'admin'], true)) {
+            abort(403);
+        }
+
+        // kalau seller (bukan admin), pastikan ini produk dia
+        if (($user->role ?? null) === 'seller' && $product->user_id !== $user->id) {
+            abort(403);
+        }
 
         $categories = Category::orderBy('name')->get();
 
@@ -133,7 +161,12 @@ class ProductController extends Controller
     {
         $user = Auth::user();
 
-        abort_unless(in_array($user->role ?? null, ['seller', 'admin']), 403);
+        if (! in_array($user->role ?? null, ['seller', 'admin'], true)) {
+            abort(403);
+        }
+        if (($user->role ?? null) === 'seller' && $product->user_id !== $user->id) {
+            abort(403);
+        }
 
         $data = $request->validate([
             'name'        => ['required', 'string', 'max:150'],
@@ -144,29 +177,11 @@ class ProductController extends Controller
             'image'       => ['nullable', 'image', 'max:2048'],
         ]);
 
-        $imagePath = $product->image_url;
+        // upload baru (kalau ada), kalau tidak ada → pakai lama
+        $imagePath = $this->uploadProductImage($request->file('image'), $product->image_url);
 
-        if ($request->hasFile('image')) {
-            // hapus file lama kalau ada & file-nya benar-benar ada
-            if ($product->image_url && file_exists(public_path('storage/' . $product->image_url))) {
-                @unlink(public_path('storage/' . $product->image_url));
-            }
-
-            $filename = time() . '_' . $request->file('image')->getClientOriginalName();
-
-            $request->file('image')->move(
-                public_path('storage/products'),
-                $filename
-            );
-
-            $imagePath = 'products/' . $filename;
-        }
-
-        // kalau sebelumnya approved dan di-edit, kita kembalikan ke pending
-        $status = $product->status;
-        if ($status === 'approved') {
-            $status = 'pending';
-        }
+        // kalau sebelumnya approved dan di-edit, kembalikan ke pending
+        $status = $product->status === 'approved' ? 'pending' : $product->status;
 
         $product->update([
             'category_id' => $data['category_id'] ?? null,
@@ -190,10 +205,18 @@ class ProductController extends Controller
     {
         $user = Auth::user();
 
-        abort_unless(in_array($user->role ?? null, ['seller', 'admin']), 403);
+        if (! in_array($user->role ?? null, ['seller', 'admin'], true)) {
+            abort(403);
+        }
+        if (($user->role ?? null) === 'seller' && $product->user_id !== $user->id) {
+            abort(403);
+        }
 
-        if ($product->image_url && file_exists(public_path('storage/' . $product->image_url))) {
-            @unlink(public_path('storage/' . $product->image_url));
+        if ($product->image_url) {
+            $full = public_path('storage/' . ltrim($product->image_url, '/'));
+            if (is_file($full)) {
+                @unlink($full);
+            }
         }
 
         $product->delete();

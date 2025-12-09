@@ -73,7 +73,7 @@ class ProductController extends Controller
         // upload gambar (kalau ada)
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
+            $imagePath = $request->file('image')->store('products', 'private');
         }
 
         $slug = Str::slug($data['name']) . '-' . uniqid();

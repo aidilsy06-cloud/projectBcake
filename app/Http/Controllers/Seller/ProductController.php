@@ -55,12 +55,19 @@ class ProductController extends Controller
     {
         $user  = Auth::user();
         $store = $user->store;
+        $role  = strtolower((string) ($user->role ?? ''));
 
-        $query = Product::with('category')
-            ->where('user_id', $user->id);
+        $query = Product::with('category');
 
-        if ($store) {
-            $query->where('store_id', $store->id);
+        if ($role === 'admin') {
+            // admin boleh lihat semua produk
+        } else {
+            // seller / role lain → hanya produk milik user
+            $query->where('user_id', $user->id);
+
+            if ($store) {
+                $query->where('store_id', $store->id);
+            }
         }
 
         // optional: filter status di query string ?status=pending|approved|rejected
@@ -130,21 +137,30 @@ class ProductController extends Controller
     }
 
     /**
+     * Pastikan user boleh mengakses produk ini.
+     * - Admin: boleh semua
+     * - Selain admin: hanya jika user_id sama
+     */
+    protected function authorizeProduct(Product $product): void
+    {
+        $user = Auth::user();
+        $role = strtolower((string) ($user->role ?? ''));
+
+        if ($role === 'admin') {
+            return;
+        }
+
+        if ($product->user_id !== $user->id) {
+            abort(403);
+        }
+    }
+
+    /**
      * Form edit produk.
      */
     public function edit(Product $product)
     {
-        $user = Auth::user();
-
-        // boleh seller pemilik / admin
-        if (! in_array($user->role ?? null, ['seller', 'admin'], true)) {
-            abort(403);
-        }
-
-        // kalau seller (bukan admin), pastikan ini produk dia
-        if (($user->role ?? null) === 'seller' && $product->user_id !== $user->id) {
-            abort(403);
-        }
+        $this->authorizeProduct($product);
 
         $categories = Category::orderBy('name')->get();
 
@@ -159,14 +175,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        $user = Auth::user();
-
-        if (! in_array($user->role ?? null, ['seller', 'admin'], true)) {
-            abort(403);
-        }
-        if (($user->role ?? null) === 'seller' && $product->user_id !== $user->id) {
-            abort(403);
-        }
+        $this->authorizeProduct($product);
 
         $data = $request->validate([
             'name'        => ['required', 'string', 'max:150'],
@@ -203,14 +212,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $user = Auth::user();
-
-        if (! in_array($user->role ?? null, ['seller', 'admin'], true)) {
-            abort(403);
-        }
-        if (($user->role ?? null) === 'seller' && $product->user_id !== $user->id) {
-            abort(403);
-        }
+        $this->authorizeProduct($product);
 
         if ($product->image_url) {
             $full = public_path('storage/' . ltrim($product->image_url, '/'));

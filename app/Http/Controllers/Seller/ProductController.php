@@ -34,7 +34,8 @@ class ProductController extends Controller
 
         $products = $query->latest()->paginate(15);
 
-        return view('seller.products.index', compact('products'));
+        // NOTE: pakai 'Seller.products.index' (S besar)
+        return view('Seller.products.index', compact('products'));
     }
 
     /**
@@ -47,7 +48,8 @@ class ProductController extends Controller
         // Kategori untuk dropdown
         $categories = Category::orderBy('name')->get();
 
-        return view('seller.products.create', [
+        // NOTE: pakai 'Seller.products.create'
+        return view('Seller.products.create', [
             'categories' => $categories,
             'user'       => $user,
         ]);
@@ -108,7 +110,8 @@ class ProductController extends Controller
 
         $categories = Category::orderBy('name')->get();
 
-        return view('seller.products.edit', [
+        // NOTE: pakai 'Seller.products.edit'
+        return view('Seller.products.edit', [
             'product'    => $product,
             'categories' => $categories,
         ]);

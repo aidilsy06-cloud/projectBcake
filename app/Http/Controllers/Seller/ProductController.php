@@ -7,7 +7,8 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+// Storage sudah tidak dipakai, boleh dihapus:
+// use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
@@ -59,7 +60,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $user  = Auth::user();
-        $store = $user->store; // atau cara lain kamu ambil store seller
+        $store = $user->store;
 
         $data = $request->validate([
             'name'        => ['required', 'string', 'max:150'],
@@ -70,10 +71,21 @@ class ProductController extends Controller
             'image'       => ['nullable', 'image', 'max:2048'],
         ]);
 
-        // upload gambar (kalau ada)
+        // ==============================
+        // UPLOAD GAMBAR TANPA STORAGE:LINK
+        // ==============================
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'private');
+            $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+
+            // Simpan langsung ke public/storage/products
+            $request->file('image')->move(
+                public_path('storage/products'),
+                $filename
+            );
+
+            // Di database simpan relatif dari folder storage/
+            $imagePath = 'products/' . $filename;
         }
 
         $slug = Str::slug($data['name']) . '-' . uniqid();
@@ -88,7 +100,7 @@ class ProductController extends Controller
             'stock'       => $data['stock'],
             'description' => $data['description'] ?? null,
             'image_url'   => $imagePath,
-            'status'      => 'pending',   // menunggu verifikasi admin
+            'status'      => 'pending',
         ]);
 
         return redirect()
@@ -135,11 +147,19 @@ class ProductController extends Controller
         $imagePath = $product->image_url;
 
         if ($request->hasFile('image')) {
-            if ($product->image_url) {
-                Storage::disk('public')->delete($product->image_url);
+            // hapus file lama kalau ada & file-nya benar-benar ada
+            if ($product->image_url && file_exists(public_path('storage/' . $product->image_url))) {
+                @unlink(public_path('storage/' . $product->image_url));
             }
 
-            $imagePath = $request->file('image')->store('products', 'public');
+            $filename = time() . '_' . $request->file('image')->getClientOriginalName();
+
+            $request->file('image')->move(
+                public_path('storage/products'),
+                $filename
+            );
+
+            $imagePath = 'products/' . $filename;
         }
 
         // kalau sebelumnya approved dan di-edit, kita kembalikan ke pending
@@ -172,8 +192,8 @@ class ProductController extends Controller
 
         abort_unless(in_array($user->role ?? null, ['seller', 'admin']), 403);
 
-        if ($product->image_url) {
-            Storage::disk('public')->delete($product->image_url);
+        if ($product->image_url && file_exists(public_path('storage/' . $product->image_url))) {
+            @unlink(public_path('storage/' . $product->image_url));
         }
 
         $product->delete();

@@ -278,7 +278,8 @@
     <section class="w-full overflow-visible relative">
         <div x-data="{
             active: 0,
-            slides: [{
+            slides: [
+                {
                     image: '{{ asset('image/slicecake.jpg') }}',
                     title: 'Welcome to a world of sweetness.',
                     tagline: 'Dunia manis yang hangat untuk menyenangkan hati.'
@@ -462,7 +463,7 @@
                             class="w-full aspect-[4/3] object-cover rounded-t-3xl">
                         <div class="py-3 text-center">
                             <h3 class="text-sm md:text-base font-medium text-[#362320]">
-                                Custom Cake & Modern Cake
+                                Custom Cake &amp; Modern Cake
                             </h3>
                         </div>
                     </a>
@@ -497,7 +498,7 @@
                             class="w-full aspect-[4/3] object-cover rounded-t-3xl">
                         <div class="py-3 text-center">
                             <h3 class="text-sm md:text-base font-medium text-[#362320]">
-                                Cupcake & Brownies
+                                Cupcake &amp; Brownies
                             </h3>
                         </div>
                     </a>
@@ -512,7 +513,7 @@
                             class="w-full aspect-[4/3] object-cover rounded-t-3xl">
                         <div class="py-3 text-center">
                             <h3 class="text-sm md:text-base font-medium text-[#362320]">
-                                Pastry & Roti
+                                Pastry &amp; Roti
                             </h3>
                         </div>
                     </a>
@@ -532,7 +533,8 @@
 
                 <div class="md:col-span-3">
                     <a href="{{ route('categories.show', 'snack') }}" class="category-float block w-full">
-                        <img src="{{ asset('image/snack.jpg') }}" class="w-full aspect-[4/3] object-cover rounded-t-3xl">
+                        <img src="{{ asset('image/snack.jpg') }}"
+                            class="w-full aspect-[4/3] object-cover rounded-t-3xl">
                         <div class="py-3 text-center">
                             <h3 class="text-sm md:text-base font-medium text-[#362320]">
                                 Snack
@@ -701,25 +703,21 @@
 
                     @forelse ($bestSellers as $product)
                         @php
-                            // Default foto
+                            // fallback kalau belum ada foto
                             $img = asset('image/dessertbox.jpg');
-
+                            // ideal: image_url = "products/nama-file.jpg"
                             $raw = trim($product->image_url ?? '');
 
                             if ($raw !== '') {
+                                $raw = ltrim($raw, '/');
+
                                 if (\Illuminate\Support\Str::startsWith($raw, ['http://', 'https://'])) {
-                                    // URL penuh (Unsplash)
+                                    // URL penuh
                                     $img = $raw;
-                                } elseif (\Illuminate\Support\Str::startsWith($raw, ['storage/', '/storage/'])) {
-                                    // sudah mengandung storage/
-                                    $img = asset(ltrim($raw, '/'));
                                 } else {
-                                    // anggap path relatife ke storage/
-                                    $img = asset('storage/' . ltrim($raw, '/'));
+                                    // path relatif dari storage/
+                                    $img = asset('storage/' . $raw);
                                 }
-                            } elseif (!empty($product->image_path ?? null)) {
-                                // Kalau nanti kamu pakai kolom image_path
-                                $img = asset('storage/' . $product->image_path);
                             }
                         @endphp
 
@@ -746,7 +744,6 @@
                             </div>
 
                         </div>
-
                     @empty
                         <p class="text-center text-gray-400 py-6">
                             Belum ada produk yang bisa ditampilkan saat ini.
@@ -758,8 +755,7 @@
         </div>
     </section>
 
-    {{-- ============ BANNER PROMO (HARI BESAR — SLIDER SMOOTH) ============ --}}
-    {{-- (kode banner promo kamu yang panjang tadi bisa tetap seperti sebelumnya di sini) --}}
+    {{-- ============ (di bawah sini kalau kamu punya banner promo / section lain, lanjutkan seperti biasa) ============ --}}
 
 @endsection
 

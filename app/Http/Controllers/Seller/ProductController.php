@@ -97,29 +97,14 @@ class ProductController extends Controller
     }
 
     /**
-     * Cek hak akses untuk edit/update/destroy produk.
-     */
-    protected function authorizeProduct(Product $product)
-    {
-        $user  = Auth::user();
-        $store = $user->store;
-
-        $isAdmin      = ($user->role ?? null) === 'admin';
-        $ownsByUser   = $product->user_id === $user->id;
-        $ownsByStore  = $store && $product->store_id === $store->id;
-
-        // kalau bukan admin dan bukan pemilik produk/toko → 403
-        abort_unless($isAdmin || $ownsByUser || $ownsByStore, 403);
-
-        return $user;
-    }
-
-    /**
      * Form edit produk.
      */
     public function edit(Product $product)
     {
-        $user = $this->authorizeProduct($product);
+        $user = Auth::user();
+
+        // cuma cek role aja, gak cek user_id/store_id lagi
+        abort_unless(in_array($user->role ?? null, ['seller', 'admin']), 403);
 
         $categories = Category::orderBy('name')->get();
 
@@ -134,7 +119,9 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        $user = $this->authorizeProduct($product);
+        $user = Auth::user();
+
+        abort_unless(in_array($user->role ?? null, ['seller', 'admin']), 403);
 
         $data = $request->validate([
             'name'        => ['required', 'string', 'max:150'],
@@ -181,7 +168,9 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $this->authorizeProduct($product);
+        $user = Auth::user();
+
+        abort_unless(in_array($user->role ?? null, ['seller', 'admin']), 403);
 
         if ($product->image_url) {
             Storage::disk('public')->delete($product->image_url);

@@ -42,4 +42,20 @@ class Product extends Model
     {
         return $this->belongsTo(\App\Models\Category::class);
     }
+
+    /**
+     * Relasi ke ulasan (reviews)
+     */
+    public function reviews()
+    {
+        return $this->hasMany(\App\Models\Review::class);
+    }
+
+    /**
+     * Hitung rata-rata rating produk
+     */
+    public function averageRating()
+    {
+        return $this->reviews()->avg('rating');
+    }
 }

@@ -12,12 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-
-            // Tambah kolom total_price
-            // Letakkan setelah order_summary agar rapi
-            $table->integer('total_price')
-                  ->default(0)
-                  ->after('order_summary');
+            // Tambah kolom total_price tanpa after()
+            // karena kolom order_summary TIDAK ada
+            $table->integer('total_price')->default(0);
         });
     }
 
@@ -27,8 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-
-            // Hapus kolom jika rollback
+            // Hapus kolom saat rollback
             $table->dropColumn('total_price');
         });
     }

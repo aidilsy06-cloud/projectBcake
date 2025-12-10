@@ -42,4 +42,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(Store::class);
     }
+
+    /** RELASI ULASAN (REVIEW) YANG DIBUAT USER */
+    public function reviews()
+    {
+        return $this->hasMany(\App\Models\Review::class);
+    }
 }

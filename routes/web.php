@@ -32,6 +32,9 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\StoreController as AdminStoreController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
+// Review (ULASAN PRODUK) 👇
+use App\Http\Controllers\ReviewController;
+
 // Models
 use App\Models\Product;
 use App\Models\User;
@@ -119,15 +122,21 @@ Route::get('/store/{store:slug}', [StoreController::class, 'show'])->name('store
 
 /*
 |--------------------------------------------------------------------------
-| ORDER VIA WHATSAPP
+| ORDER VIA WHATSAPP + ULASAN (WAJIB LOGIN)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
+    // Order via WA
     Route::post('/store/{store:slug}/order', [PublicOrderController::class, 'store'])
         ->name('stores.order');
 
     Route::get('/orders/{order}/success', [PublicOrderController::class, 'success'])
         ->name('orders.success');
+
+    // ULASAN PRODUK (REVIEW) 👇
+    // form di detail produk akan POST ke route ini
+    Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])
+        ->name('products.reviews.store');
 });
 
 /*
@@ -301,4 +310,3 @@ Route::prefix('buyer')
         Route::get('/orders', [BuyerOrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [BuyerOrderController::class, 'show'])->name('orders.show');
     });
-

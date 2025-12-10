@@ -101,7 +101,12 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $product->load(['store', 'category']);
+        // load relasi yang dipakai di halaman detail, termasuk ulasan
+        $product->load([
+            'store',
+            'category',
+            'reviews.user',   // ⬅️ ulasan + nama user
+        ]);
 
         return view('products.show', compact('product'));
     }

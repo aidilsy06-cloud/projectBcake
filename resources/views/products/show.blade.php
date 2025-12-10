@@ -85,6 +85,56 @@
     color:transparent;
     font-weight:700;
   }
+
+  /* =======================
+     ULASAN / REVIEW AREA
+     ======================= */
+  .review-section{
+    margin-top:1.75rem;
+  }
+  .review-header{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:.75rem;
+    margin-bottom:1rem;
+  }
+  .rating-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:.35rem;
+    padding:.35rem .8rem;
+    border-radius:999px;
+    background:#fef2f2;
+    border:1px solid rgba(248,113,150,.35);
+    font-size:.8rem;
+    color:#b91c1c;
+  }
+  .review-card{
+    background:#fff;
+    border-radius:1.25rem;
+    border:1px solid rgba(248,113,150,.18);
+    padding:0.85rem 1rem;
+    box-shadow:0 12px 30px rgba(137,5,36,.06);
+  }
+  .review-name{
+    font-size:.85rem;
+    font-weight:600;
+    color:var(--bcake-cocoa);
+  }
+  .review-meta{
+    font-size:.7rem;
+    color:#9ca3af;
+  }
+  .review-text{
+    font-size:.8rem;
+    color:#374151;
+    margin-top:.3rem;
+  }
+  .review-form textarea{
+    resize:vertical;
+  }
 </style>
 @endpush
 
@@ -119,6 +169,10 @@
 
     $store   = $product->store ?? null;
     $backUrl = url()->previous();
+
+    // Ambil data rating
+    $reviewsCount   = $product->reviews->count();
+    $averageRating  = $reviewsCount ? number_format($product->averageRating(), 1) : null;
 @endphp
 
 <div class="bg-rose-50/60">
@@ -187,6 +241,15 @@
             @if(isset($product->status))
               <span class="pill" style="background:#ecfdf3;border-color:#6ee7b7;color:#166534;">
                 {{ strtoupper($product->status) }}
+              </span>
+            @endif
+
+            @if($reviewsCount)
+              <span class="rating-badge">
+                ⭐ {{ $averageRating }} / 5
+                <span class="text-[0.7rem] text-rose-500">
+                  ({{ $reviewsCount }} ulasan)
+                </span>
               </span>
             @endif
           </div>
@@ -274,6 +337,127 @@
           </div>
         </div>
       </div>
+
+      {{-- =============================
+           ULASAN PEMBELI
+         ============================= --}}
+      <div class="review-section mt-8">
+        <div class="review-header">
+          <div>
+            <h2 class="text-base md:text-lg font-semibold text-[var(--bcake-cocoa)]">
+              Ulasan Pembeli
+            </h2>
+            <p class="text-xs text-gray-500 mt-0.5">
+              Lihat pengalaman pembeli lain atau bagikan pengalamanmu setelah mencoba produk ini.
+            </p>
+          </div>
+
+          @if($reviewsCount)
+            <div class="rating-badge">
+              ⭐ {{ $averageRating }} / 5
+              <span class="text-[0.7rem] text-rose-500">
+                ({{ $reviewsCount }} ulasan)
+              </span>
+            </div>
+          @endif
+        </div>
+
+        {{-- Flash message --}}
+        @if (session('success'))
+          <div class="mb-3 text-xs text-green-800 bg-green-100 border border-green-200 rounded-xl px-3 py-2">
+            {{ session('success') }}
+          </div>
+        @endif
+
+        {{-- LIST ULASAN --}}
+        @if($reviewsCount)
+          <div class="space-y-3 mb-5">
+            @foreach($product->reviews()->latest()->take(10)->get() as $review)
+              <div class="review-card">
+                <div class="flex items-start justify-between gap-2">
+                  <div>
+                    <div class="review-name">
+                      {{ $review->user->name ?? 'Pembeli' }}
+                    </div>
+                    <div class="review-meta">
+                      {{ $review->created_at->format('d M Y, H:i') }}
+                    </div>
+                  </div>
+                  <div class="text-xs font-semibold text-rose-600">
+                    ⭐ {{ $review->rating }}/5
+                  </div>
+                </div>
+
+                @if($review->comment)
+                  <p class="review-text">
+                    {{ $review->comment }}
+                  </p>
+                @endif
+              </div>
+            @endforeach
+          </div>
+        @else
+          <p class="text-xs text-gray-500 mb-4">
+            Belum ada ulasan untuk produk ini. Jadilah yang pertama memberikan ulasan ✨
+          </p>
+        @endif
+
+        {{-- FORM TULIS ULASAN --}}
+        @auth
+          <div class="border-t border-rose-100 pt-4 review-form">
+            <h3 class="text-sm font-semibold text-[var(--bcake-cocoa)] mb-2">
+              Tulis Ulasanmu
+            </h3>
+
+            <form action="{{ route('products.reviews.store', $product) }}" method="POST" class="space-y-3">
+              @csrf
+
+              <div class="flex flex-wrap items-center gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">
+                    Rating
+                  </label>
+                  <select name="rating"
+                          class="w-32 border border-rose-200 rounded-xl px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-rose-300 @error('rating') border-red-400 @enderror">
+                    <option value="">Pilih rating</option>
+                    @for($i = 5; $i >= 1; $i--)
+                      <option value="{{ $i }}" {{ old('rating') == $i ? 'selected' : '' }}>
+                        {{ $i }} ⭐
+                      </option>
+                    @endfor
+                  </select>
+                  @error('rating')
+                    <p class="text-[0.7rem] text-red-500 mt-1">{{ $message }}</p>
+                  @enderror
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">
+                  Ulasan (opsional)
+                </label>
+                <textarea
+                  name="comment"
+                  rows="3"
+                  class="w-full border border-rose-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-rose-300 @error('comment') border-red-400 @enderror"
+                  placeholder="Ceritakan pengalamanmu dengan produk ini...">{{ old('comment') }}</textarea>
+                @error('comment')
+                  <p class="text-[0.7rem] text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+              </div>
+
+              <button type="submit" class="btn-primary text-xs">
+                ✨ Kirim Ulasan
+              </button>
+            </form>
+          </div>
+        @else
+          <p class="text-xs text-gray-500 border-t border-rose-100 pt-3">
+            Silakan <a href="{{ route('login') }}" class="text-rose-600 underline">login</a> untuk menulis ulasan.
+          </p>
+        @endauth
+      </div>
+      {{-- END REVIEW SECTION --}}
     </div>
 
   </div>
